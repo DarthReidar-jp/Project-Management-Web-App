@@ -4,8 +4,7 @@ from . import views
 urlpatterns = [
     #アカウント画面系URL
     #ログイン画面
-    path('login/', views.login, name='login'),
-    
+    #path('login/', views.login, name='login'),
     ]
 '''#アカウント作成画面
     path('account/create/', views.account_create, name='account_create'),
