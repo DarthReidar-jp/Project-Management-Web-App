@@ -17,6 +17,8 @@ class Project(models.Model):
 
     class Meta:
         ordering = ['-created_at']  # 作成日時の降順でソート
+    def __str__(self):
+        return self.name
 
 
 class ProjectMember(models.Model):
@@ -45,6 +47,10 @@ class ProjectMember(models.Model):
     class Meta:
         unique_together = ('user', 'project')  # ユーザーとプロジェクトの組み合わせが一意
 
+    def __str__(self):
+        return str(self.user)
+
+
 
 class Phase(models.Model):
     name = models.CharField(max_length=255)  # フェーズ名
@@ -61,6 +67,8 @@ class Phase(models.Model):
 
     class Meta:
         ordering = ['-start_date']  # 開始日時の降順でソート
+    def __str__(self):
+        return str(self.name)
 
 
 class Unit(models.Model):
@@ -73,6 +81,8 @@ class Unit(models.Model):
     )  # ユニットが所属するフェーズ
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
+    def __str__(self):
+        return str(self.name)
 
 
 class Task(models.Model):
@@ -102,6 +112,8 @@ class Task(models.Model):
             # その結果を `_is_completed` 属性に格納する
         return self._is_completed
         # `_is_completed` 属性の値を返す
+    def __str__(self):
+        return str(self.name)
 
 
 class TaskAssignment(models.Model):
@@ -126,3 +138,6 @@ class TaskAssignment(models.Model):
         if self.task.is_completed():  # タスクが完了した場合
             # タスクが完了した場合の処理
             pass
+
+    def __str__(self):
+        return str(self.user)
