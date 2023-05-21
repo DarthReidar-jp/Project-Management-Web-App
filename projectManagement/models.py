@@ -1,15 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class Project(models.Model):
     name = models.CharField(max_length=255)  # プロジェクト名
     description = models.TextField()  # プロジェクトの説明
     deadline = models.DateTimeField()  # プロジェクトの締め切り日時
-    members = models.ManyToManyField(  # プロジェクトメンバー
-        AbstractUser,
+    members = models.ManyToManyField(
+        User,
         through='ProjectMember',
-        related_name='projects',
+        related_name='projects',  # ユーザーモデルとの多対多関係の関連名
     )
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
@@ -19,24 +20,24 @@ class Project(models.Model):
 
 
 class ProjectMember(models.Model):
-    PROJECT_ROLE_CHOICES = [  # プロジェクトメンバーの役割の選択肢
+    PROJECT_ROLE_CHOICES = [
         ('manager', 'Manager'),  # マネージャー
         ('worker', 'Worker'),  # ワーカー
         ('stakeholder', 'Stakeholder'),  # ステークホルダー
     ]
-    user = models.ForeignKey(  # プロジェクトメンバーのユーザー
-        AbstractUser,
+    user = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
-        related_name='project_memberships',
+        related_name='project_memberships',  # ユーザーモデルとの関連名
     )
-    project = models.ForeignKey(  # 所属するプロジェクト
+    project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='memberships',
+        related_name='memberships',  # プロジェクトモデルとの関連名
     )
-    role = models.CharField(  # 役割
+    role = models.CharField(
         max_length=20,
-        choices=PROJECT_ROLE_CHOICES,
+        choices=PROJECT_ROLE_CHOICES,  # 役割の選択肢
     )
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
@@ -51,7 +52,7 @@ class Phase(models.Model):
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
-        related_name='phases',
+        related_name='phases',  # プロジェクトモデルとの関連名
     )  # フェーズが所属するプロジェクト
     start_date = models.DateTimeField()  # フェーズの開始日時
     end_date = models.DateTimeField()  # フェーズの終了日時
@@ -66,10 +67,10 @@ class Unit(models.Model):
     name = models.CharField(max_length=255)  # ユニット名
     description = models.TextField()  # ユニットの説明
     deadline = models.DateTimeField()  # ユニットの締め切り日時
-    phase = models.ForeignKey(  # ユニットが所属するフェーズ
+    phase = models.ForeignKey(
         Phase,
         on_delete=models.CASCADE,
-    )
+    )  # ユニットが所属するフェーズ
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
 
@@ -78,16 +79,16 @@ class Task(models.Model):
     name = models.CharField(max_length=255)  # タスク名
     description = models.TextField()  # タスクの説明
     deadline = models.DateTimeField()  # タスクの締め切り日時
-    unit = models.ForeignKey(  # タスクが所属するユニット
+    unit = models.ForeignKey(
         Unit,
         on_delete=models.CASCADE,
-    )
+    )  # タスクが所属するユニット
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
-    assigned_users = models.ManyToManyField(  # タスクに割り当てられたユーザー
-        AbstractUser,
+    assigned_users = models.ManyToManyField(
+        User,
         through='TaskAssignment',
-        related_name='task_assignments',
+        related_name='assigned_tasks',  # ユーザーモデルとの多対多関係の関連名
     )
 
     def is_completed(self):
@@ -95,7 +96,7 @@ class Task(models.Model):
             # `_is_completed` 属性が存在しない場合の処理
             self._is_completed = all(
                 task_assignment.is_completed
-                for task_assignment in self.taskassignment_set.all()
+                for task_assignment in self.task_assignments.all()
             )
             # タスクに関連する全ての TaskAssignment の完了状態をチェックし、
             # その結果を `_is_completed` 属性に格納する
@@ -103,22 +104,21 @@ class Task(models.Model):
         # `_is_completed` 属性の値を返す
 
 
-
 class TaskAssignment(models.Model):
-    task = models.ForeignKey(  # 割り当てられたタスク
+    task = models.ForeignKey(
         Task,
         on_delete=models.CASCADE,
-    )
-    user = models.ForeignKey(  # 割り当てられたユーザー
-        AbstractUser,
+    )  # 割り当てられたタスク
+    user = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
-        related_name='task_assignments',
-    )
+        related_name='task_assignments',  # ユーザーモデルとの関連名
+    )  # 割り当てられたユーザー
     assigned_at = models.DateTimeField(auto_now_add=True)  # 割り当て日時
     is_completed = models.BooleanField(default=False)  # タスクが完了したかどうか
 
     class Meta:
-        unique_together = ('task', 'user',)  # タスクとユーザーの組み合わせは一意
+        unique_together = ('task', 'user')  # タスクとユーザーの組み合わせは一意
 
     def complete(self):
         self.is_completed = True  # タスクを完了済みに設定
@@ -126,4 +126,3 @@ class TaskAssignment(models.Model):
         if self.task.is_completed():  # タスクが完了した場合
             # タスクが完了した場合の処理
             pass
-
