@@ -52,3 +52,4 @@ urlpatterns = [
     path('projects/<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.edit_task, name='edit_task'),
     
 ]
+
