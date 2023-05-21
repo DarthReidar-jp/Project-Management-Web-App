@@ -5,7 +5,9 @@ urlpatterns = [
     #アカウント画面系URL
     #ログイン画面
     path('login/', views.login, name='login'),
-    #アカウント作成画面
+    
+    ]
+'''#アカウント作成画面
     path('account/create/', views.account_create, name='account_create'),
     #アカウント作成完了画面
     path('account/create/complete/', views.account_create_complete, name='account_create_complete'),
@@ -50,5 +52,4 @@ urlpatterns = [
     path('projects/<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/create/', views.create_task, name='create_task'),
     #タスク詳細編集画面
     path('projects/<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.edit_task, name='edit_task'),
-    
-]
+    '''
