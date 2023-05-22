@@ -1,23 +1,47 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
-{% block title %} ログイン画面  {% endblock %}
+{% block title %}ログイン画面{% endblock %}
+
+{% block styles %}
+  <style>
+    /* カスタムのスタイルを追加する場合はここに記述 */
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+{% endblock %}
 
 {% block content %}
-    <h1> ログイン <h1>
-    <form method = "post" class = "p-4 m-4 bg-light border border-success rounded form-group">
-        {% csrf_token %}
-        {% for error  in form.errors.values %}
-            {{ error }}
-        {% endfor %}
-        <label>
-            ユーザーID
-        </label>
-        <input class= "form-control" name= "username">
-        <label>
-            パスワード
-        </label>
-        <input type="password" class="form-control" name = "password">
-        <button type="submit" class="btn btn-success mt-4">ログインする</button>
-    </form>
-    {% endblock %}
-    
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h1 class="text-center">ログイン</h1>
+          </div>
+          <div class="card-body">
+            <form method="post" class="form-group">
+              {% csrf_token %}
+              {% for field in form %}
+                <div class="mb-3">
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                  {% if field.field.required %}
+                    <p class="text-danger">このフィールドは必須です</p>
+                  {% endif %}
+                  <div class="d-flex justify-content-center">
+                    {{ field }}
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary">ログインする</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
