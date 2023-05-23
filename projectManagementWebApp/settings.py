@@ -12,6 +12,32 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+#ログイン後の画面
+from django.urls import reverse_lazy
+#ユーザーネームは使わない
+ACCOUNT_USERNAME_REQUIRED = False 
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+#認証にはメールアドレスを使用する
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+
+#ログイン後のリダイレクト先を指定
+from django.urls import reverse_lazy
+LOGIN_REDIRECT_URL = reverse_lazy('project_list')
+
+#ログアウト後のリダイレクト先を指定
+ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy("account_login")
+
+#メールアドレスが確認済みである必要がある
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+#Emailのターミナルでの確認
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+#即ログアウトとする
+ACCOUNT_LOGOUT_ON_GET = True
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,9 +62,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites', 
     'django.contrib.staticfiles',
+    'crispy_forms',
     'projectManagement',
-    'accounts',
+    'accounts',    
+    'allauth',     
+    'allauth.account',     
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [
@@ -119,6 +150,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static_local" ]
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media_local"
@@ -128,4 +160,16 @@ MEDIA_ROOT = BASE_DIR / "media_local"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#アカウント認証用
 AUTH_USER_MODEL = 'accounts.User'
+
+#django-allauthの設定
+AUTHENTICATION_BACKENDS = [ 
+  'django.contrib.auth.backends.ModelBackend',     
+  'allauth.account.auth_backends.AuthenticationBackend',
+] 
+
+SITE_ID = 1
+
+
+
