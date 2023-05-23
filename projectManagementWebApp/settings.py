@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'django.contrib.sites', 
     'django.contrib.staticfiles',
     'crispy_forms',
+    'bootstrap4',
+    'crispy_bootstrap4',
     'projectManagement',
     'accounts',    
     'allauth',     
@@ -153,7 +155,7 @@ STATICFILES_DIRS = [BASE_DIR / "static_local" ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media_local"
+MEDIA_ROOT = [BASE_DIR / "media_local"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

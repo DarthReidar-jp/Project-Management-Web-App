@@ -5,4 +5,4 @@ RUN pip install django-allauth
 #フォームに対して自動でBootstrapクラスを適用してくれるモジュール
 RUN pip install django-crispy-forms
 RUN pip install django-bootstrap4
-
+RUN pip install crispy-bootstrap4
