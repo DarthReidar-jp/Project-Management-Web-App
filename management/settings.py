@@ -24,7 +24,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 #ログイン後のリダイレクト先を指定
 from django.urls import reverse_lazy
-LOGIN_REDIRECT_URL = reverse_lazy('project_list')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
 
 #ログアウト後のリダイレクト先を指定
 ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy("account_login")

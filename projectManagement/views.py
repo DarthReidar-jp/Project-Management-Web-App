@@ -1,9 +1,5 @@
 from django.shortcuts import render
 
-# アカウント作成
-def account_create(request):
-    return render(request, 'account_create.html')
-
 # プロジェクト一覧
 def project_list(request):
     return render(request, 'project_list.html')
