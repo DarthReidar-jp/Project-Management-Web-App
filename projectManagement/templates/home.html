@@ -22,77 +22,26 @@
     </a>
   </div>
   
+  {% for project in projects %}
   <div class="project-tile">
-    <a href="{% url 'detail_project'%}">
+    <a href="{% url 'detail_project' %}">
       <div class="project-info">
-        <h3>{{ project.project_name }}</h3>
-        <p>進捗: 50%</p>
-        <p>期限: 2023年06月30日</p>
-        <p>優先度: 高</p>
-        <p>総工数: 80時間</p>
-        <p>責任者: John Doe</p>
-        <p>種類: タイプA</p>
+        <h3>{{ project.project.project_name }}</h3>
+        <p>進捗: {{ project.progress }}%</p>
+        <p>期限: {{ project.deadline }}</p>
+        <p>優先度: {{ project.priority }}</p>
+        <p>総工数: {{ project.total_work_hours }}</p>
+        <p>責任者: {{ project.responsible }}</p>
+        {% if project.project_kind %}
+        <p>種類: {{ project.project_kind }}</p>
+        {% endif %}
       </div>
     </a>
     <div class="delete-project">
       <button type="button">削除</button>
     </div>
   </div>
-
-  <div class="project-tile">
-    <a href="{% url 'detail_project'%}">
-      <div class="project-info">
-        <h3>{{ project.project_name }}</h3>
-        <p>進捗: 50%</p>
-        <p>期限: 2023年06月30日</p>
-        <p>優先度: 高</p>
-        <p>総工数: 80時間</p>
-        <p>責任者: John Doe</p>
-        <p>種類: タイプA</p>
-      </div>
-    </a>
-    <div class="delete-project">
-      <button type="button">削除</button>
-    </div>
-  </div>
-
-  <div class="project-tile">
-    <a href="{% url 'detail_project'%}">
-      <div class="project-info">
-        <h3>{{ project.project_name }}</h3>
-        <p>進捗: 50%</p>
-        <p>期限: 2023年06月30日</p>
-        <p>優先度: 高</p>
-        <p>総工数: 80時間</p>
-        <p>責任者: John Doe</p>
-        <p>種類: タイプA</p>
-      </div>
-    </a>
-    <div class="delete-project">
-      <button type="button">削除</button>
-    </div>
-  </div>
-
-  <div class="project-tile">
-    <a href="{% url 'detail_project'%}">
-      <div class="project-info">
-        <h3>{{ project.project_name }}</h3>
-        <p>進捗: 50%</p>
-        <p>期限: 2023年06月30日</p>
-        <p>優先度: 高</p>
-        <p>総工数: 80時間</p>
-        <p>責任者: John Doe</p>
-        <p>種類: タイプA</p>
-      </div>
-    </a>
-    <div class="delete-project">
-      <button type="button">削除</button>
-    </div>
-  </div>
-
-
-  <!-- 追加のプロジェクトタイルを繰り返し表示 -->
-
+  {% endfor %}
 </div>
 
 <div class="project-actions">
