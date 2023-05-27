@@ -1,8 +1,8 @@
 from django.shortcuts import render
 
 # プロジェクト一覧
-def project_list(request):
-    return render(request, 'project_list.html')
+def home(request):
+    return render(request, 'home.html')
 
 # プロジェクト作成
 def create_project(request):

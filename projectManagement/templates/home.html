@@ -1,11 +1,117 @@
 {% extends 'base.html' %}
 
-{% block title %}サンプルページ{% endblock %}
-{% block styles %}{% endblock %}
-{% block content %}
-  <h2>サンプルページ</h2>
-  <p>これはサンプルページです。</p>
-  <p>他のページを作成する際は、このHTMLファイルをベースにしてください。</p>
+{% block title %}プロジェクト一覧{% endblock %}
+
+{% block styles %}
+
 {% endblock %}
 
-{% block scripts %}{% endblock %}
+{% block content %}
+<div class="project-list">
+  <h2>プロジェクト一覧</h2>
+  
+  <div class="project-tile create-project-tile">
+    <a href="{% url 'create_project' %}">
+      <div class="project-info">
+        <h3>新規プロジェクト作成</h3>
+        <p>新しいプロジェクトを作成します</p>
+      </div>
+      <div class="create-icon">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+    </a>
+  </div>
+  
+  <div class="project-tile">
+    <a href="{% url 'detail_project'%}">
+      <div class="project-info">
+        <h3>{{ project.project_name }}</h3>
+        <p>進捗: 50%</p>
+        <p>期限: 2023年06月30日</p>
+        <p>優先度: 高</p>
+        <p>総工数: 80時間</p>
+        <p>責任者: John Doe</p>
+        <p>種類: タイプA</p>
+      </div>
+    </a>
+    <div class="delete-project">
+      <button type="button">削除</button>
+    </div>
+  </div>
+
+  <div class="project-tile">
+    <a href="{% url 'detail_project'%}">
+      <div class="project-info">
+        <h3>{{ project.project_name }}</h3>
+        <p>進捗: 50%</p>
+        <p>期限: 2023年06月30日</p>
+        <p>優先度: 高</p>
+        <p>総工数: 80時間</p>
+        <p>責任者: John Doe</p>
+        <p>種類: タイプA</p>
+      </div>
+    </a>
+    <div class="delete-project">
+      <button type="button">削除</button>
+    </div>
+  </div>
+
+  <div class="project-tile">
+    <a href="{% url 'detail_project'%}">
+      <div class="project-info">
+        <h3>{{ project.project_name }}</h3>
+        <p>進捗: 50%</p>
+        <p>期限: 2023年06月30日</p>
+        <p>優先度: 高</p>
+        <p>総工数: 80時間</p>
+        <p>責任者: John Doe</p>
+        <p>種類: タイプA</p>
+      </div>
+    </a>
+    <div class="delete-project">
+      <button type="button">削除</button>
+    </div>
+  </div>
+
+  <div class="project-tile">
+    <a href="{% url 'detail_project'%}">
+      <div class="project-info">
+        <h3>{{ project.project_name }}</h3>
+        <p>進捗: 50%</p>
+        <p>期限: 2023年06月30日</p>
+        <p>優先度: 高</p>
+        <p>総工数: 80時間</p>
+        <p>責任者: John Doe</p>
+        <p>種類: タイプA</p>
+      </div>
+    </a>
+    <div class="delete-project">
+      <button type="button">削除</button>
+    </div>
+  </div>
+
+
+  <!-- 追加のプロジェクトタイルを繰り返し表示 -->
+
+</div>
+
+<div class="project-actions">
+  <button type="button" class="join-project-button">プロジェクト参加</button>
+  <div class="search-bar">
+    <input type="text" placeholder="プロジェクトを検索">
+  </div>
+  <div class="sort-options">
+    <label for="sort-select">プロジェクト並び替え:</label>
+    <select id="sort-select">
+      <option value="created">作成順</option>
+      <option value="updated">更新順</option>
+      <option value="name">名前順</option>
+      <option value="favorite">お気に入り順</option>
+    </select>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
