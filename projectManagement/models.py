@@ -1,22 +1,39 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
-User = get_user_model()
+User = settings.AUTH_USER_MODEL
 
 class Project(models.Model):
-    name = models.CharField(max_length=255)  # プロジェクト名
-    description = models.TextField()  # プロジェクトの説明
-    deadline = models.DateTimeField()  # プロジェクトの締め切り日時
-    members = models.ManyToManyField(
-        User,
-        through='ProjectMember',
-        related_name='projects',  # ユーザーモデルとの多対多関係の関連名
-    )
-    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
-    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
+    project_name = models.CharField(max_length=255)
+    project_description = models.TextField()
+    project_kind = models.CharField(max_length=255)
+    responsible = models.ForeignKey(User, on_delete=models.CASCADE)
+    priority = models.IntegerField()
+    invitation_id = models.CharField(max_length=255)
+    dead_line = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_completed_project = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['-created_at']  # 作成日時の降順でソート
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.project_name
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        phases = self.phases.all()
+        if not self.pk or not phases.exists():
+            self.is_completed_project = False
+        elif phases.exists() and not phases.filter(is_completed_phase=False).exists():
+            self.is_completed_project = True
+        else:
+            self.is_completed_project = False
+
+        self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
+
 
 
 class ProjectMember(models.Model):
@@ -25,16 +42,8 @@ class ProjectMember(models.Model):
         ('worker', 'Worker'),  # ワーカー
         ('stakeholder', 'Stakeholder'),  # ステークホルダー
     ]
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='project_memberships',  # ユーザーモデルとの関連名
-    )
-    project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-        related_name='memberships',  # プロジェクトモデルとの関連名
-    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    project = models.ForeignKey(Project,on_delete=models.CASCADE)
     role = models.CharField(
         max_length=20,
         choices=PROJECT_ROLE_CHOICES,  # 役割の選択肢
@@ -45,84 +54,105 @@ class ProjectMember(models.Model):
     class Meta:
         unique_together = ('user', 'project')  # ユーザーとプロジェクトの組み合わせが一意
 
+    def __str__(self):
+        return f"{self.user} - {self.project}"
 
 class Phase(models.Model):
-    name = models.CharField(max_length=255)  # フェーズ名
-    description = models.TextField()  # フェーズの説明
-    project = models.ForeignKey(
-        Project,
-        on_delete=models.CASCADE,
-        related_name='phases',  # プロジェクトモデルとの関連名
-    )  # フェーズが所属するプロジェクト
-    start_date = models.DateTimeField()  # フェーズの開始日時
-    end_date = models.DateTimeField()  # フェーズの終了日時
-    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
-    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
+    phase_name = models.CharField(max_length=255)
+    phase_description = models.TextField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="phases")
+    start_day = models.DateField()
+    dead_line = models.DateField()
+    is_completed_phase = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-start_date']  # 開始日時の降順でソート
+        ordering = ['-start_day']
+
+    def __str__(self):
+        return str(self.phase_name)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        units = self.units.all()
+        if not self.pk or not units.exists():
+            self.is_completed_phase = False
+        elif units.exists() and not units.filter(is_completed_unit=False).exists():
+            self.is_completed_phase = True
+        else:
+            self.is_completed_phase = False
+
+        self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
 
 
 class Unit(models.Model):
-    name = models.CharField(max_length=255)  # ユニット名
-    description = models.TextField()  # ユニットの説明
-    deadline = models.DateTimeField()  # ユニットの締め切り日時
-    phase = models.ForeignKey(
-        Phase,
-        on_delete=models.CASCADE,
-    )  # ユニットが所属するフェーズ
-    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
-    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
+    unit_name = models.CharField(max_length=255)
+    unit_description = models.TextField()
+    phase = models.ForeignKey(Phase, on_delete=models.CASCADE, related_name="units")
+    start_day = models.DateField()
+    dead_line = models.DateField()
+    is_completed_unit = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.unit_name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        tasks = self.tasks.all()
+        if not self.pk or not tasks.exists():
+            self.is_completed_unit = False
+        elif tasks.exists() and not tasks.filter(is_completed_task=False).exists():
+            self.is_completed_unit = True
+        else:
+            self.is_completed_unit = False
+
+        self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
+
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=255)  # タスク名
-    description = models.TextField()  # タスクの説明
-    deadline = models.DateTimeField()  # タスクの締め切り日時
-    unit = models.ForeignKey(
-        Unit,
-        on_delete=models.CASCADE,
-    )  # タスクが所属するユニット
-    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
-    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
-    assigned_users = models.ManyToManyField(
-        User,
-        through='TaskAssignment',
-        related_name='assigned_tasks',  # ユーザーモデルとの多対多関係の関連名
-    )
+    task_name = models.CharField(max_length=255)
+    task_description = models.TextField()
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name="tasks") 
+    start_day = models.DateField()
+    dead_line = models.DateField()
+    is_completed_task = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    def is_completed(self):
-        if not hasattr(self, '_is_completed'):
-            # `_is_completed` 属性が存在しない場合の処理
-            self._is_completed = all(
-                task_assignment.is_completed
-                for task_assignment in self.task_assignments.all()
-            )
-            # タスクに関連する全ての TaskAssignment の完了状態をチェックし、
-            # その結果を `_is_completed` 属性に格納する
-        return self._is_completed
-        # `_is_completed` 属性の値を返す
+    def __str__(self):
+        return self.task_name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # 保存処理を先に実行
+
+        assignments = self.assignments.all()
+        if not self.pk or not assignments.exists():
+            self.is_completed_task = False
+        elif assignments.exists() and not assignments.filter(is_completed_member=False).exists():
+            self.is_completed_task = True
+        else:
+            self.is_completed_task = False
+
+        # `is_completed_task`のみを更新
+        self.__class__.objects.filter(pk=self.pk).update(is_completed_task=self.is_completed_task)
 
 
 class TaskAssignment(models.Model):
-    task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-    )  # 割り当てられたタスク
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='task_assignments',  # ユーザーモデルとの関連名
-    )  # 割り当てられたユーザー
-    assigned_at = models.DateTimeField(auto_now_add=True)  # 割り当て日時
-    is_completed = models.BooleanField(default=False)  # タスクが完了したかどうか
+    """タスク割り当てモデル"""
+    task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name="assignments")
+    project_member = models.ForeignKey(ProjectMember, on_delete=models.CASCADE)
+    is_completed_member= models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ('task', 'user')  # タスクとユーザーの組み合わせは一意
+    def __str__(self):
+        return f"{self.task} - {self.project_member}"
+    
 
-    def complete(self):
-        self.is_completed = True  # タスクを完了済みに設定
-        self.save()
-        if self.task.is_completed():  # タスクが完了した場合
-            # タスクが完了した場合の処理
-            pass
+
