@@ -24,11 +24,11 @@
   
   {% for project in projects %}
   <div class="project-tile">
-    <a href="{% url 'detail_project' %}">
+    <a href="{% url 'project_detail' project.project.id %}">
       <div class="project-info">
         <h3>{{ project.project.project_name }}</h3>
         <p>進捗: {{ project.progress }}%</p>
-        <p>期限: {{ project.deadline }}</p>
+        <p>期限: {{ project.dead_line }}</p>
         <p>優先度: {{ project.priority }}</p>
         <p>総工数: {{ project.total_work_hours }}</p>
         <p>責任者: {{ project.responsible }}</p>

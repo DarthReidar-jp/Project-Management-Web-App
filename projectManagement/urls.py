@@ -6,21 +6,23 @@ urlpatterns = [
     #プロジェクト一覧画面
     path('home/', views.home, name='home'),
     #プロジェクト作成画面
-    path('projects/create/', views.create_project, name='create_project'), 
+    path('projects/create/', views.project_create, name='create_project'), 
     #プロジェクト編集画面
     path('projects/<int:project_id>/edit/', views.edit_project, name='edit_project'),
     
     #フェーズ系<int:project_id>
     #フェーズ一覧画面
-    path('projects/1/', views.project_detail, name='detail_project'),
+    path('projects/<int:project_id>/', views.project_detail, name='project_detail'),
     #フェーズ作成画面
-    path('projects/<int:project_id>/phases/create/', views.create_phase, name='create_phase'),
+    path('projects/<int:project_id>/phases/create/', views.phase_create, name='phase_create'),
     #フェーズ編集画面
     path('projects/<int:project_id>/phases/<int:phase_id>/edit/', views.edit_phase, name='edit_phase'),
 
     #ユニット系
     #ユニット一覧画面
+    # urls.py
     path('projects/<int:project_id>/phases/<int:phase_id>/', views.phase_detail, name='phase_detail'),
+
     #ユニット作成画面
     path('projects/<int:project_id>/phases/<int:phase_id>/units/create/', views.create_unit, name='create_unit'),
     #ユニット編集画面

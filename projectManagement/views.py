@@ -1,13 +1,11 @@
-from django.shortcuts import render, redirect
-from .models import Project
-
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Project,Phase,ProjectMember
+from datetime import date
 # プロジェクト一覧
-from django.shortcuts import render
-from .models import Project
-
 def home(request):
     projects = Project.objects.all()
     project_data = []
+    #プロジェクト内の総タスクのカウント
     for project in projects:
         total_tasks = 0
         completed_tasks = 0
@@ -43,11 +41,8 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
-
-
-
-
-def create_project(request):
+#プロジェクトの作成
+def project_create(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
         project_description = request.POST.get('project_description')
@@ -77,28 +72,65 @@ def create_project(request):
 
         return redirect('home')  # 作成後にプロジェクト一覧ページにリダイレクト
 
-    return render(request, 'create_project.html')
+    return render(request, 'project_create.html')
 
+#プロジェクト詳細画面
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    phases = project.phases.order_by('dead_line')
 
-# プロジェクト編集
-def edit_project(request):
-    return render(request, 'edit_project.html')
+    context = {
+        'project': project,
+        'phases': phases,
+    }
+    return render(request, 'project_detail.html', context)
 
-# プロジェクト詳細
-def project_detail(request):
-    return render(request, 'project_detail.html')
+#プロジェクト編集
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
 
-# フェーズ詳細
-def phase_detail(request):
-    return render(request, 'phase_detail.html')
+    # Handle project editing logic here
 
-# フェーズ作成
-def create_phase(request):
-    return render(request, 'create_phase.html')
+    context = {
+        'project': project,
+    }
+    return render(request, 'edit_project.html', context)
+
+#フェーズ作成
+def phase_create(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == 'POST':
+        phase_name = request.POST['phase_name']
+        phase_description = request.POST['phase_description']
+        phase_deadline = request.POST['phase_deadline']
+        start_day = date.today()  # 今日の日付を使用する例
+
+        phase = Phase.objects.create(
+            project=project,
+            phase_name=phase_name,  # フィールド名を修正
+            phase_description=phase_description,  # フィールド名を修正
+            start_day=start_day,  # start_dayの値を設定
+            dead_line=phase_deadline  # フィールド名を修正
+        )
+
+    # プロジェクト詳細画面にリダイレクト
+        return redirect('project_detail', project_id=project_id)
+        # Handle further actions or redirects
+
+    context = {
+        'project': project
+    }
+
+    return render(request, 'phase_create.html', context)
 
 # フェーズ編集
 def edit_phase(request):
     return render(request, 'edit_phase.html')
+
+# フェーズ詳細
+def phase_detail(request):
+    return render(request, 'phase_detail.html')
 
 # ユニット作成
 def create_unit(request):
