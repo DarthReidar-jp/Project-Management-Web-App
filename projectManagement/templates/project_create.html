@@ -8,7 +8,7 @@
 {% block content %}
 <div class="project-create">
   <h2>プロジェクト作成</h2>
-  <form method="post" action="{% url 'create_project' %}">
+  <form method="post" action="{% url 'project_create' %}">
     {% csrf_token %}
     <div class="form-group">
       <label for="project-name">プロジェクト名</label>

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ phase.phase_name }}{% endblock %}
+
+{% block content %}
+  <div class="phase-detail">
+    <h1 class="phase-title">{{ phase.phase_name }}</h1>
+    <a href="{% url 'phase_edit' project.id phase.id %}" class="edit-button">Edit Phase</a>
+
+    <div class="unit-list">
+      <h2 class="unit-title">Units</h2>
+      {% for unit in phase.units.all %}
+        <div class="unit-tile">
+          <h3 class="unit-name">{{ unit.unit_name }}</h3>
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>Task Name</th>
+                <th>Deadline</th>
+                <th>Check</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in unit.tasks.all %}
+                <tr>
+                  <td><a href="{% url 'task_detail' project.id phase.id unit.id task.id %}">{{ task.task_name }}</a></td>
+                  <td>{{ task.dead_line }}</td>
+                  <td><input type="checkbox" name="check-task" {% if task.is_completed_task %}checked{% endif %}></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <a href="{% url 'task_create' project.id phase.id unit.id %}" class="add-task-button">Add New Task</a>
+        </div>
+      {% endfor %}
+      <a href="{% url 'unit_create' project.id phase.id %}" class="add-unit-button">Add New Unit</a>
+    </div>
+  </div>
+{% endblock %}

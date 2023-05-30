@@ -6,3 +6,35 @@
 ・フェーズ期限の入力（カレンダー）
 ・作成ボタン
 
+フェーズ詳細画面
+機能
+・ページタイトルはフェーズ名
+    タブのページタイトルもフェーズ名
+    画面上左上に大きな文字で表示
+・フェーズ編集画面への移動
+    画面上のフェーズ名の横に編集ボタンを配置
+    クリックされたらフェーズ編集画面への移動
+    path('projects/<int:project_id>/phases/<int:phase_id>/edit/', views.phase_edit, name='phase_edit')
+・ユニット一覧表示
+    大き目な長方形のタイルでユニットごとに表示
+    横３列
+・ユニットのタイル内の表示
+    ユニットのタイル内には、そのユニットに属する
+    タスクを表形式で表示
+    タイルからはみ出ないようにする　
+・タスクの表形式
+    一番上には見出しで以下のカラムを表示
+    ・タスク名
+    ・タスク期限
+    ・check
+    タスク名にはタスク名、タスク名をクリックするとそのタスクの詳細画面へ移動
+     path('projects/<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/', views.task_detail, name='task_detail'),
+    期限は期限を
+    checkはクリックでそのタスクを完了できるようにする。
+    表上には新規タスクを追加するボタンを設置
+    path('projects/<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/create/', views.task_create, name='task_create'),
+・ユニットの新規作成
+    右のほうに正方形のタイルで
+    新規作成を促すタイトルとアイコン表示
+    クリックされたらユニット作成画面へ移動
+    path('projects/<int:project_id>/phases/<int:phase_id>/units/create/', views.unit_create, name='unit_create'),

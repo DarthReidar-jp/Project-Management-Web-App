@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project,Phase,ProjectMember
 from datetime import date
+
+def welcome_view(request):
+    return render(request, 'welcome.html')
+
 # プロジェクト一覧
 def home(request):
     projects = Project.objects.all()
@@ -86,7 +90,7 @@ def project_detail(request, project_id):
     return render(request, 'project_detail.html', context)
 
 #プロジェクト編集
-def edit_project(request, project_id):
+def project_edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     # Handle project editing logic here
@@ -94,7 +98,7 @@ def edit_project(request, project_id):
     context = {
         'project': project,
     }
-    return render(request, 'edit_project.html', context)
+    return render(request, 'project_edit.html', context)
 
 #フェーズ作成
 def phase_create(request, project_id):
@@ -125,29 +129,33 @@ def phase_create(request, project_id):
     return render(request, 'phase_create.html', context)
 
 # フェーズ編集
-def edit_phase(request):
-    return render(request, 'edit_phase.html')
+def phase_edit(request, project_id, phase_id):
+    phase = get_object_or_404(Phase, id=phase_id)
+    project = phase.project
+    return render(request, 'phase_edit.html', {'phase': phase, 'project': project})
 
 # フェーズ詳細
-def phase_detail(request):
-    return render(request, 'phase_detail.html')
+def phase_detail(request, project_id, phase_id):
+    phase = get_object_or_404(Phase, id=phase_id)
+    project = phase.project
+    return render(request, 'phase_detail.html', {'phase': phase, 'project': project})
 
 # ユニット作成
-def create_unit(request):
-    return render(request, 'create_unit.html')
+def unit_create(request):
+    return render(request, 'unit_create.html')
 
 # ユニット編集
-def edit_unit(request):
-    return render(request, 'edit_unit.html')
+def unit_edit(request):
+    return render(request, 'unit_edit.html')
 
 # タスク詳細
 def task_detail(request):
     return render(request, 'task_detail.html')
 
 # タスク作成
-def create_task(request):
-    return render(request, 'create_task.html')
+def task_create(request):
+    return render(request, 'task_create.html')
 
 # タスク編集
-def edit_task(request):
-    return render(request, 'edit_task.html')
+def task_edit(request):
+    return render(request, 'task_edit.html')
