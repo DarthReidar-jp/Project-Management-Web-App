@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project,Phase,ProjectMember
+from .models import Project,Phase,ProjectMember,Unit,Task,TaskAssignment
 from datetime import date
 
 def welcome_view(request):
@@ -131,8 +131,24 @@ def phase_create(request, project_id):
 # フェーズ編集
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
-    project = phase.project
-    return render(request, 'phase_edit.html', {'phase': phase, 'project': project})
+
+    if request.method == 'POST':
+        phase_name = request.POST['phase_name']
+        phase_description = request.POST['phase_description']
+        phase_deadline = request.POST['phase_deadline']
+
+        phase.phase_name = phase_name
+        phase.phase_description = phase_description
+        phase.dead_line = phase_deadline
+        phase.save()
+
+        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+
+    context = {
+        'phase': phase
+    }
+
+    return render(request, 'phase_edit.html', context)
 
 # フェーズ詳細
 def phase_detail(request, project_id, phase_id):
@@ -140,13 +156,72 @@ def phase_detail(request, project_id, phase_id):
     project = phase.project
     return render(request, 'phase_detail.html', {'phase': phase, 'project': project})
 
-# ユニット作成
-def unit_create(request):
-    return render(request, 'unit_create.html')
+def unit_create(request, project_id, phase_id):
+    phase = get_object_or_404(Phase, pk=phase_id)
+
+    if request.method == 'POST':
+        unit_name = request.POST['unit_name']
+        unit_description = request.POST['unit_description']
+        unit_deadline = request.POST['unit_deadline']
+        start_day = date.today()
+
+        unit = Unit.objects.create(
+            phase=phase,
+            unit_name=unit_name,
+            unit_description=unit_description,
+            dead_line=unit_deadline,
+            start_day=start_day
+        )
+    
+        for i in range(1, 6):  # Adjust the range as per the maximum number of tasks
+            task_name = request.POST.get(f'task_name_{i}')
+            task_description = request.POST.get(f'task_description_{i}')
+            task_deadline = request.POST.get(f'task_deadline_{i}')
+            start_day = date.today()
+
+            if task_name and task_description and task_deadline:
+                Task.objects.create(
+                    unit=unit,
+                    task_name=task_name,
+                    task_description=task_description,
+                    dead_line=task_deadline,
+                    start_day=start_day
+                )
+
+        # Redirect to the phase detail page
+        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+
+    task_range = range(1, 6)  # Adjust the range as per the maximum number of tasks
+
+    context = {
+        'phase': phase,
+        'task_range': task_range
+    }
+
+    return render(request, 'unit_create.html', context)
+
 
 # ユニット編集
-def unit_edit(request):
-    return render(request, 'unit_edit.html')
+def unit_edit(request, project_id, phase_id, unit_id):
+    unit = get_object_or_404(Unit, id=unit_id)
+
+    if request.method == 'POST':
+        unit_name = request.POST['unit_name']
+        unit_description = request.POST['unit_description']
+        unit_deadline = request.POST['unit_deadline']
+
+        unit.unit_name = unit_name
+        unit.unit_description = unit_description
+        unit.deadline = unit_deadline
+        unit.save()
+
+        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+
+    context = {
+        'unit': unit
+    }
+
+    return render(request, 'unit_edit.html', context)
 
 # タスク詳細
 def task_detail(request):

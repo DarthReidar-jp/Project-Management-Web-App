@@ -1,11 +1,49 @@
 {% extends 'base.html' %}
 
-{% block title %}サンプルページ{% endblock %}
-{% block styles %}{% endblock %}
-{% block content %}
-  <h2>サンプルページ</h2>
-  <p>これはサンプルページです。</p>
-  <p>他のページを作成する際は、このHTMLファイルをベースにしてください。</p>
+{% block title %}ユニット作成{% endblock %}
+
+{% block styles %}
 {% endblock %}
 
-{% block scripts %}{% endblock %}
+{% block content %}
+<div class="unit-create">
+  <h2>ユニット作成</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="unit-name">ユニット名</label>
+      <input type="text" id="unit-name" name="unit_name" required>
+    </div>
+    <div class="form-group">
+      <label for="unit-description">ユニットの説明</label>
+      <textarea id="unit-description" name="unit_description" rows="4" required></textarea>
+    </div>
+    <div class="form-group">
+      <label for="unit-deadline">ユニット期限</label>
+      <input type="date" id="unit-deadline" name="unit_deadline" required>
+    </div>
+    <div class="task-table">
+      <h3>タスク作成</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>タスク名</th>
+            <th>タスク説明</th>
+            <th>期限</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in task_range %}
+          <tr>
+            <td><input type="text" name="task_name_{{ i }}" required></td>
+            <td><textarea name="task_description_{{ i }}" rows="2" required></textarea></td>
+            <td><input type="date" name="task_deadline_{{ i }}" required></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <button type="submit" class="btn-create">作成する</button>
+  </form>
+</div>
+{% endblock %}

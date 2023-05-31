@@ -1,0 +1,55 @@
+/* phase_detail.css */
+.phase-detail {
+  padding: 20px;
+}
+
+.phase-title {
+  font-size: 32px;
+}
+
+.edit-button,
+.edit-unit-button,
+.add-task-button,
+.add-unit-button {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #f8f8f8;
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.unit-list {
+  margin-top: 20px;
+}
+
+.unit-title {
+  font-size: 24px;
+}
+
+.unit-tile {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+}
+
+.unit-name {
+  display: inline-block;
+  font-size: 20px;
+}
+
+.task-table {
+  margin-top: 16px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-table th,
+.task-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
