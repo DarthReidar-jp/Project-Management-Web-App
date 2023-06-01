@@ -224,12 +224,53 @@ def unit_edit(request, project_id, phase_id, unit_id):
     return render(request, 'unit_edit.html', context)
 
 # タスク詳細
-def task_detail(request):
-    return render(request, 'task_detail.html')
+def task_detail(request, project_id, phase_id, unit_id, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    context = {
+        'project_id': project_id,
+        'phase_id': phase_id,
+        'unit_id': unit_id,
+        'task': task
+    }
+
+    return render(request, 'task_detail.html', context)
 
 # タスク作成
-def task_create(request):
-    return render(request, 'task_create.html')
+def task_create(request, project_id, phase_id, unit_id):
+    unit = get_object_or_404(Unit, id=unit_id)
+    project_members = ProjectMember.objects.filter(project_id=project_id)
+
+    if request.method == 'POST':
+        task_name = request.POST['task_name']
+        task_description = request.POST['task_description']
+        task_deadline = request.POST['task_deadline']
+        task_member_id = request.POST['task_member']
+
+        task = Task.objects.create(
+            task_name=task_name,
+            task_description=task_description,
+            unit=unit,
+            start_day=date.today(),
+            dead_line=task_deadline
+        )
+
+        task_assignment = TaskAssignment.objects.create(
+            task=task,
+            project_member_id=task_member_id
+        )
+
+        return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task.id)
+
+    context = {
+        'project_id': project_id,
+        'phase_id': phase_id,
+        'unit_id': unit_id,
+        'project_members': project_members
+    }
+
+    return render(request, 'task_create.html', context)
+
 
 # タスク編集
 def task_edit(request):
