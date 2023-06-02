@@ -1,11 +1,128 @@
 {% extends 'base.html' %}
 
-{% block title %}サンプルページ{% endblock %}
-{% block styles %}{% endblock %}
-{% block content %}
-  <h2>サンプルページ</h2>
-  <p>これはサンプルページです。</p>
-  <p>他のページを作成する際は、このHTMLファイルをベースにしてください。</p>
+{% block title %}タスク詳細{% endblock %}
+
+{% block styles %}
+
 {% endblock %}
 
-{% block scripts %}{% endblock %}
+{% block content %}
+<div class="task-detail">
+  <h2>タスク詳細</h2>
+  <div class="task-info">
+    <div class="info-item">
+      <h3>タスク名</h3>
+      <p id="task-name">{{ task.task_name }}</p>
+      <button class="edit-button" onclick="showTaskNameForm()">編集</button>
+    </div>
+    <div class="info-item">
+      <h3>タスクの説明</h3>
+      <p id="task-description">{{ task.task_description }}</p>
+      <button class="edit-button" onclick="showTaskDescriptionForm()">編集</button>
+    </div>
+    <div class="info-item">
+      <h3>期限</h3>
+      <p id="task-deadline">{{ task.dead_line }}</p>
+      <button class="edit-button" onclick="showTaskDeadlineForm()">編集</button>
+    </div>
+    <div class="info-item">
+      <h3>タスクアサインメンバー</h3>
+      <p id="task-member">{{ task.task_member }}</p>
+      <button class="edit-button" onclick="showTaskMemberForm()">編集</button>
+    </div>
+  </div>
+  <button class="back-button" onclick="goBack()">戻る</button>
+</div>
+
+<!-- タスク名編集フォーム -->
+<div id="task-name-form" class="hidden">
+  <form onsubmit="saveTaskName(event)">
+    <input type="text" id="task-name-input" value="{{ task.task_name }}">
+    <button type="submit">保存</button>
+  </form>
+</div>
+
+<!-- タスクの説明編集フォーム -->
+<div id="task-description-form" class="hidden">
+  <form onsubmit="saveTaskDescription(event)">
+    <textarea id="task-description-input">{{ task.task_description }}</textarea>
+    <button type="submit">保存</button>
+  </form>
+</div>
+
+<!-- 期限編集フォーム -->
+<div id="task-deadline-form" class="hidden">
+  <form onsubmit="saveTaskDeadline(event)">
+    <input type="date" id="task-deadline-input" value="{{ task.dead_line }}">
+    <button type="submit">保存</button>
+  </form>
+</div>
+
+<!-- タスクアサインメンバー編集フォーム -->
+<div id="task-member-form" class="hidden">
+  <form onsubmit="saveTaskMember(event)">
+    <!-- メンバー選択のドロップダウンや他の関連するHTML要素を追加してください -->
+    <button type="submit">保存</button>
+  </form>
+</div>
+
+<script>
+  function showTaskNameForm() {
+    hideAllForms();
+    document.getElementById('task-name-form').classList.remove('hidden');
+  }
+
+  function showTaskDescriptionForm() {
+    hideAllForms();
+    document.getElementById('task-description-form').classList.remove('hidden');
+  }
+
+  function showTaskDeadlineForm() {
+    hideAllForms();
+    document.getElementById('task-deadline-form').classList.remove('hidden');
+  }
+
+  function showTaskMemberForm() {
+    hideAllForms();
+    document.getElementById('task-member-form').classList.remove('hidden');
+  }
+
+  function hideAllForms() {
+    const forms = document.getElementsByClassName('edit-form');
+    for (let i = 0; i < forms.length; i++) {
+      forms[i].classList.add('hidden');
+    }
+  }
+
+  function saveTaskName(event) {
+    event.preventDefault();
+    const taskName = document.getElementById('task-name-input').value;
+    document.getElementById('task-name').textContent = taskName;
+    hideAllForms();
+  }
+
+  function saveTaskDescription(event) {
+    event.preventDefault();
+    const taskDescription = document.getElementById('task-description-input').value;
+    document.getElementById('task-description').textContent = taskDescription;
+    hideAllForms();
+  }
+
+  function saveTaskDeadline(event) {
+    event.preventDefault();
+    const taskDeadline = document.getElementById('task-deadline-input').value;
+    document.getElementById('task-deadline').textContent = taskDeadline;
+    hideAllForms();
+  }
+
+  function saveTaskMember(event) {
+    event.preventDefault();
+    // タスクアサインメンバーの保存処理を実装してください
+    hideAllForms();
+  }
+
+  function goBack() {
+    window.history.back();
+  }
+</script>
+{% endblock %}
