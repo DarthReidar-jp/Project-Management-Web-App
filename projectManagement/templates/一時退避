@@ -4,3 +4,7 @@
 <link rel="stylesheet" href="{% static 'css/footer.css' %}">
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/allauth.css' %}">
+
+
+
+

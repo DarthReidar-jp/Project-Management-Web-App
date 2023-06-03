@@ -2,6 +2,11 @@
 
 {% block title %}{{ phase.phase_name }}{% endblock %}
 
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/phase_detail.css' %}">
+{% endblock %}
+
 {% block content %}
   <div class="phase-detail">
     <h1 class="phase-title">{{ phase.phase_name }}</h1>

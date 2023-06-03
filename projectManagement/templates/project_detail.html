@@ -1,46 +1,44 @@
-{% extends 'base.html' %}
-
+{% extends 'project_base.html' %}
+{% block styles %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+{% endblock %}
 {% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
 
-{% block styles %}
-{% endblock %}
+
 
 {% block content %}
-<div class="container">
-  <div class="page-header mb-4">
-    <h1 class="mb-0">{{ project.project_name }}</h1>
-    <a href="{% url 'project_edit' project.id %}" class="btn btn-primary">編集</a>
+<div class="container project-detail">
+  <div class="project-header">
+    <h2>{{ project.project_name }}</h2>
+    <a href="{% url 'project_edit' project.id %}" class="btn btn-primary edit-button">編集</a>
   </div>
 
-  <div class="row">
+  <div class="row phase-list">
     <div class="col-md-6">
-      <h2>フェーズ一覧</h2>
+      <h3>フェーズ一覧</h3>
       {% if phases %}
         {% for phase in phases %}
-          <div class="card mb-3">
-            <a href="{% url 'phase_detail' project.id phase.id %}">
-              <div class="card-body">
-                <h3 class="card-title">{{ phase.phase_name }}</h3>
-                <p class="card-text">進捗: {{ phase.completed_tasks }} / {{ phase.total_tasks }}</p>
-                <p class="card-text">工数: {{ phase.total_work_hours }}</p>
-                <p class="card-text">期限: {{ phase.deadline }}</p>
-                <p class="card-text">責任者: {{ phase.responsible }}</p>
-              </div>
-            </a>
-          </div>
+          <a href="{% url 'phase_detail' project.id phase.id %}" class="card phase-tile mb-3">
+            <div class="card-body phase-info">
+              <h4>{{ phase.phase_name }}</h4>
+              <p>進捗: {{ phase.completed_tasks }} / {{ phase.total_tasks }}</p>
+              <p>工数: {{ phase.total_work_hours }}</p>
+              <p>期限: {{ phase.deadline }}</p>
+              <p>責任者: {{ phase.responsible }}</p>
+            </div>
+          </a>
         {% endfor %}
       {% else %}
         <p>フェーズがありません。</p>
       {% endif %}
     </div>
     <div class="col-md-6">
-      <div class="create-phase-tile card text-center">
-        <a href="{% url 'phase_create' project.id %}">
-          <div class="card-body">
-            <h3 class="card-title"><i class="fas fa-plus-circle"></i> 新規フェーズ作成</h3>
-          </div>
-        </a>
-      </div>
+      <a href="{% url 'phase_create' project.id %}" class="card create-phase-tile text-center">
+        <div class="card-body">
+          <h4><i class="fas fa-plus-circle create-icon"></i> 新規フェーズ作成</h4>
+        </div>
+      </a>
     </div>
   </div>
 </div>
