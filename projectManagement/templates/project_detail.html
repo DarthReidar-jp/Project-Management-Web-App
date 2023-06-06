@@ -1,11 +1,9 @@
-{% extends 'project_base.html' %}
+{% extends 'app_base.html' %}
 {% block styles %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
 {% endblock %}
 {% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
-
-
 
 {% block content %}
 <div class="container project-detail">

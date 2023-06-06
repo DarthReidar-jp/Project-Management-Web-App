@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project,Phase,ProjectMember,Unit,Task,TaskAssignment
 from datetime import date
+from django.http import JsonResponse
 
 def welcome_view(request):
     return render(request, 'welcome.html')
@@ -44,6 +45,8 @@ def home(request):
         'projects': project_data,
     }
     return render(request, 'home.html', context)
+
+    
 
 #プロジェクトの作成
 def project_create(request):
