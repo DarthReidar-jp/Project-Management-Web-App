@@ -2,12 +2,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project,Phase,ProjectMember,Unit,Task,TaskAssignment
 from datetime import date
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def welcome_view(request):
     return render(request, 'welcome.html')
 
 # プロジェクト一覧
 def home(request):
+    if request.method == 'POST':
+        project_id = request.POST.get('project_id')
+        if project_id:
+            try:
+                project = Project.objects.get(id=project_id)
+                project.delete()
+            except Project.DoesNotExist:
+                pass
+        return redirect('home')
+        
     projects = Project.objects.all()
     project_data = []
     #プロジェクト内の総タスクのカウント
@@ -46,7 +57,19 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
+def delete_project(request, project_id):
+    # プロジェクトを削除する処理を追加
+    if request.method == 'POST':
+        try:
+            project = Project.objects.get(id=project_id)
+            project.delete()
+            return JsonResponse({'success': True})
+        except Project.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
     
+    return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
+
 
 #プロジェクトの作成
 def project_create(request):

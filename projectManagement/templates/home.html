@@ -1,16 +1,12 @@
 {% extends 'app_base.html' %}
-
 {% block title %}プロジェクト一覧{% endblock %}
-
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_list.css' %}">
 {% endblock %}
-
 {% block content %}
 <div class="project-list">
   <h2>プロジェクト一覧</h2>
-  
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
       <div class="project-info">
@@ -22,7 +18,6 @@
       </div>
     </a>
   </div>
-  
   {% for project in projects %}
   <div class="project-tile">
     <a href="{% url 'project_detail' project.project.id %}">
@@ -38,8 +33,9 @@
         {% endif %}
       </div>
     </a>
+    <!-- 削除ボタンとアラートを追加 -->
     <div class="delete-project">
-      <button type="button">削除</button>
+      <button class="button delete-button" data-project-id="{{ project.project.id }}">削除</button>
     </div>
   </div>
   {% endfor %}
@@ -60,8 +56,29 @@
     </select>
   </div>
 </div>
+
+<!-- 削除確認アラート用のモーダル -->
+<div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteProjectModalLabel">プロジェクト削除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        本当にプロジェクトを削除しますか？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <button type="button" class="btn btn-danger confirm-delete-button">削除する</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+{% load static %}
+<script src="{% static 'js/home.js' %}"></script>
 
 {% endblock %}

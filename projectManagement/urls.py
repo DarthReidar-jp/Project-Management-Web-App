@@ -5,6 +5,8 @@ urlpatterns = [
     #プロジェクト系
     #プロジェクト一覧画面
     path('home/', views.home, name='home'),
+    #プロジェクト削除
+    path('projects/<int:project_id>/delete/', views.delete_project, name='delete_project'),
     #プロジェクト作成画面
     path('projects/create/', views.project_create, name='project_create'), 
     #プロジェクト編集画面
