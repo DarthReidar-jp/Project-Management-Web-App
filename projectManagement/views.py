@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project,Phase,ProjectMember,Unit,Task,TaskAssignment
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment
 from datetime import date
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+#開発用初期画面
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-# プロジェクト一覧
+#プロジェクト一覧表示機能(名前をhome→project_listに変更予定)
 def home(request):
     if request.method == 'POST':
         project_id = request.POST.get('project_id')
@@ -18,10 +19,11 @@ def home(request):
             except Project.DoesNotExist:
                 pass
         return redirect('home')
-        
+
+    #Get all projects from database
     projects = Project.objects.all()
     project_data = []
-    #プロジェクト内の総タスクのカウント
+    #count of total tasks in project
     for project in projects:
         total_tasks = 0
         completed_tasks = 0
@@ -31,12 +33,12 @@ def home(request):
                 total_tasks += tasks.count()
                 completed_tasks += tasks.filter(is_completed_task=True).count()
 
-        # Calculate progress percentage
+        #Calculate progress percentage
         progress = 0
         if total_tasks > 0:
             progress = completed_tasks / total_tasks * 100
 
-        # Calculate total work hours
+        #Calculate total work hours
         total_work_hours = '未定'
         if total_tasks > 0:
             total_work_hours = total_tasks * 10  # Assuming each task takes 10 hours
@@ -57,7 +59,7 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
-
+#プロジェクト削除機能（未完成）
 def delete_project(request, project_id):
     # プロジェクトを削除する処理を追加
     if request.method == 'POST':
@@ -70,8 +72,7 @@ def delete_project(request, project_id):
     
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-
-#プロジェクトの作成
+#プロジェクト作成機能
 def project_create(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
@@ -104,7 +105,7 @@ def project_create(request):
 
     return render(request, 'project_create.html')
 
-#プロジェクト詳細画面
+#フェーズ一覧表示機能
 def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('dead_line')
@@ -115,7 +116,7 @@ def project_detail(request, project_id):
     }
     return render(request, 'project_detail.html', context)
 
-#プロジェクト編集
+#プロジェクト編集機能（未完成）
 def project_edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -126,7 +127,7 @@ def project_edit(request, project_id):
     }
     return render(request, 'project_edit.html', context)
 
-#フェーズ作成
+#フェーズ作成機能（未完成）
 def phase_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -134,7 +135,7 @@ def phase_create(request, project_id):
         phase_name = request.POST['phase_name']
         phase_description = request.POST['phase_description']
         phase_deadline = request.POST['phase_deadline']
-        start_day = date.today()  # 今日の日付を使用する例
+        start_day = date.today()  #要修正、入力された日付を取得
 
         phase = Phase.objects.create(
             project=project,
@@ -144,7 +145,7 @@ def phase_create(request, project_id):
             dead_line=phase_deadline  # フィールド名を修正
         )
 
-    # プロジェクト詳細画面にリダイレクト
+        #プロジェクト詳細画面にリダイレクト
         return redirect('project_detail', project_id=project_id)
         # Handle further actions or redirects
 
@@ -154,7 +155,7 @@ def phase_create(request, project_id):
 
     return render(request, 'phase_create.html', context)
 
-# フェーズ編集
+#フェーズ編集機能
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
 
@@ -176,12 +177,13 @@ def phase_edit(request, project_id, phase_id):
 
     return render(request, 'phase_edit.html', context)
 
-# フェーズ詳細
+#ユニット一覧表示機能
 def phase_detail(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
     return render(request, 'phase_detail.html', {'phase': phase, 'project': project})
 
+#ユニット作成機能（未完成）
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
 
@@ -189,7 +191,7 @@ def unit_create(request, project_id, phase_id):
         unit_name = request.POST['unit_name']
         unit_description = request.POST['unit_description']
         unit_deadline = request.POST['unit_deadline']
-        start_day = date.today()
+        start_day = date.today() #要修正　任意の日付を取得する
 
         unit = Unit.objects.create(
             phase=phase,
@@ -226,8 +228,7 @@ def unit_create(request, project_id, phase_id):
 
     return render(request, 'unit_create.html', context)
 
-
-# ユニット編集
+#ユニット編集機能
 def unit_edit(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
@@ -249,7 +250,7 @@ def unit_edit(request, project_id, phase_id, unit_id):
 
     return render(request, 'unit_edit.html', context)
 
-# タスク詳細
+#タスク詳細表示機能
 def task_detail(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
 
@@ -262,7 +263,7 @@ def task_detail(request, project_id, phase_id, unit_id, task_id):
 
     return render(request, 'task_detail.html', context)
 
-# タスク作成
+#タスク作成機能
 def task_create(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
     project_members = ProjectMember.objects.filter(project_id=project_id)
@@ -297,7 +298,6 @@ def task_create(request, project_id, phase_id, unit_id):
 
     return render(request, 'task_create.html', context)
 
-
-# タスク編集
+#タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
