@@ -11,16 +11,19 @@
   <div class="project-actions">
     <button type="button" class="join-project-button">プロジェクト参加</button>
     <div class="search-bar">
-      <input type="text" placeholder="プロジェクトを検索">
+      <form method="GET" action="{% url 'project_list' %}">
+        <input type="text" placeholder="プロジェクトを検索" name="search" value="{{ search_option }}">
+      </form>
     </div>
     <div class="sort-options">
       <label for="sort-select">プロジェクト並び替え:</label>
-      <select id="sort-select">
-        <option value="created">作成順</option>
-        <option value="updated">更新順</option>
-        <option value="name">名前順</option>
-        <option value="favorite">お気に入り順</option>
-      </select>
+      <form method="GET" action="{% url 'project_list' %}">
+        <select id="sort-select" name="sort" onchange="this.form.submit()">
+          <option value="created" {% if sort_option == 'created' %}selected{% endif %}>作成順</option>
+          <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>更新順</option>
+          <option value="name" {% if sort_option == 'name' %}selected{% endif %}>名前順</option>
+        </select>
+      </form>
     </div>
   </div>
   

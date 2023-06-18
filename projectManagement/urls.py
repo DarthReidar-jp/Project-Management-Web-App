@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     # プロジェクト系
     path('project_list/', views.project_list, name='project_list'),  # プロジェクト一覧画面

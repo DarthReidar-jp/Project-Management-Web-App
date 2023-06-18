@@ -3,65 +3,72 @@ from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment
 from datetime import date
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count, Q, F, Sum
+import json
+from django.core import serializers
 
 #開発用初期画面
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#プロジェクト一覧表示機能
+# Create your views here.
 def project_list(request):
-    if request.method == 'POST':
-        project_id = request.POST.get('project_id')
-        if project_id:
-            try:
-                project = Project.objects.get(id=project_id)
-                project.delete()
-            except Project.DoesNotExist:
-                pass
-        return redirect('project_list')
+    if request.method == 'GET':
+        search_option = request.GET.get('search')
+        sort_option = request.GET.get('sort')
 
-    #Get all projects from database
-    projects = Project.objects.all()
-    project_data = []
-    #count of total tasks in project
-    for project in projects:
-        total_tasks = 0
-        completed_tasks = 0
-        for phase in project.phases.all():
-            for unit in phase.units.all():
-                tasks = unit.tasks.all()
-                total_tasks += tasks.count()
-                completed_tasks += tasks.filter(is_completed_task=True).count()
+        projects = Project.objects.all()
 
-        #Calculate progress percentage
-        progress = 0
-        if total_tasks > 0:
-            progress = completed_tasks / total_tasks * 100
+        # 検索オプションが指定された場合は、プロジェクト名でフィルタリング
+        if search_option:
+            projects = projects.filter(project_name__icontains=search_option)
 
-        #Calculate total work hours
-        total_work_hours = '未定'
-        if total_tasks > 0:
-            total_work_hours = total_tasks * 10  # Assuming each task takes 10 hours
+        # ソートオプションに基づいてプロジェクトを並び替え
+        if sort_option == 'created':
+            projects = projects.order_by('created_at')
+        elif sort_option == 'updated':
+            projects = projects.order_by('-updated_at')
+        elif sort_option == 'name':
+            projects = projects.order_by('project_name')
 
-        project_info = {
-            'project': project,
-            'progress': progress,
-            'deadline': project.dead_line,
-            'priority': project.priority,
-            'total_work_hours': total_work_hours,
-            'responsible': project.responsible,
-            'project_kind': project.project_kind,
+        project_data = []
+        for project in projects:
+            # 進捗の計算
+            total_tasks = 0
+            completed_tasks = 0
+            for phase in project.phases.all():
+                for unit in phase.units.all():
+                    tasks = unit.tasks.all()
+                    total_tasks += tasks.count()
+                    completed_tasks += tasks.filter(is_completed_task=True).count()
+
+            progress = 0
+            if total_tasks > 0:
+                progress = completed_tasks / total_tasks * 100
+
+            project_info = {
+                'project': project,
+                'progress': progress,
+                'deadline': project.dead_line,
+                'priority': project.priority,
+                'total_work_hours': total_tasks * 10,  # 1タスクあたり10時間と仮定
+                'responsible': project.responsible,
+                'project_kind': project.project_kind,
+            }
+            project_data.append(project_info)
+
+        context = {
+            'projects': project_data,
+            'search_option': search_option,
+            'sort_option': sort_option,
         }
-        project_data.append(project_info)
 
-    context = {
-        'projects': project_data,
-    }
-    return render(request, 'project_list.html', context)
+        return render(request, 'project_list.html', context)
 
-#プロジェクト削除機能（未完成）
+    return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
+
+@csrf_exempt
 def delete_project(request, project_id):
-    # プロジェクトを削除する処理を追加
     if request.method == 'POST':
         try:
             project = Project.objects.get(id=project_id)
@@ -72,17 +79,14 @@ def delete_project(request, project_id):
     
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
+
 #プロジェクト作成機能
 def project_create(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
         project_description = request.POST.get('project_description')
-        invite_email = request.POST.get('invite_email')
-        invite_role = request.POST.get('invite_role')
         project_deadline = request.POST.get('project_deadline')
         project_priority = request.POST.get('project_priority')
-        project_leader_email = request.POST.get('project_leader_email')
-        project_leader_role = request.POST.get('project_leader_role')
         project_status = request.POST.get('project_status')
 
         # プロジェクトをデータベースに保存
@@ -90,20 +94,48 @@ def project_create(request):
             project_name=project_name,
             project_description=project_description,
             project_kind=project_status,
-            responsible=request.user,
+            responsible=request.user,  # プロジェクト作成者が初期の参加メンバー兼責任者
             priority=project_priority,
             dead_line=project_deadline
         )
 
-        # プロジェクトメンバーの招待情報を保存
-        # invite_emailとinvite_roleを使って招待情報を保存する処理を実装してください
-
-        # プロジェクト責任者情報を保存
-        # project_leader_emailとproject_leader_roleを使ってプロジェクト責任者情報を保存する処理を実装してください
-
         return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
 
     return render(request, 'project_create.html')
+
+#プロジェクト編集機能
+def project_edit(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == 'POST':
+        project_name = request.POST.get('project_name')
+        project_description = request.POST.get('project_description')
+        project_deadline = request.POST.get('project_deadline')
+        project_priority = request.POST.get('project_priority')
+
+        if project_name:  # Update only if new data is provided
+            project.project_name = project_name
+
+        if project_description:  # Update only if new data is provided
+            project.project_description = project_description
+
+        if project_deadline:  # Update only if new data is provided
+            project.dead_line = project_deadline
+
+        if project_priority:  # Update only if new data is provided
+            project.priority = project_priority
+
+        # Save updates to the database
+        project.save()
+
+        return redirect('project_list')
+
+    context = {
+        'project': project,
+    }
+    return render(request, 'project_edit.html', context)
+
+
 
 #フェーズ一覧表示機能
 def project_detail(request, project_id):
@@ -116,16 +148,7 @@ def project_detail(request, project_id):
     }
     return render(request, 'project_detail.html', context)
 
-#プロジェクト編集機能（未完成）
-def project_edit(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
 
-    # Handle project editing logic here
-
-    context = {
-        'project': project,
-    }
-    return render(request, 'project_edit.html', context)
 
 #フェーズ作成機能（未完成）
 def phase_create(request, project_id):
