@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          // プロジェクトの削除に成功した場合、homeにリダイレクトする
-          window.location.href = '/home/';
+          // プロジェクトの削除に成功した場合、project_listにリダイレクトする
+          window.location.href = '/project_list/';
         } else {
           // エラーメッセージを表示するなどの処理
           console.error(data.message);

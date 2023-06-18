@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     # プロジェクト系
-    path('home/', views.home, name='home'),  # プロジェクト一覧画面
+    path('project_list/', views.project_list, name='project_list'),  # プロジェクト一覧画面
     path('projects/<int:project_id>/delete/', views.delete_project, name='delete_project'),  # プロジェクト削除
     path('projects/create/', views.project_create, name='project_create'),  # プロジェクト作成画面
     path('projects/<int:project_id>/edit/', views.project_edit, name='project_edit'),  # プロジェクト編集画面

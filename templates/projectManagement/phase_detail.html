@@ -1,7 +1,5 @@
 {% extends 'app_base.html' %}
-
 {% block title %}{{ phase.phase_name }}{% endblock %}
-
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/phase_detail.css' %}">
@@ -9,11 +7,17 @@
 
 {% block content %}
   <div class="phase-detail">
-    <h1 class="phase-title">{{ phase.phase_name }}</h1>
-    <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}" class="edit-button">Edit Phase</a>
-
+    <div class="phase-title">
+      <h1>{{ phase.phase_name }}</h1>
+      <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}" class="edit-button">Edit Phase</a>
+    </div>
+    
     <div class="unit-list">
-      <h2 class="unit-title">Units</h2>
+      <div class="unit-title">
+        <h2>Units</h2>
+        <a href="{% url 'unit_create' project_id=project.id phase_id=phase.id %}" class="add-unit-button">Add New Unit</a>
+      </div>
+      
       {% for unit in phase.units.all %}
         <div class="unit-tile">
           <h3 class="unit-name">{{ unit.unit_name }}</h3>
@@ -39,7 +43,7 @@
           <a href="{% url 'task_create' project_id=project.id phase_id=phase.id unit_id=unit.id %}" class="add-task-button">Add New Task</a>
         </div>
       {% endfor %}
-      <a href="{% url 'unit_create' project_id=project.id phase_id=phase.id %}" class="add-unit-button">Add New Unit</a>
     </div>
+    <a href="{% url 'project_list' %}" class="btn btn-back">プロジェクト一覧画面へ戻る</a>
   </div>
 {% endblock %}

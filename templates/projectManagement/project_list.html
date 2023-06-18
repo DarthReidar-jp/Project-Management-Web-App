@@ -7,6 +7,23 @@
 {% block content %}
 <div class="project-list">
   <h2>プロジェクト一覧</h2>
+
+  <div class="project-actions">
+    <button type="button" class="join-project-button">プロジェクト参加</button>
+    <div class="search-bar">
+      <input type="text" placeholder="プロジェクトを検索">
+    </div>
+    <div class="sort-options">
+      <label for="sort-select">プロジェクト並び替え:</label>
+      <select id="sort-select">
+        <option value="created">作成順</option>
+        <option value="updated">更新順</option>
+        <option value="name">名前順</option>
+        <option value="favorite">お気に入り順</option>
+      </select>
+    </div>
+  </div>
+  
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
       <div class="project-info">
@@ -41,21 +58,6 @@
   {% endfor %}
 </div>
 
-<div class="project-actions">
-  <button type="button" class="join-project-button">プロジェクト参加</button>
-  <div class="search-bar">
-    <input type="text" placeholder="プロジェクトを検索">
-  </div>
-  <div class="sort-options">
-    <label for="sort-select">プロジェクト並び替え:</label>
-    <select id="sort-select">
-      <option value="created">作成順</option>
-      <option value="updated">更新順</option>
-      <option value="name">名前順</option>
-      <option value="favorite">お気に入り順</option>
-    </select>
-  </div>
-</div>
 
 <!-- 削除確認アラート用のモーダル -->
 <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
@@ -79,6 +81,6 @@
 
 {% block scripts %}
 {% load static %}
-<script src="{% static 'js/home.js' %}"></script>
+<script src="{% static 'js/project_list.js' %}"></script>
 
 {% endblock %}

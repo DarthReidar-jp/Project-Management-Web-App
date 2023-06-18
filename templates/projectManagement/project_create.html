@@ -1,7 +1,5 @@
 {% extends 'app_base.html' %}
-
 {% block title %}プロジェクト作成{% endblock %}
-
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_create.css' %}">
@@ -10,16 +8,20 @@
 {% block content %}
 <div class="project-create">
   <h2>プロジェクト作成</h2>
+
   <form method="post" action="{% url 'project_create' %}">
+  
     {% csrf_token %}
     <div class="form-group">
       <label for="project-name">プロジェクト名</label>
       <input type="text" id="project-name" name="project_name" required>
     </div>
+
     <div class="form-group">
       <label for="project-description">プロジェクトの説明</label>
       <textarea id="project-description" name="project_description" rows="4" required></textarea>
     </div>
+
     <div class="form-group">
       <label for="invite-email">プロジェクトメンバーの招待</label>
       <input type="email" id="invite-email" name="invite_email" placeholder="メールアドレス" required>
@@ -27,14 +29,16 @@
         <option value="" selected disabled>権限</option>
         <option value="1">Manager</option>
         <option value="2">Worker</option>
-        <option value="3">Steak Holder</option>
+        <option value="3">Stakeholder</option>
       </select>
       <button type="button" id="send-invitation">メール送信</button>
     </div>
+
     <div class="form-group">
       <label for="project-deadline">プロジェクト期限</label>
       <input type="date" id="project-deadline" name="project_deadline" required>
     </div>
+
     <div class="form-group">
       <label for="project-priority">プロジェクトの優先度設定</label>
       <select id="project-priority" name="project_priority" required>
@@ -44,6 +48,7 @@
         <option value="3">高</option>
       </select>
     </div>
+
     <div class="form-group">
       <label for="project-leader">プロジェクト責任者設定</label>
       <input type="email" id="project-leader" name="project_leader_email" placeholder="メールアドレス" required>
@@ -51,12 +56,13 @@
         <option value="" selected disabled>権限</option>
         <option value="1">Manager</option>
         <option value="2">Worker</option>
-        <option value="3">Steak Holder</option>
+        <option value="3">Stakeholder</option>
       </select>
       <button type="button" id="send-invitation-leader">メール送信</button>
       <span>もしくは</span>
       <button type="button" id="use-myself">自分</button>
     </div>
+
     <div class="form-group">
       <label for="project-status">プロジェクトステータス管理</label>
       <select id="project-status" name="project_status" required>
@@ -66,11 +72,15 @@
         <option value="3">終了後</option>
       </select>
     </div>
-    <button type="submit" class="btn-create">作成する</button>
+
+    <div class="buttons">
+      <button type="submit" class="btn-create">作成する</button>
+      <a href="{% url 'project_list' %}" class="btn-back">プロジェクト一覧画面へ戻る</a>
+    </div>
+
   </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
-
 {% endblock %}

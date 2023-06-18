@@ -17,7 +17,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 #ログイン後のリダイレクト先を指定
 from django.urls import reverse_lazy
-LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGIN_REDIRECT_URL = reverse_lazy('project_list')
 
 #ログアウト後のリダイレクト先を指定
 ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy("account_login")
@@ -85,6 +85,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates' ,'account'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement'),
         ],
         'APP_DIRS': True,
@@ -150,7 +151,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static" ]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATIC_ROOT = '/static/'
 

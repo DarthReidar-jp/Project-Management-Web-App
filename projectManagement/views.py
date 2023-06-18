@@ -8,8 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#プロジェクト一覧表示機能(名前をhome→project_listに変更予定)
-def home(request):
+#プロジェクト一覧表示機能
+def project_list(request):
     if request.method == 'POST':
         project_id = request.POST.get('project_id')
         if project_id:
@@ -18,7 +18,7 @@ def home(request):
                 project.delete()
             except Project.DoesNotExist:
                 pass
-        return redirect('home')
+        return redirect('project_list')
 
     #Get all projects from database
     projects = Project.objects.all()
@@ -57,7 +57,7 @@ def home(request):
     context = {
         'projects': project_data,
     }
-    return render(request, 'home.html', context)
+    return render(request, 'project_list.html', context)
 
 #プロジェクト削除機能（未完成）
 def delete_project(request, project_id):
@@ -101,7 +101,7 @@ def project_create(request):
         # プロジェクト責任者情報を保存
         # project_leader_emailとproject_leader_roleを使ってプロジェクト責任者情報を保存する処理を実装してください
 
-        return redirect('home')  # 作成後にプロジェクト一覧ページにリダイレクト
+        return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
 
     return render(request, 'project_create.html')
 
