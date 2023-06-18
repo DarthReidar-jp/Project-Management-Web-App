@@ -1,15 +1,18 @@
 {% extends 'app_base.html' %}
+{% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
 {% block styles %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
 {% endblock %}
-{% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
+
 
 {% block content %}
 <div class="container project-detail">
   <div class="project-header">
-    <h2>{{ project.project_name }}</h2>
-    <a href="{% url 'project_edit' project.id %}" class="btn btn-primary edit-button">編集</a>
+    <div class="project-name-editbutton">
+      <h2>{{ project.project_name }}</h2>
+      <a href="{% url 'project_edit' project.id %}" class="btn btn-primary edit-button">編集</a>
+    </div>
     <a href="{% url 'project_list' %}" class="btn btn-back">プロジェクト一覧画面へ戻る</a>
   </div>
 
