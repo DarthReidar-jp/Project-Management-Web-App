@@ -7,7 +7,10 @@ urlpatterns = [
     path('project_list/', views.project_list, name='project_list'),  # プロジェクト一覧画面
     path('projects/<int:project_id>/delete/', views.delete_project, name='delete_project'),  # プロジェクト削除
     path('projects/create/', views.project_create, name='project_create'),  # プロジェクト作成画面
-    path('projects/<int:project_id>/edit/', views.project_edit, name='project_edit'),  # プロジェクト編集画面
+    path('projects/<int:project_id>/edit/', views.project_edit, name='project_edit'), # プロジェクト編集画面
+    path('projects/join/', views.project_join, name='project_join_without_id'),
+    path('projects/join/<str:invitation_id>/', views.project_join, name='project_join'),
+
 
     # フェーズ系<int:project_id>
     path('projects/<int:project_id>/', views.project_detail, name='project_detail'),  # フェーズ一覧画面

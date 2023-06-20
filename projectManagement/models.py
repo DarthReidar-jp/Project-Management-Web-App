@@ -9,7 +9,7 @@ class Project(models.Model):
     project_kind = models.CharField(max_length=255)
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     priority = models.IntegerField()
-    invitation_id = models.CharField(max_length=255)
+    invitation_id = models.CharField(max_length=255,unique=True)
     dead_line = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
