@@ -1,6 +1,12 @@
 //削除ボタンの設定
 document.addEventListener('DOMContentLoaded', 
   function() {
+      const joinProjectButton = document.querySelector('.join-project-button');
+      joinProjectButton.addEventListener('click', 
+      function() {
+        window.location.href = '/app/projects/join/';
+      });
+
     const deleteButtons = document.querySelectorAll('.delete-button');
 
   deleteButtons.forEach(button => {
@@ -70,8 +76,8 @@ function getCookie(name) {
   return cookieValue;
 }
 
-const searchInput = document.querySelector('.search-bar input');
 searchInput.addEventListener('input', function() {
   const searchQuery = searchInput.value;
-  window.location.href = `/project_list/?search=${searchQuery}`;
+  window.location.href = `/app/projects/list/?search=${searchQuery}`;  // "app"を追加
 });
+

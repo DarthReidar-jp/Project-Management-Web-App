@@ -14,7 +14,7 @@ import string,random
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#プロジェクト一覧表示機能
+# プロジェクト一覧表示機能
 def project_list(request):
     if request.method == 'GET':
         search_option = request.GET.get('search')
@@ -70,9 +70,9 @@ def project_list(request):
 
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#プロジェクト削除機能
+# プロジェクト削除機能
 @csrf_exempt
-def delete_project(request, project_id):
+def project_delete(request, project_id):
     if request.method == 'POST':
         try:
             project = Project.objects.get(id=project_id)
@@ -80,7 +80,7 @@ def delete_project(request, project_id):
             return JsonResponse({'success': True})
         except Project.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
-    
+
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
 @login_required
@@ -176,7 +176,7 @@ def project_edit(request, project_id):
     return render(request, 'project_edit.html', context)
 
 #フェーズ一覧表示機能
-def project_detail(request, project_id):
+def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('dead_line')
 
@@ -184,7 +184,7 @@ def project_detail(request, project_id):
         'project': project,
         'phases': phases,
     }
-    return render(request, 'project_detail.html', context)
+    return render(request, 'phase_list.html', context)
 
 #フェーズ作成機能（未完成）
 def phase_create(request, project_id):
@@ -205,7 +205,7 @@ def phase_create(request, project_id):
         )
 
         #プロジェクト詳細画面にリダイレクト
-        return redirect('project_detail', project_id=project_id)
+        return redirect('phase_list', project_id=project_id)
         # Handle further actions or redirects
 
     context = {
@@ -228,7 +228,7 @@ def phase_edit(request, project_id, phase_id):
         phase.dead_line = phase_deadline
         phase.save()
 
-        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
 
     context = {
         'phase': phase
@@ -237,10 +237,10 @@ def phase_edit(request, project_id, phase_id):
     return render(request, 'phase_edit.html', context)
 
 #ユニット一覧表示機能
-def phase_detail(request, project_id, phase_id):
+def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
-    return render(request, 'phase_detail.html', {'phase': phase, 'project': project})
+    return render(request, 'unit_list.html', {'phase': phase, 'project': project})
 
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
@@ -280,7 +280,7 @@ def unit_create(request, project_id, phase_id):
                 )
             i += 1
 
-        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     return render(request, 'projectManagement/unit_create.html', {
         'project_id': project_id,
         'phase_id': phase_id,
@@ -310,7 +310,7 @@ def unit_edit(request, project_id, phase_id, unit_id):
         unit.deadline = unit_deadline
         unit.save()
 
-        return redirect('phase_detail', project_id=project_id, phase_id=phase_id)
+        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
 
     context = {
         'unit': unit

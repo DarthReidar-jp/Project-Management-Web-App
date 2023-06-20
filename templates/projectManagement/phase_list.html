@@ -2,7 +2,7 @@
 {% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
 {% block styles %}
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/project_detail.css' %}">
+  <link rel="stylesheet" href="{% static 'css/phase_list.css' %}">
 {% endblock %}
 
 
@@ -30,7 +30,7 @@
       {% if phases %}
 
         {% for phase in phases %}
-          <a href="{% url 'phase_detail' project.id phase.id %}" class="card phase-tile mb-3">
+          <a href="{% url 'unit_list' project.id phase.id %}" class="card phase-tile mb-3">
             <div class="card-body phase-info">
               <h4>{{ phase.phase_name }}</h4>
               <p>進捗: {{ phase.completed_tasks }} / {{ phase.total_tasks }}</p>

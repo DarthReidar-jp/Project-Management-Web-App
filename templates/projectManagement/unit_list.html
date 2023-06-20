@@ -2,7 +2,7 @@
 {% block title %}{{ phase.phase_name }}{% endblock %}
 {% block styles %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/phase_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/unit_list.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
     <div class="phase-title">
       <h1>{{ phase.phase_name }}</h1>
       <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}" class="edit-button">Edit Phase</a>
-      <a href="{% url 'project_detail' project_id=project.id  %}" class="btn btn-back">フェーズ一覧へ戻る</a>
+      <a href="{% url 'phase_list' project_id=project.id  %}" class="btn btn-back">フェーズ一覧へ戻る</a>
     </div>
     
     <div class="unit-list">

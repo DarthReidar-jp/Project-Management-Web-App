@@ -40,13 +40,12 @@
   </div>
   {% for project in projects %}
   <div class="project-tile">
-    <a href="{% url 'project_detail' project.project.id %}">
+    <a href="{% url 'phase_list' project.project.id %}">
       <div class="project-info">
         <h3>{{ project.project.project_name }}</h3>
         <p>進捗: {{ project.progress }}%</p>
-        <p>期限: {{ project.dead_line }}</p>
+        <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
         <p>優先度: {{ project.priority }}</p>
-        <p>総工数: {{ project.total_work_hours }}</p>
         <p>責任者: {{ project.responsible }}</p>
         {% if project.project_kind %}
         <p>種類: {{ project.project_kind }}</p>

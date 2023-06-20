@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+#Account User Substitution
 User = settings.AUTH_USER_MODEL
 
 class Project(models.Model):
@@ -34,19 +35,26 @@ class Project(models.Model):
 
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
 
-
-
 class ProjectMember(models.Model):
     PROJECT_ROLE_CHOICES = [
         ('manager', 'Manager'),  # マネージャー
         ('worker', 'Worker'),  # ワーカー
         ('stakeholder', 'Stakeholder'),  # ステークホルダー
     ]
+    STATUS_CHOICES = [
+        ('applying', '申請中'),
+        ('joined', '参加済み'),
+    ]
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
     role = models.CharField(
         max_length=20,
         choices=PROJECT_ROLE_CHOICES,  # 役割の選択肢
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='not_participating',
     )
     created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
     updated_at = models.DateTimeField(auto_now=True)  # 更新日時
@@ -86,7 +94,6 @@ class Phase(models.Model):
 
         self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
 
-
 class Unit(models.Model):
     unit_name = models.CharField(max_length=255)
     unit_description = models.TextField()
@@ -112,8 +119,6 @@ class Unit(models.Model):
             self.is_completed_unit = False
 
         self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
-
-
 
 class Task(models.Model):
     task_name = models.CharField(max_length=255)
@@ -141,7 +146,6 @@ class Task(models.Model):
 
         # `is_completed_task`のみを更新
         self.__class__.objects.filter(pk=self.pk).update(is_completed_task=self.is_completed_task)
-
 
 class TaskAssignment(models.Model):
     """タスク割り当てモデル"""
