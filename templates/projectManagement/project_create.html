@@ -10,57 +10,24 @@
   <h2>プロジェクト作成</h2>
 
   <form method="post" action="{% url 'project_create' %}">
-  
     {% csrf_token %}
-    <div class="form-group">
-      <label for="project-name">プロジェクト名</label>
-      <input type="text" id="project-name" name="project_name" required>
-    </div>
-
-    <div class="form-group">
-      <label for="project-description">プロジェクトの説明</label>
-      <textarea id="project-description" name="project_description" rows="4" required></textarea>
-    </div>
-
-    <!-- プロジェクト種類の入力欄を追加 -->
-    <div class="form-group">
-      <label for="project-kind">プロジェクト種類</label>
-      <input type="text" id="project-kind" name="project_kind">
-    </div>
-
-    <div class="form-group">
-      <label for="project-deadline">プロジェクト期限</label>
-      <input type="date" id="project-deadline" name="project_deadline" required>
-    </div>
-
-    <div class="form-group">
-      <label for="project-priority">プロジェクトの優先度設定</label>
-      <select id="project-priority" name="project_priority" required>
-        <option value="" selected disabled>優先度</option>
-        <option value="1">低</option>
-        <option value="2">中</option>
-        <option value="3">高</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="project-status">プロジェクトステータス管理</label>
-      <select id="project-status" name="project_status" required>
-        <option value="" selected disabled>ステータス</option>
-        <option value="1">開始前</option>
-        <option value="2">進行中</option>
-        <option value="3">終了後</option>
-      </select>
-    </div>
-
+    {{ form.as_p }}
     <div class="buttons">
       <button type="submit" class="btn-create">作成する</button>
       <a href="{% url 'project_list' %}" class="btn-back">プロジェクト一覧画面へ戻る</a>
     </div>
-
   </form>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+  $(document).ready(function() {
+    $('.datepicker').datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true,
+      todayHighlight: true
+    }).datepicker("setDate", new Date());
+  });
+</script>
 {% endblock %}

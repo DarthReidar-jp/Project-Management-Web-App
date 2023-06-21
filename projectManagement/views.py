@@ -5,10 +5,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, F, Sum
-import json
+import json,string
 from django.core import serializers
 from django.utils import timezone
 import string,random
+from .forms import ProjectCreateForm
 
 #開発用初期画面
 def welcome_view(request):
@@ -111,37 +112,30 @@ def project_join(request):
 @login_required
 def project_create(request):
     if request.method == 'POST':
-        project_name = request.POST.get('project_name')
-        project_description = request.POST.get('project_description')
-        project_kind = request.POST.get('project_kind')
-        project_deadline = request.POST.get('project_deadline')
-        project_priority = request.POST.get('project_priority')
-        project_status = request.POST.get('project_status')
+        form = ProjectCreateForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.responsible = request.user
 
-        # ランダムな招待IDを生成
-        invitation_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            # ランダムな招待IDを生成
+            invitation_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            project.invitation_id = invitation_id
 
-        # プロジェクトをデータベースに保存
-        project = Project.objects.create(
-            project_name=project_name,
-            project_description=project_description,
-            project_kind=project_kind,
-            responsible=request.user,  # プロジェクト作成者が初期の参加メンバー兼責任者
-            priority=project_priority,
-            invitation_id=invitation_id,
-            dead_line=project_deadline
-        )
+            project.save()
 
-        # プロジェクト作成者をメンバーとして追加
-        ProjectMember.objects.create(
-            user=request.user,
-            project=project,
-            role='manager'
-        )
+            # プロジェクト作成者をメンバーとして追加
+            ProjectMember.objects.create(
+                user=request.user,
+                project=project,
+                role='manager'
+            )
 
-        return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
+            return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
 
-    return render(request, 'project_create.html')
+    else:
+        form = ProjectCreateForm()
+
+    return render(request, 'project_create.html', {'form': form})
 
 #プロジェクト編集機能
 def project_edit(request, project_id):
