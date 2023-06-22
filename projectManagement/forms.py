@@ -3,13 +3,11 @@ from django.core.exceptions import ValidationError
 from .models import Project,ProjectMember,Phase,Unit,Task,TaskAssignment 
 
 class ProjectCreateForm(forms.ModelForm):
-
     PRIORITY_CHOICES = [
         (1, 'high'),
         (2, 'middle'),
         (3, 'low'),
     ]
-
     project_name = forms.CharField(label='プロジェクト名', required=True)
     project_description = forms.CharField(label='プロジェクトの説明', widget=forms.Textarea, required=False)
     project_kind = forms.CharField(label='プロジェクト種類', required=False)

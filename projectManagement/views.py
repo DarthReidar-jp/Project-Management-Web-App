@@ -144,30 +144,15 @@ def project_edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == 'POST':
-        project_name = request.POST.get('project_name')
-        project_description = request.POST.get('project_description')
-        project_deadline = request.POST.get('project_deadline')
-        project_priority = request.POST.get('project_priority')
-
-        if project_name:  # Update only if new data is provided
-            project.project_name = project_name
-
-        if project_description:  # Update only if new data is provided
-            project.project_description = project_description
-
-        if project_deadline:  # Update only if new data is provided
-            project.dead_line = project_deadline
-
-        if project_priority:  # Update only if new data is provided
-            project.priority = project_priority
-
-        # Save updates to the database
-        project.save()
-
-        return redirect('project_list')
-
+        form = ProjectCreateForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('project_list')
+    else:
+        form = ProjectCreateForm(instance=project)
+        
     context = {
-        'project': project,
+        'form': form,
     }
     return render(request, 'project_edit.html', context)
 
@@ -205,73 +190,26 @@ def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
 
     if request.method == 'POST':
-        phase_name = request.POST['phase_name']
-        phase_description = request.POST['phase_description']
-        phase_deadline = request.POST['phase_deadline']
-
-        phase.phase_name = phase_name
-        phase.phase_description = phase_description
-        phase.dead_line = phase_deadline
-        phase.save()
-
-        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
-
+        form = PhaseCreateForm(request.POST, instance=phase)
+        if form.is_valid():
+            form.save()
+            return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+    else:
+        form = PhaseCreateForm(instance=phase)
+        
     context = {
-        'phase': phase
+        'form': form,
     }
-
     return render(request, 'phase_edit.html', context)
+
 
 #ユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
     return render(request, 'unit_list.html', {'phase': phase, 'project': project})
-def unit_create(request, project_id, phase_id):
-    phase = get_object_or_404(Phase, pk=phase_id)
-    project = get_object_or_404(Project, pk=project_id)
 
-    if request.method == 'POST':
-        unit_name = request.POST['unit_name']
-        unit_description = request.POST['unit_description']
-        unit_deadline = request.POST['unit_deadline']
-        start_day = date.today()
-
-        unit = Unit.objects.create(
-            phase=phase,
-            unit_name=unit_name,
-            unit_description=unit_description,
-            dead_line=unit_deadline,
-            start_day=start_day
-        )
-
-        i = 1
-        while True:
-            task_name = request.POST.get(f'task_name_{i}')
-            task_description = request.POST.get(f'task_description_{i}')
-            task_deadline = request.POST.get(f'task_deadline_{i}')
-            start_day = date.today()
-
-            if not task_name and not task_description and not task_deadline:
-                break
-
-            if task_name:  # Only create task if name is present
-                Task.objects.create(
-                    unit=unit,
-                    task_name=task_name,
-                    task_description=task_description,
-                    dead_line=task_deadline,
-                    start_day=start_day
-                )
-            i += 1
-
-        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
-    return render(request, 'projectManagement/unit_create.html', {
-        'project_id': project_id,
-        'phase_id': phase_id,
-    })
-
-
+#ユニット作成機能
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
     project = get_object_or_404(Project, pk=project_id)
@@ -320,24 +258,20 @@ def unit_create(request, project_id, phase_id):
 
     return render(request, 'unit_create.html', context)
 
-#ユニット編集機能
+#
 def unit_edit(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
     if request.method == 'POST':
-        unit_name = request.POST['unit_name']
-        unit_description = request.POST['unit_description']
-        unit_deadline = request.POST['unit_deadline']
-
-        unit.unit_name = unit_name
-        unit.unit_description = unit_description
-        unit.deadline = unit_deadline
-        unit.save()
-
-        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+        form = UnitCreateForm(request.POST, instance=unit)
+        if form.is_valid():
+            form.save()
+            return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+    else:
+        form = UnitCreateForm(instance=unit)
 
     context = {
-        'unit': unit
+        'form': form,
     }
 
     return render(request, 'unit_edit.html', context)
@@ -377,7 +311,6 @@ def task_create(request, project_id, phase_id, unit_id):
         form = TaskCreateForm(project_id=project_id)
 
     return render(request, 'task_create.html', {'form': form, 'project_id': project_id, 'phase_id': phase_id, 'unit_id': unit_id})
-
 
 #タスク編集機能(未完成)
 def task_edit(request):
