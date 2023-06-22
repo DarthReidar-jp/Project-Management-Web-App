@@ -1,0 +1,105 @@
+.project-detail {
+  padding: 20px;
+}
+
+.project-header {
+  display: flex;
+  align-items: center;
+  justify-content:space-between;
+  margin-bottom: 20px;
+}
+
+.project-header h2 {
+  font-size: 24px;
+  margin-right: 20px;
+}
+
+.edit-button {
+  font-size: 16px;
+  color: #f8f9fa;
+  margin-right: 20px;
+}
+
+.project-name-editbutton{
+  justify-content:left;
+}
+
+
+.btn-back {
+  font-size: 16px;
+  color: #f8f9fa;
+  background-color: #6c757d;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-left: 50%;
+}
+
+.btn-back:hover {
+  background-color: #5a6268;
+}
+
+.phases{
+  padding: 40px;
+}
+
+.create-phase-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.create-phase-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.create-phase-tile h4 {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.create-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.phase-list {
+  margin-bottom: 40px;
+}
+
+.phase-list h3 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.phase-tile {
+  display: flex;
+  align-items: left;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  text-decoration: none;
+  color: #212529;
+}
+
+.phase-info {
+  flex-grow: 1;
+}
+
+.phase-info h4 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+

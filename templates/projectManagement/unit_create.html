@@ -1,0 +1,41 @@
+{% extends 'app_base.html' %}
+{% block title %}ユニット作成{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/unit_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="unit-create">
+  <h2>ユニット作成</h2>
+  <form method="post" id="unitForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="task-table">
+      <h3>タスク作成</h3>
+
+      <table id="taskTable">
+        <thead>
+          <tr>
+            <th>タスク名</th>
+            <th>タスク説明</th>
+            <th>期限</th>
+          </tr>
+        </thead>
+
+        <tbody id="taskTableBody">
+          <!-- Dynamic task rows will be appended here -->
+        </tbody>
+      </table>
+
+      <button type="button" id="addTask">タスクを追加する</button>
+    </div>
+    <button type="submit" class="btn-create">作成する</button>
+    <a href="{% url 'unit_list' project_id=project_id phase_id=phase_id %}" class="btn-back">戻る</a>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/unit_create.js' %}"></script>
+{% endblock %}

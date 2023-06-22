@@ -1,0 +1,50 @@
+{% extends 'app_base.html' %}
+{% block title %}{{ phase.phase_name }}{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/unit_list.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="phase-detail">
+    <div class="phase-title">
+      <h1>{{ phase.phase_name }}</h1>
+      <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}" class="edit-button">Edit Phase</a>
+      <a href="{% url 'phase_list' project_id=project.id  %}" class="btn btn-back">フェーズ一覧へ戻る</a>
+    </div>
+    
+    <div class="unit-list">
+      <div class="unit-title">
+        <h2>Units</h2>
+        <a href="{% url 'unit_create' project_id=project.id phase_id=phase.id %}" class="add-unit-button">Add New Unit</a>
+      </div>
+      
+      {% for unit in phase.units.all %}
+        <div class="unit-tile">
+          <h3 class="unit-name">{{ unit.unit_name }}</h3>
+          <a href="{% url 'unit_edit' project_id=project.id phase_id=phase.id unit_id=unit.id %}" class="edit-unit-button">Edit Unit</a>
+          <table class="task-table">
+            <thead>
+              <tr>
+                <th>Task Name</th>
+                <th>Deadline</th>
+                <th>Check</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for task in unit.tasks.all %}
+                <tr>
+                  <td><a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{ task.task_name }}</a></td>
+                  <td>{{ task.deadline }}</td>
+                  <td><input type="checkbox" name="check-task" {% if task.is_completed_task %}checked{% endif %}></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <a href="{% url 'task_create' project_id=project.id phase_id=phase.id unit_id=unit.id %}" class="add-task-button">Add New Task</a>
+        </div>
+      {% endfor %}
+    </div>
+    
+  </div>
+{% endblock %}

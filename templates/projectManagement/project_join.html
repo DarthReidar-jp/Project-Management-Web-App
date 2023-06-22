@@ -1,0 +1,27 @@
+{% extends 'app_base.html' %}
+{% block title %}プロジェクト参加{% endblock %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/project_join.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="project-join">
+  <h2>プロジェクト参加</h2>
+
+  <div class="form-group">
+    <label for="invitation-id">招待ID</label>
+    <input type="text" id="invitation-id" name="invitation_id" required>
+  </div>
+
+  <button id="search-btn">検索</button>
+
+  <div id="search-results">
+    <!-- 検索結果はここに表示されます -->
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/project_join.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'app_base.html' %}
+{% block title %}プロジェクト編集{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/project_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="project-edit">
+  <h2>プロジェクト編集</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="project-name">プロジェクト名</label>
+      <input type="text" id="project-name" name="project_name" value="{{ project.project_name }}">
+    </div>
+
+    <div class="form-group">
+      <label for="project-description">プロジェクトの説明</label>
+      <textarea id="project-description" name="project_description" rows="4">{{ project.project_description }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="project-deadline">プロジェクト期限</label>
+      <input type="date" id="project-deadline" name="project_deadline" value="{{ project.dead_line }}">
+    </div>
+
+    <div class="form-group">
+      <label for="project-priority">プロジェクトの優先度設定</label>
+      <select id="project-priority" name="project_priority">
+        <option value="" selected disabled>優先度</option>
+        <option value="1" {% if project.priority == 1 %}selected{% endif %}>低</option>
+        <option value="2" {% if project.priority == 2 %}selected{% endif %}>中</option>
+        <option value="3" {% if project.priority == 3 %}selected{% endif %}>高</option>
+      </select>
+    </div>
+    
+    <button type="submit" class="btn-update">更新する</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

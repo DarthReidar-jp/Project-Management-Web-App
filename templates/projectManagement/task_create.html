@@ -1,0 +1,17 @@
+{% extends 'app_base.html' %}
+{% block title %}タスク作成{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/task_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="task-create">
+  <h2>タスク作成</h2>
+  <form method="post" action="{% url 'task_create' project_id=project_id phase_id=phase_id unit_id=unit_id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-create">作成する</button>
+  </form>
+</div>
+{% endblock %}
