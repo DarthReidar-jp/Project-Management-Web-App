@@ -8,24 +8,9 @@
 {% block content %}
 <div class="unit-create">
   <h2>ユニット作成</h2>
-
   <form method="post" id="unitForm">
     {% csrf_token %}
-    <div class="form-group">
-      <label for="unit-name">ユニット名</label>
-      <input type="text" id="unit-name" name="unit_name" required>
-    </div>
-
-    <div class="form-group">
-      <label for="unit-description">ユニットの説明</label>
-      <textarea id="unit-description" name="unit_description" rows="4" required></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="unit-deadline">ユニット期限</label>
-      <input type="date" id="unit-deadline" name="unit_deadline" required>
-    </div>
-
+    {{ form.as_p }}
     <div class="task-table">
       <h3>タスク作成</h3>
 
@@ -45,7 +30,6 @@
 
       <button type="button" id="addTask">タスクを追加する</button>
     </div>
-
     <button type="submit" class="btn-create">作成する</button>
     <a href="{% url 'unit_list' project_id=project_id phase_id=phase_id %}" class="btn-back">戻る</a>
   </form>

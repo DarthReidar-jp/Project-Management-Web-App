@@ -28,23 +28,24 @@
     <div class="phases-list">
       <h3>フェーズ一覧</h3>    
       {% if phases %}
-
+    
         {% for phase in phases %}
           <a href="{% url 'unit_list' project.id phase.id %}" class="card phase-tile mb-3">
             <div class="card-body phase-info">
               <h4>{{ phase.phase_name }}</h4>
               <p>進捗: {{ phase.completed_tasks }} / {{ phase.total_tasks }}</p>
               <p>工数: {{ phase.total_work_hours }}</p>
-              <p>期限: {{ phase.deadline }}</p>
+              <p>開始予定日: {{ phase.start_day|date:"Y/m/d"  }}</p> <!-- 修正箇所 -->
+              <p>期限: {{ phase.dead_line|date:"Y/m/d" }}</p> <!-- 修正箇所 -->
               <p>責任者: {{ phase.responsible }}</p>
             </div>
           </a>
         {% endfor %}
-
+    
       {% else %}
-
+    
         <p>フェーズがありません。</p>
-
+    
       {% endif %}
     </div>
   </div>

@@ -9,7 +9,8 @@ import json,string
 from django.core import serializers
 from django.utils import timezone
 import string,random
-from .forms import ProjectCreateForm
+from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm
+from django.forms import formset_factory
 
 #開発用初期画面
 def welcome_view(request):
@@ -108,12 +109,12 @@ def project_join(request):
     else:
         return render(request, 'project_join.html')
 
-
 @login_required
 def project_create(request):
     if request.method == 'POST':
         form = ProjectCreateForm(request.POST)
         if form.is_valid():
+            print("Project deadline:", form.cleaned_data['dead_line'])
             project = form.save(commit=False)
             project.responsible = request.user
 
@@ -122,6 +123,7 @@ def project_create(request):
             project.invitation_id = invitation_id
 
             project.save()
+            print("Saved project deadline:", Project.objects.last().dead_line)
 
             # プロジェクト作成者をメンバーとして追加
             ProjectMember.objects.create(
@@ -172,7 +174,7 @@ def project_edit(request, project_id):
 #フェーズ一覧表示機能
 def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    phases = project.phases.order_by('dead_line')
+    phases = project.phases.order_by('start_day')
 
     context = {
         'project': project,
@@ -183,29 +185,19 @@ def phase_list(request, project_id):
 #フェーズ作成機能（未完成）
 def phase_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    form = PhaseCreateForm(request.POST or None)
+    if form.is_valid():
+        phase = form.save(commit=False)
+        phase.project = project
+        phase.save()
 
-    if request.method == 'POST':
-        phase_name = request.POST['phase_name']
-        phase_description = request.POST['phase_description']
-        phase_deadline = request.POST['phase_deadline']
-        start_day = date.today()  #要修正、入力された日付を取得
-
-        phase = Phase.objects.create(
-            project=project,
-            phase_name=phase_name,  # フィールド名を修正
-            phase_description=phase_description,  # フィールド名を修正
-            start_day=start_day,  # start_dayの値を設定
-            dead_line=phase_deadline  # フィールド名を修正
-        )
-
-        #プロジェクト詳細画面にリダイレクト
+        # プロジェクト詳細画面にリダイレクト
         return redirect('phase_list', project_id=project_id)
-        # Handle further actions or redirects
 
     context = {
-        'project': project
+        'form': form,
+        'project': project,
     }
-
     return render(request, 'phase_create.html', context)
 
 #フェーズ編集機能
@@ -235,7 +227,6 @@ def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
     return render(request, 'unit_list.html', {'phase': phase, 'project': project})
-
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
     project = get_object_or_404(Project, pk=project_id)
@@ -281,11 +272,50 @@ def unit_create(request, project_id, phase_id):
     })
 
 
-    task_range = range(1, 6)  # Adjust the range as per the maximum number of tasks
+def unit_create(request, project_id, phase_id):
+    phase = get_object_or_404(Phase, pk=phase_id)
+    project = get_object_or_404(Project, pk=project_id)
+
+    TaskFormSet = formset_factory(TaskCreateForm, extra=1)
+    if request.method == 'POST':
+        form = UnitCreateForm(request.POST)
+        if form.is_valid():
+            unit = form.save(commit=False)
+            unit.phase = phase
+            unit.start_day = date.today()
+            unit.save()
+
+            i = 1
+            while True:
+                task_name = request.POST.get(f'task_name_{i}')
+                task_description = request.POST.get(f'task_description_{i}')
+                task_deadline = request.POST.get(f'task_deadline_{i}')
+                start_day = date.today()
+
+                if not task_name and not task_description and not task_deadline:
+                    break
+
+                if task_name:  # Only create task if name is present
+                    Task.objects.create(
+                        unit=unit,
+                        task_name=task_name,
+                        task_description=task_description,
+                        dead_line=task_deadline,
+                        start_day=start_day
+                    )
+                i += 1
+
+            return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+
+
+    else:
+        form = UnitCreateForm()
 
     context = {
+        'form': form,
         'phase': phase,
-        'task_range': task_range
+        'project_id': project_id,
+        'phase_id': phase_id,
     }
 
     return render(request, 'unit_create.html', context)
@@ -328,28 +358,25 @@ def task_detail(request, project_id, phase_id, unit_id, task_id):
 #タスク作成機能
 def task_create(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
-    project_members = ProjectMember.objects.filter(project_id=project_id)
 
     if request.method == 'POST':
-        task_name = request.POST['task_name']
-        task_description = request.POST['task_description']
-        task_deadline = request.POST['task_deadline']
-        task_member_id = request.POST['task_member']
+        form = TaskCreateForm(request.POST, project_id=project_id)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.unit = unit
+            task.start_day = date.today()
+            task.save()
+            
+            task_assignment = TaskAssignment.objects.create(
+                task=task,
+                project_member=form.cleaned_data.get('task_member') or request.user
+            )
+            
+            return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+    else:
+        form = TaskCreateForm(project_id=project_id)
 
-        task = Task.objects.create(
-            task_name=task_name,
-            task_description=task_description,
-            unit=unit,
-            start_day=date.today(),
-            dead_line=task_deadline
-        )
-
-        task_assignment = TaskAssignment.objects.create(
-            task=task,
-            project_member_id=task_member_id
-        )
-
-        return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task.id)
+    return render(request, 'task_create.html', {'form': form, 'project_id': project_id, 'phase_id': phase_id, 'unit_id': unit_id})
 
 
 #タスク編集機能(未完成)
