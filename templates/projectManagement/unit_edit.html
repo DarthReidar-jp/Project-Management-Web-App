@@ -1,0 +1,30 @@
+{% extends 'app_base.html' %}
+
+{% block title %}ユニット編集{% endblock %}
+
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/unit_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="unit-edit">
+  <h2>ユニット編集</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="unit-name">ユニット名</label>
+      <input type="text" id="unit-name" name="unit_name" value="{{ unit.unit_name }}" required>
+    </div>
+    <div class="form-group">
+      <label for="unit-description">ユニット説明</label>
+      <textarea id="unit-description" name="unit_description" rows="4" required>{{ unit.unit_description }}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="unit-deadline">ユニット期限</label>
+      <input type="date" id="unit-deadline" name="unit_deadline" value="{{ unit.deadline }}" required>
+    </div>
+    <button type="submit" class="btn-save">保存する</button>
+  </form>
+</div>
+{% endblock %}

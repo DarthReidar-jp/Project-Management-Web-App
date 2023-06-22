@@ -1,0 +1,88 @@
+{% extends 'app_base.html' %}
+{% block title %}プロジェクト一覧{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/project_list.css' %}">
+{% endblock %}
+{% block content %}
+<div class="project-list">
+  <h2>プロジェクト一覧</h2>
+
+  <div class="project-actions">
+    <button type="button" class="join-project-button">プロジェクト参加</button>
+    <div class="search-bar">
+      <form method="GET" action="{% url 'project_list' %}">
+        <input type="text" placeholder="プロジェクトを検索" name="search" value="{{ search_option }}">
+      </form>
+    </div>
+    <div class="sort-options">
+      <label for="sort-select">プロジェクト並び替え:</label>
+      <form method="GET" action="{% url 'project_list' %}">
+        <select id="sort-select" name="sort" onchange="this.form.submit()">
+          <option value="created" {% if sort_option == 'created' %}selected{% endif %}>作成順</option>
+          <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>更新順</option>
+          <option value="name" {% if sort_option == 'name' %}selected{% endif %}>名前順</option>
+        </select>
+      </form>
+    </div>
+  </div>
+  
+  <div class="project-tile create-project-tile">
+    <a href="{% url 'project_create' %}">
+      <div class="project-info">
+        <h3>新規プロジェクト作成</h3>
+        <p>新しいプロジェクトを作成します</p>
+      </div>
+      <div class="create-icon">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+    </a>
+  </div>
+  {% for project in projects %}
+  <div class="project-tile">
+    <a href="{% url 'phase_list' project.project.id %}">
+      <div class="project-info">
+        <h3>{{ project.project.project_name }}</h3>
+        <p>進捗: {{ project.progress }}%</p>
+        <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
+        <p>優先度: {{ project.priority }}</p>
+        <p>責任者: {{ project.responsible }}</p>
+        {% if project.project_kind %}
+        <p>種類: {{ project.project_kind }}</p>
+        {% endif %}
+      </div>
+    </a>
+    <!-- 削除ボタンとアラートを追加 -->
+    <div class="delete-project">
+      <button class="button delete-button" data-project-id="{{ project.project.id }}">削除</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+<!-- 削除確認アラート用のモーダル -->
+<div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteProjectModalLabel">プロジェクト削除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        本当にプロジェクトを削除しますか？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <button type="button" class="btn btn-danger confirm-delete-button">削除する</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/project_list.js' %}"></script>
+
+{% endblock %}
