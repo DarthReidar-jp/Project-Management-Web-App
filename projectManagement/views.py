@@ -1,15 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment
+import json,string,random
 from datetime import date
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment
+from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, F, Sum
-import json,string
 from django.core import serializers
 from django.utils import timezone
-import string,random
-from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm
 from django.forms import formset_factory
 
 #開発用初期画面
@@ -85,6 +84,7 @@ def project_delete(request, project_id):
 
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
+#プロジェクト参加機能
 @login_required
 def project_join(request):
     invitation_id = request.GET.get('invitation_id')  # これでinvitation_idを取得
@@ -109,6 +109,7 @@ def project_join(request):
     else:
         return render(request, 'project_join.html')
 
+#プロジェクト作成機能
 @login_required
 def project_create(request):
     if request.method == 'POST':
@@ -258,7 +259,7 @@ def unit_create(request, project_id, phase_id):
 
     return render(request, 'unit_create.html', context)
 
-#
+#ユニット編集機能
 def unit_edit(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
