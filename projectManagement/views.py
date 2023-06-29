@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment,Notification
 from datetime import date
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,9 +12,19 @@ import string,random
 from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm
 from django.forms import formset_factory
 
+
 #開発用初期画面
 def welcome_view(request):
     return render(request, 'welcome.html')
+
+#通知機能
+def notification_list(request):
+    notifications = Notification.objects.filter(user=request.user)
+    return render(request, 'notification_list.html', {'notifications': notifications})
+
+def notification_detail(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+    return render(request, 'notification_detail.html', {'notification': notification})
 
 # プロジェクト一覧表示機能
 def project_list(request):
@@ -22,7 +32,9 @@ def project_list(request):
         search_option = request.GET.get('search')
         sort_option = request.GET.get('sort')
 
-        projects = Project.objects.all()
+        # ログインユーザーが参加しているプロジェクトのみを表示
+        user_projects = ProjectMember.objects.filter(user=request.user, status='joined').values_list('project', flat=True)
+        projects = Project.objects.filter(id__in=user_projects)
 
         # 検索オプションが指定された場合は、プロジェクト名でフィルタリング
         if search_option:
@@ -202,12 +214,21 @@ def phase_edit(request, project_id, phase_id):
     }
     return render(request, 'phase_edit.html', context)
 
-
-#ユニット一覧表示機能
+# 既存のユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
     return render(request, 'unit_list.html', {'phase': phase, 'project': project})
+
+# タスクの完了・未完了を切り替える新しいビュー
+def task_toggle(request, project_id, phase_id, unit_id, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    assignment = get_object_or_404(TaskAssignment, task=task, project_member__user=request.user)
+    assignment.is_completed_member = not assignment.is_completed_member
+    assignment.save()
+    task.save()
+    return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+
 
 #ユニット作成機能
 def unit_create(request, project_id, phase_id):
