@@ -4,6 +4,7 @@ from django.conf import settings
 #Account User Substitution
 User = settings.AUTH_USER_MODEL
 
+
 class Project(models.Model):
     
     project_name = models.CharField(max_length=255)
@@ -65,6 +66,38 @@ class ProjectMember(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.project}"
+
+class Notification(models.Model):
+    NOTIFICATION_TYPE_CHOICES = [
+        ('deadline', 'Deadline Reminder'),  # 締め切りリマインダー
+        ('invitation', 'Project Invitation'),  # プロジェクトへの招待
+        # 他の通知の種類をここに追加
+    ]
+    STATUS_CHOICES = [
+        ('unread', 'Unread'),  # 未読
+        ('read', 'Read'),  # 既読
+    ]
+    title = models.CharField(max_length=255)  # 通知のタイトル
+    detail = models.TextField()  # 通知の詳細情報
+    notification_type = models.CharField(
+        max_length=20,
+        choices=NOTIFICATION_TYPE_CHOICES,  # 通知の種類の選択肢
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='unread',  # デフォルトは未読
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 通知を受け取るユーザー
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)  # 通知が関連するプロジェクト
+    created_at = models.DateTimeField(auto_now_add=True)  # 通知が作成された時間
+
+    class Meta:
+        ordering = ['-created_at']  # 最新の通知が先に来るように
+
+    def __str__(self):
+        return f"{self.title} - {self.user}"
+
 
 class Phase(models.Model):
     phase_name = models.CharField(max_length=255)

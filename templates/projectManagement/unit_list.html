@@ -33,11 +33,18 @@
             </thead>
             <tbody>
               {% for task in unit.tasks.all %}
-                <tr>
-                  <td><a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{ task.task_name }}</a></td>
-                  <td>{{ task.deadline }}</td>
-                  <td><input type="checkbox" name="check-task" {% if task.is_completed_task %}checked{% endif %}></td>
-                </tr>
+              <tr>
+                <td><a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{ task.task_name }}</a></td>
+                <td>{{ task.dead_line }}</td>
+                <td>
+                  <form method="post" action="{% url 'task_toggle' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" name="check-task" class="{% if task.is_completed_task %}completed{% else %}uncompleted{% endif %}">
+                      {% if task.is_completed_task %}Completed{% else %}Complete{% endif %}
+                    </button>
+                  </form>
+                </td>
+              </tr>
               {% endfor %}
             </tbody>
           </table>
