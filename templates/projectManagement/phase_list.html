@@ -11,12 +11,16 @@
   <div class="project-header">
     <div class="project-name-editbutton">
       <h2>{{ project.project_name }}</h2>
+      {% if is_manager %}
       <a href="{% url 'project_edit' project.id %}" class="btn btn-primary edit-button">編集</a>
+      {% endif %}
     </div>
     <a href="{% url 'project_list' %}" class="btn btn-back">プロジェクト一覧画面へ戻る</a>
   </div>
 
   <div class="phases">
+    {% if is_manager %}
+    <a href="{% url 'invite_user' project.id %}" class="btn btn-primary invite-button">メンバー招待</a>
     <div class="create-phase"> 
       <a href="{% url 'phase_create' project.id %}" class="card create-phase-tile text-center">
         <div class="card-body">
@@ -24,6 +28,7 @@
         </div>
       </a>
     </div>
+    {% endif %}
 
     <div class="phases-list">
       <h3>フェーズ一覧</h3>    

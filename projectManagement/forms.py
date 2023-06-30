@@ -92,3 +92,8 @@ class TaskCreateForm(forms.ModelForm):
                 required=False,
                 empty_label="選択してください"
             )
+
+class InviteUserForm(forms.Form):
+    email = forms.EmailField(label='Eメールアドレス', required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
+

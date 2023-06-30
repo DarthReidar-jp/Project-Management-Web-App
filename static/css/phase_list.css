@@ -102,4 +102,18 @@
   margin-bottom: 5px;
 }
 
+.invite-button {
+  font-size: 16px;
+  color: #f8f9fa;
+  background-color: #007bff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-bottom: 20px;
+}
+
+.invite-button:hover {
+  background-color: #0056b3;
+}
+
 

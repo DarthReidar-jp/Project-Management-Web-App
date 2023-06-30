@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+import uuid
 
 #Account User Substitution
 User = settings.AUTH_USER_MODEL
@@ -12,7 +13,8 @@ class Project(models.Model):
     project_kind = models.CharField(max_length=255)
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     priority = models.IntegerField(null=True)
-    invitation_id = models.CharField(max_length=255,unique=True)
+    joined_id = models.CharField(max_length=255,unique=True)
+    invitation_code = models.UUIDField(default=uuid.uuid4, unique=True)
     dead_line = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
