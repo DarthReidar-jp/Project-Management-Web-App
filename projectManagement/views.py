@@ -292,42 +292,47 @@ def task_toggle(request, project_id, phase_id, unit_id, task_id):
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
     project = get_object_or_404(Project, pk=project_id)
-    members = ProjectMember.objects.filter(project=project)
-    members = [{'id': member.id, 'name': member.user.email} for member in members]
 
     TaskFormSet = formset_factory(TaskCreateForm, extra=1)
     if request.method == 'POST':
-        unit_form = UnitCreateForm(request.POST)
-        task_formset = TaskFormSet(request.POST)
-
-        if unit_form.is_valid() and task_formset.is_valid():
-            unit = unit_form.save(commit=False)
+        form = UnitCreateForm(request.POST)
+        if form.is_valid():
+            unit = form.save(commit=False)
             unit.phase = phase
             unit.start_day = date.today()
             unit.save()
 
-            for form in task_formset:
-                task = form.save(commit=False)
-                task.unit = unit
-                task.start_day = date.today()
-                task.save()
-                TaskAssignment.objects.create(
-                    task=task,
-                    project_member=ProjectMember.objects.get(id=form.cleaned_data['task_member'].id)
-                )
+            i = 1
+            while True:
+                task_name = request.POST.get(f'task_name_{i}')
+                task_description = request.POST.get(f'task_description_{i}')
+                task_deadline = request.POST.get(f'task_deadline_{i}')
+                start_day = date.today()
+
+                if not task_name and not task_description and not task_deadline:
+                    break
+
+                if task_name:  # Only create task if name is present
+                    Task.objects.create(
+                        unit=unit,
+                        task_name=task_name,
+                        task_description=task_description,
+                        dead_line=task_deadline,
+                        start_day=start_day
+                    )
+                i += 1
 
             return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+
+
     else:
-        unit_form = UnitCreateForm()
-        task_formset = TaskFormSet()
+        form = UnitCreateForm()
 
     context = {
-        'unit_form': unit_form,
-        'task_formset': task_formset,
+        'form': form,
         'phase': phase,
         'project_id': project_id,
         'phase_id': phase_id,
-        'members': members,
     }
 
     return render(request, 'unit_create.html', context)

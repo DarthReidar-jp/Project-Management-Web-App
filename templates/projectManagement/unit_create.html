@@ -4,7 +4,7 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/unit_create.css' %}">
 {% endblock %}
- 
+
 {% block content %}
 <div class="unit-create">
   <h2>ユニット作成</h2>
@@ -20,7 +20,6 @@
             <th>タスク名</th>
             <th>タスク説明</th>
             <th>期限</th>
-            <th>アサインメンバー</th>
           </tr>
         </thead>
 
@@ -39,9 +38,4 @@
 {% block scripts %}
 {% load static %}
 <script src="{% static 'js/unit_create.js' %}"></script>
-<script>
-var members = JSON.parse('{{ members|escapejs|escapejs }}');
-
-  </script>
 {% endblock %}
-
