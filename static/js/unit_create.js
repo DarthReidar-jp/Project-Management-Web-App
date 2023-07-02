@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() { 
     document.getElementById("addTask").addEventListener("click", function() {
         var taskTableBody = document.getElementById("taskTableBody");
         var rowCount = taskTableBody.rows.length + 1;
