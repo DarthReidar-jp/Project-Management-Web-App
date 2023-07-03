@@ -1,0 +1,26 @@
+{% extends 'app_base.html' %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'notification.css' %}">
+{% endblock %}
+{% block title %}通知一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>通知一覧</h1>
+    <div class="list-group">
+        {% for notification in notifications %}
+        <a href="{% url 'notification_detail' notification.id %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ notification.title }}</h5>
+                <small>{{ notification.created_at }}</small>
+            </div>
+            <p class="mb-1">{{ notification.detail }}</p>
+            <small>{{ notification.get_notification_type_display }}</small>
+        </a>
+        {% empty %}
+        <p>通知はありません。</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

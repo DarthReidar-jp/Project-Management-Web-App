@@ -1,0 +1,10 @@
+{% extends 'app_base.html' %}
+
+{% block content %}
+  <h2>Invite User</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Invite</button>
+  </form>
+{% endblock %}

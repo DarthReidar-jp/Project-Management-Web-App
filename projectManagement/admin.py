@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment
+from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment,Notification
+
+class NotificationInline(admin.TabularInline):
+    model = Notification
 
 class TaskAssignmentInline(admin.TabularInline):
     model = TaskAssignment
@@ -57,9 +60,15 @@ class ProjectMemberAdmin(admin.ModelAdmin):
     list_per_page = 10
     list_select_related = ['user', 'project']
 
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ['title','notification_type', 'project','user']
+    list_filter = ['project']
+    list_per_page = 10
+
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(ProjectMember, ProjectMemberAdmin)
 admin.site.register(Phase, PhaseAdmin)
 admin.site.register(Unit, UnitAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskAssignment, TaskAssignmentAdmin)
+admin.site.register(Notification,NotificationAdmin)

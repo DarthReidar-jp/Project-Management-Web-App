@@ -2,10 +2,10 @@
 document.addEventListener('DOMContentLoaded', 
   function() {
       const joinProjectButton = document.querySelector('.join-project-button');
-      joinProjectButton.addEventListener('click', 
-      function() {
-        window.location.href = '/app/projects/join/';
-      });
+      joinProjectButton.addEventListener('click', function() {
+      const modal = new bootstrap.Modal(document.getElementById('projectSearchModal'));
+      modal.show();
+    });
 
     const deleteButtons = document.querySelectorAll('.delete-button');
 

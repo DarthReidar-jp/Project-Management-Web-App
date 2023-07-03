@@ -1,0 +1,24 @@
+{% extends 'app_base.html' %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'notification_detail.css' %}">
+{% endblock %}
+{% block title %}通知詳細{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ notification.title }}</h5>
+            <p class="card-text">{{ notification.detail }}</p>
+            <p class="card-text">{{ notification.get_notification_type_display }}</p>
+            {% if notification.notification_type == 'invitation' %}
+                <form action="{% url 'approve_invitation' notification.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">参加承認</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

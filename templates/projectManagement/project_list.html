@@ -79,6 +79,24 @@
     </div>
   </div>
 </div>
+
+<!-- Add this at the end of your file -->
+<div class="modal fade" id="projectSearchModal" tabindex="-1" aria-labelledby="projectSearchModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="projectSearchModalLabel">プロジェクト検索</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="GET" action="{% url 'project_search' %}">
+          <input type="text" placeholder="参加IDを入力" name="joined_id" required>
+          <button type="submit" class="search-project-button">検索</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

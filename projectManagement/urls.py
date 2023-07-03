@@ -3,11 +3,26 @@ from . import views
 
 
 urlpatterns = [
+
+    #notifications
+    path('notifications/', views.notification_list, name='notification_list'),
+    path('notifications/<int:notification_id>/', views.notification_detail, name='notification_detail'),
+
+    #invite projects
+    path('invite-user/<int:project_id>/', views.invite_user, name='invite_user'),
+    path('invitation/<uuid:invitation_code>/', views.project_invitation, name='project_invitation'),
+    path('invitation_login/<str:invitation_code>/', views.invitation_login, name='invitation_login'),
+    path('invitation_signup/<str:invitation_code>/', views.invitation_signup, name='invitation_signup'),
+
+    #joined projects
+    path('projects/search/', views.project_search, name='project_search'),
+    path('projects/join/<int:project_id>/', views.project_join, name='project_join'),
+    
+
+
     # project type
     path('projects/list/', views.project_list, name='project_list'), 
     path('projects/<int:project_id>/delete/', views.project_delete, name='project_delete'), 
-    path('projects/join/', views.project_join, name='project_join_without_id'),
-    path('projects/join/<str:invitation_id>/', views.project_join, name='project_join'),#chesck Project join screen 
     path('projects/create/', views.project_create, name='project_create'),
     path('projects/<int:project_id>/edit/', views.project_edit, name='project_edit'),
 
@@ -25,4 +40,6 @@ urlpatterns = [
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/', views.task_detail, name='task_detail'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/create/', views.task_create, name='task_create'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.task_edit, name='task_edit'),
+    # タスクの完了・未完了を切り替える新しいパス
+    path('task_toggle/<int:project_id>/<int:phase_id>/<int:unit_id>/<int:task_id>/', views.task_toggle, name='task_toggle'),
 ]
