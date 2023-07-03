@@ -1,0 +1,135 @@
+Modify the Django python code according to the instructions.
+[overview]
+It is an implementation about the invite system in the project management application.
+
+Project members with manager permissions can invite users to the project.
+
+When you enter the email address of the user you want to invite in the form,
+You will be sent a URL link where you can join the project.
+
+Click the link to go to the login screen
+After logging in, you can participate in the project from the project participation screen.
+
+List of screens to be created
+・ Member invitation input screen
+・Login screen (Already implemented, but I want to add a conditional branch for users with an invitation ID)
+・Project participation screen
+The login functionality is implemented in another application using django-allauth.
+path('accounts/', include('allauth.urls')),
+
+
+[instructions]
+Please coordinate your implementation steps for this feature accordingly.
+I will also send you a code for information that you can refer to in future replies.
+
+[login]
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<div class="allauth_container">
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+<p>{% blocktrans with site.name as site_name %}Please sign in with one
+of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+
+<div class="socialaccount_ballot">
+  <ul class="socialaccount_providers">
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+  </ul>
+  <div class="login-or">{% trans 'or' %}</div>
+</div>
+{% include "socialaccount/snippets/login_extra.html" %}
+{% else %}
+{% endif %}
+    
+<form class="login allauth_form" method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    <h2>{% trans "Sign In" %}</h2>
+
+    {{ form | crispy }}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}    
+    
+    <button class="primaryAction btn btn-primary my-3" type="submit">{% trans "Sign In" %}</button>
+    <a class="button secondaryAction" href="{% url 'account_reset_password' %}">
+        <span>
+            {% trans "Forgot Password?" %}
+        </span>
+    </a>
+    <p>ユーザー登録は <a href="{{ signup_url }}">こちら</a><p>
+</form>
+</div>
+{% endblock %}
+[invite_user]
+#招待機能
+def invite_user(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        form = InviteUserForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            # send email with invitation link
+            send_mail(
+                'Project Invitation',
+                'You have been invited to join our project. Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            return render(request, 'phase_list.html')
+    else:
+        form = InviteUserForm()
+    return render(request, 'invite_user.html', {'form': form})
+
+以下の概要と指示をChatGPTが理解しやすいように校正しなさい。
+[概要]
+プロジェクト管理アプリにおけるプロジェクト参加機能を実装しています。
+
+プロジェクト参加は、project_list 画面のプロジェクト参加ボタンを押すことで開始され、
+プロジェクト検索モーダルが表示されます。
+プロジェクト検索モーダル内で、ユーザーは参加ID入力フィールドに参加したいプロジェクトのjoined_idを入力します。
+検索ボタンを押すと、検索結果がモーダルに表示されます。
+プロジェクトが見つかれば、そのプロジェクトタイルが表示されます。
+見つからなかった場合は、「見つかりませんでした」と表示されます。
+
+そのプロジェクトタイルの下に、そのプロジェクトに参加するボタンが表示され
+そのボタンを押すと、そのプロジェクトのプロジェクトメンバーとして、ユーザーが登録されます。
+
+[指示]
+上記の機能を実装しなさい
+作成した以下のコードを返信しなさい
+htmls
+project_list.html
+project_search.html
+project_join.html
+
+views.py
+def project_list
+def project_join
+def project_search
+
+javascript
+project_list.js
+project_search.js
+project_join.js
+
+[情報]
+・project_list.html
+
+・views.py　def project_list
+
+・project_list.js
+
+・urls
+path('projects/join/', views.project_join, name='project_join'),
+path('projects/search/', views.project_search, name='project_serch'),

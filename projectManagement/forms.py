@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Project,ProjectMember,Phase,Unit,Task,TaskAssignment 
+from django.forms import formset_factory
 
 class ProjectCreateForm(forms.ModelForm):
     PRIORITY_CHOICES = [
@@ -92,3 +93,8 @@ class TaskCreateForm(forms.ModelForm):
                 required=False,
                 empty_label="選択してください"
             )
+
+class InviteUserForm(forms.Form):
+    email = forms.EmailField(label='Eメールアドレス', required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
+

@@ -1,0 +1,91 @@
+Modify the Django python code according to the instructions.
+[overview]
+It is an implementation about the unit creation screen in the project management application.
+
+The current code clearly has a bug.
+・The unit creation form is not displayed on the screen
+・The pull-down menu for selecting task assignment members is not displayed when creating a task
+
+[instructions]
+Please fix the above bug.
+Submit your revised code in full.
+Send current html,views.py,forms.py,models.py,javascript as sources, so check
+
+Modify the Django python code according to the instructions.
+[overview]
+It is an implementation about the unit creation screen in the project management application
+
+The unit creation screen accepts the following inputs.
+・Unit name (required)
+・Description of the unit (optional)
+・Unit start date (required)
+・Unit end date (required)
+You can also create tasks at the same time.
+However, it is also possible to create a unit without creating a task.
+
+The task information input field accepts the following inputs.
+・Task name (required)
+・Task description (optional)
+・Deadline (optional)
+・Assign member (required)
+
+Learn more about member assignments here.
+From the project members participating in the project, select one assigned member from the pull-down menu.
+The member is registered as the member in charge of that task.
+
+Make task input fields more compact than unit creation.
+Also, I would like you to implement a button that can increase the number of input fields so that you can create as many tasks as you want.
+
+All input reception uses forms.py.
+
+[instructions]
+Implement the code based on the information in html, models.py, forms.py, css
+Reply html,css,views.py.
+
+[html]
+
+[css]
+
+[models.py]
+
+[forms.py]
+
+Modify the Django python code according to the instructions
+[overview]
+It is an implementation about the unit creation screen in the project management application
+
+This project management application
+Tasks are contained in units, units are contained in phases, and phases are contained in projects.
+The unit creation screen accepts the following inputs.
+・Unit name (required)
+・Description of the unit (optional)
+・Unit start date (required)
+・Unit end date (required)
+You can also create tasks at the same time.
+However, it is also possible to create a unit without creating a task.
+
+The task information input field accepts the following inputs.
+・Task name (required)
+・Task description (optional)
+・Deadline (optional)
+・Assign member (required)
+
+Learn more about member assignments here.
+From the project members participating in the project, select one assigned member from the pull-down menu.
+The member is registered as the member in charge of that task.
+
+Make task input fields more compact than unit creation.
+Also, I would like you to implement a button that can increase the number of input fields so that you can create as many tasks as you want.
+
+All input reception uses forms.py.
+[instructions]
+Implement the code based on the information in html,forms
+Reply html,views.py,forms.py,javascript
+
+[html]
+
+[views.py]
+
+[forms.py]
+
+[javascript]
