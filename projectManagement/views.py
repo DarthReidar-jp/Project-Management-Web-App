@@ -1,7 +1,7 @@
-import json,string,random
+import json
+import string
+import random
 from datetime import date
-from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment,Notification
-from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -12,25 +12,25 @@ from django.utils import timezone
 from django.forms import formset_factory
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib.auth import authenticate, login,get_user_model
+from django.contrib.auth import authenticate, login, get_user_model
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification
+from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm
 
-
-
-#開発用初期画面
+#開発用初期画面（削除予定）
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#通知機能
+#通知リスト機能(未完成)
 def notification_list(request):
     notifications = Notification.objects.filter(user=request.user)
     return render(request, 'notification_list.html', {'notifications': notifications})
 
-#通知詳細表示
+#通知詳細表示機能（未完成）
 def notification_detail(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     return render(request, 'notification_detail.html', {'notification': notification})
 
-#招待機能
+#招待機能（未完成）
 def invite_user(request, project_id):
     project = Project.objects.get(id=project_id)
     if request.method == 'POST':
@@ -39,8 +39,8 @@ def invite_user(request, project_id):
             email = form.cleaned_data.get('email')
             # send email with invitation link
             send_mail(
-                'Project Invitation',
-                'You have been invited to join our project. Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
+                'プロジェクトへのご招待',
+                '私たちのプロジェクトに参加してください!Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
                 settings.EMAIL_HOST_USER,
                 [email],
                 fail_silently=False,
@@ -50,7 +50,7 @@ def invite_user(request, project_id):
         form = InviteUserForm()
     return render(request, 'invite_user.html', {'form': form})
 
-#招待ユーザーのログイン
+#招待ユーザーのログイン(未完成)
 def invitation_login(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -58,13 +58,13 @@ def invitation_login(request, invitation_code):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
+            return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
         else:
             # 認証失敗時の処理
             pass
     return render(request, 'invitation_login.html')
 
-#招待ユーザーの登録
+#招待ユーザーの登録(未完成)
 def invitation_signup(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -72,13 +72,12 @@ def invitation_signup(request, invitation_code):
         User = get_user_model()
         user = User.objects.create_user(email, password)
         login(request, user)
-        return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
+        return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
     return render(request, 'invitation_signup.html')
 
-#招待ユーザーのプロジェクト参加
+#招待ユーザーのプロジェクト参加（未完成）
 def project_invitation(request):
     return render(request,'invitation_signup.html')
-
 
 #プロジェクト一覧表示機能
 def project_list(request):
@@ -86,11 +85,11 @@ def project_list(request):
         search_option = request.GET.get('search')
         sort_option = request.GET.get('sort')
 
-        # ログインユーザーが参加しているプロジェクトのみを表示
+        #ログインユーザーが参加しているプロジェクトのみを表示
         user_projects = ProjectMember.objects.filter(user=request.user, status='joined').values_list('project', flat=True)
         projects = Project.objects.filter(id__in=user_projects)
 
-        # 検索オプションが指定された場合は、プロジェクト名でフィルタリング
+        #検索オプションが指定された場合は、プロジェクト名でフィルタリング
         if search_option:
             projects = projects.filter(project_name__icontains=search_option)
 
@@ -101,6 +100,8 @@ def project_list(request):
             projects = projects.order_by('-updated_at')
         elif sort_option == 'name':
             projects = projects.order_by('project_name')
+        elif sort_option == 'priority':
+            projects = projects.order_by('priority')
 
         project_data = []
         for project in projects:
@@ -122,7 +123,6 @@ def project_list(request):
                 'progress': progress,
                 'deadline': project.dead_line,
                 'priority': project.priority,
-                'total_work_hours': total_tasks * 10,  # 1タスクあたり10時間と仮定
                 'responsible': project.responsible,
                 'project_kind': project.project_kind,
             }
@@ -135,11 +135,9 @@ def project_list(request):
         }
 
         return render(request, 'project_list.html', context)
-
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-# プロジェクト削除機能
-@csrf_exempt
+#プロジェクト削除機能
 def project_delete(request, project_id):
     if request.method == 'POST':
         try:
@@ -151,7 +149,7 @@ def project_delete(request, project_id):
 
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#プロジェクト検索機能
+#参加プロジェクト検索機能
 @login_required
 def project_search(request):
     if request.method == 'GET':
@@ -163,7 +161,6 @@ def project_search(request):
             return render(request, 'project_search.html', {'message': '見つかりませんでした'})
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-
 #プロジェクト参加機能
 @login_required
 def project_join(request, project_id):
@@ -174,36 +171,30 @@ def project_join(request, project_id):
     except Project.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
 
-
 #プロジェクト作成機能
 @login_required
 def project_create(request):
     if request.method == 'POST':
         form = ProjectCreateForm(request.POST)
         if form.is_valid():
-            print("Project deadline:", form.cleaned_data['dead_line'])
             project = form.save(commit=False)
             project.responsible = request.user
-
-            # ランダムな招待IDを生成
+            #ランダムな招待IDを生成
             joined_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
             project.joined_id= joined_id
-
             project.save()
-            print("Saved project deadline:", Project.objects.last().dead_line)
 
-            # プロジェクト作成者をメンバーとして追加
+            #プロジェクト作成者をメンバーとして追加
             ProjectMember.objects.create(
                 user=request.user,
                 project=project,
-                role='manager'
+                role='manager',
+                status='joined'
             )
-
             return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
-
+            #メンバーの招待機能やら責任者の設定を追加したい
     else:
         form = ProjectCreateForm()
-
     return render(request, 'project_create.html', {'form': form})
 
 #プロジェクト編集機能
@@ -215,6 +206,7 @@ def project_edit(request, project_id):
         if form.is_valid():
             form.save()
             return redirect('project_list')
+            #招待IDの変更や確認をしたい、責任者やプロジェクトメンバーの編集もしたい
     else:
         form = ProjectCreateForm(instance=project)
         
@@ -223,43 +215,42 @@ def project_edit(request, project_id):
     }
     return render(request, 'project_edit.html', context)
 
-#フェーズ一覧
+#フェーズ一覧表示
 def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('start_day')
-
-    # Check if the current user is a manager of the project
     is_manager = ProjectMember.objects.filter(user=request.user, project=project, role='manager').exists()
 
     context = {
         'project': project,
         'phases': phases,
-        'is_manager': is_manager,  # Pass this to the template
+        'is_manager': is_manager,
     }
     return render(request, 'phase_list.html', context)
 
 #フェーズ作成機能
 def phase_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    form = PhaseCreateForm(request.POST or None)
-    if form.is_valid():
-        phase = form.save(commit=False)
-        phase.project = project
-        phase.save()
-
-        # プロジェクト詳細画面にリダイレクト
-        return redirect('phase_list', project_id=project_id)
+    
+    if request.method == 'POST':
+        form = PhaseCreateForm(request.POST)
+        if form.is_valid():
+            phase = form.save(commit=False)
+            phase.project = project
+            phase.save()
+            return redirect('phase_list', project_id=project_id)
+    else:
+        form = PhaseCreateForm()
 
     context = {
         'form': form,
         'project': project,
     }
     return render(request, 'phase_create.html', context)
-
+    
 #フェーズ編集機能
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
-
     if request.method == 'POST':
         form = PhaseCreateForm(request.POST, instance=phase)
         if form.is_valid():

@@ -1,7 +1,7 @@
 from django import forms
+from django.forms import formset_factory
 from django.core.exceptions import ValidationError
 from .models import Project,ProjectMember,Phase,Unit,Task,TaskAssignment 
-from django.forms import formset_factory
 
 class ProjectCreateForm(forms.ModelForm):
     PRIORITY_CHOICES = [
@@ -12,6 +12,7 @@ class ProjectCreateForm(forms.ModelForm):
     project_name = forms.CharField(label='プロジェクト名', required=True)
     project_description = forms.CharField(label='プロジェクトの説明', widget=forms.Textarea, required=False)
     project_kind = forms.CharField(label='プロジェクト種類', required=False)
+    #start_day追加予定
     dead_line = forms.DateField(
         label='プロジェクト期限',
         widget=forms.DateInput(attrs={'type': 'date'}), 
