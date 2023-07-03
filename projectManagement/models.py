@@ -5,7 +5,6 @@ import uuid
 #Account User Substitution
 User = settings.AUTH_USER_MODEL
 
-
 class Project(models.Model):
     
     project_name = models.CharField(max_length=255)

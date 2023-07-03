@@ -15,8 +15,10 @@ urlpatterns = [
     path('invitation_signup/<str:invitation_code>/', views.invitation_signup, name='invitation_signup'),
 
     #joined projects
-    path('projects/join/', views.project_join, name='project_join_without_id'),
-    path('projects/join/<str:joined_id>/', views.project_join, name='project_join'),#chesck Project join screen 
+    path('projects/search/', views.project_search, name='project_search'),
+    path('projects/join/<int:project_id>/', views.project_join, name='project_join'),
+    
+
 
     # project type
     path('projects/list/', views.project_list, name='project_list'), 

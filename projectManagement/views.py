@@ -30,6 +30,56 @@ def notification_detail(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     return render(request, 'notification_detail.html', {'notification': notification})
 
+#招待機能
+def invite_user(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        form = InviteUserForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            # send email with invitation link
+            send_mail(
+                'Project Invitation',
+                'You have been invited to join our project. Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            return render(request, 'phase_list.html')
+    else:
+        form = InviteUserForm()
+    return render(request, 'invite_user.html', {'form': form})
+
+#招待ユーザーのログイン
+def invitation_login(request, invitation_code):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
+        else:
+            # 認証失敗時の処理
+            pass
+    return render(request, 'invitation_login.html')
+
+#招待ユーザーの登録
+def invitation_signup(request, invitation_code):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        User = get_user_model()
+        user = User.objects.create_user(email, password)
+        login(request, user)
+        return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
+    return render(request, 'invitation_signup.html')
+
+#招待ユーザーのプロジェクト参加
+def project_invitation(request):
+    return render(request,'invitation_signup.html')
+
+
 #プロジェクト一覧表示機能
 def project_list(request):
     if request.method == 'GET':
@@ -101,79 +151,29 @@ def project_delete(request, project_id):
 
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#招待機能
-def invite_user(request, project_id):
-    project = Project.objects.get(id=project_id)
-    if request.method == 'POST':
-        form = InviteUserForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            # send email with invitation link
-            send_mail(
-                'Project Invitation',
-                'You have been invited to join our project. Please click the link below:\nhttp://localhost:8000/app/projects/join/{}/'.format(project.invitation_code),
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
-            return render(request, 'invitation_sent.html')
-    else:
-        form = InviteUserForm()
-    return render(request, 'invite_user.html', {'form': form})
+#プロジェクト検索機能
+@login_required
+def project_search(request):
+    if request.method == 'GET':
+        joined_id = request.GET.get('joined_id')
+        try:
+            project = Project.objects.get(joined_id=joined_id)
+            return render(request, 'project_search.html', {'project': project})
+        except Project.DoesNotExist:
+            return render(request, 'project_search.html', {'message': '見つかりませんでした'})
+    return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#招待ユーザーのログイン
-def invitation_login(request, invitation_code):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
-        else:
-            # 認証失敗時の処理
-            pass
-    return render(request, 'invitation_login.html')
-
-#招待ユーザーの登録
-def invitation_signup(request, invitation_code):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        User = get_user_model()
-        user = User.objects.create_user(email, password)
-        login(request, user)
-        return redirect('projects_join', invitation_code=invitation_code)  # 招待URLにリダイレクト
-    return render(request, 'invitation_signup.html')
-
-#招待ユーザーのプロジェクト参加
-def project_invitation(request):
-    return render(request,'invitation_signup.html')
 
 #プロジェクト参加機能
 @login_required
-def project_join(request):
-    joined_id = request.GET.get('joined_id')  # これでjoined_idを取得
-    if request.method == 'POST' and joined_id is not None:
-        project = Project.objects.filter(joined_id=joined_id).first()
-        if project is not None:
-            ProjectMember.objects.create(user=request.user, project=project, role='member')
-        return redirect('project_list')
-        
-    elif request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        if joined_id is not None:
-            project = Project.objects.filter(joined_id=joined_id).first()
-            if project is not None:
-                return JsonResponse({'project': {
-                    'name': project.project_name,
-                    'responsible': project.responsible.username
-                }})
-            else:
-                return JsonResponse({'project': None})
-        else:
-            return JsonResponse({'error': 'No invitation ID provided'}, status=400)
-    else:
-        return render(request, 'project_join.html')
+def project_join(request, project_id):
+    try:
+        project = Project.objects.get(id=project_id)
+        ProjectMember.objects.create(user=request.user, project=project, status='joined')
+        return redirect('phase_list', project_id=project_id)
+    except Project.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
+
 
 #プロジェクト作成機能
 @login_required
