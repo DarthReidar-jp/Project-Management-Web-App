@@ -1,11 +1,30 @@
 .project-list {
   max-width: 1000px;
-  margin: 0 auto;
   padding: 20px;
 }
 
-h2 {
-  margin-bottom: 20px;
+.create-project-tile {
+  border: 2px dashed #ccc;
+  background-color: #fff;
+  color: #ccc;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.create-project-tile:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.create-project-tile a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.create-icon {
+  font-size: 30px;
 }
 
 .project-tile {
@@ -54,29 +73,6 @@ h2 {
   border-radius: 4px;
 }
 
-.create-project-tile {
-  border: 2px dashed #ccc;
-  background-color: #fff;
-  color: #ccc;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.create-project-tile:hover {
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-.create-project-tile a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.create-icon {
-  font-size: 30px;
-}
 
 .project-actions {
   margin-top: 20px;

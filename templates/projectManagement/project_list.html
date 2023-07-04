@@ -4,12 +4,13 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_list.css' %}">
 {% endblock %}
+
 {% block content %}
-<div class="project-list">
-  <h2>プロジェクト一覧</h2>
+<div class="container-lg my-3 project-list">
+  <h2 class="mb-3">プロジェクト一覧</h2>
 
   <div class="project-actions">
-    <button type="button" class="join-project-button">プロジェクト参加</button>
+    <button type="button" class="join-project-button btn btn-primary btn-lg ">プロジェクト参加</button>
     <div class="search-bar">
       <form method="GET" action="{% url 'project_list' %}">
         <input type="text" placeholder="プロジェクトを検索" name="search" value="{{ search_option }}">
@@ -27,7 +28,7 @@
       </form>
     </div>
   </div>
-  
+
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
       <div class="project-info">
@@ -55,7 +56,7 @@
     </a>
     <!-- 削除ボタンとアラートを追加 -->
     <div class="delete-project">
-      <button class="button delete-button" data-project-id="{{ project.project.id }}">削除</button>
+      <button class="btn delete-button" data-project-id="{{ project.project.id }}">削除</button>
     </div>
   </div>
   {% endfor %}
@@ -91,8 +92,8 @@
       </div>
       <div class="modal-body">
         <form method="GET" action="{% url 'project_search' %}">
-          <input type="text" placeholder="参加IDを入力" name="joined_id" required>
-          <button type="submit" class="search-project-button">検索</button>
+          <input type="text" class="form-control" placeholder="参加IDを入力" name="joined_id" required>
+          <button type="submit" class="btn btn-success my-3 search-project-button">検索</button>
         </form>
       </div>
     </div>
