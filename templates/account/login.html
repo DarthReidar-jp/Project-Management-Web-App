@@ -1,47 +1,72 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
-
 {% load i18n %}
 {% load account socialaccount %}
-
 {% block title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
-<div class="allauth_container">
+<div class="container">
+  <h1 class="text-center mt-3">Sign in to ProjectManagement</h2>
 
-{% get_providers as socialaccount_providers %}
+  {% get_providers as socialaccount_providers %}
+  {% if socialaccount_providers %}
+  <p>{% blocktrans with site.name as site_name %}Please sign in with one
+    of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+    for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+  <div class="socialaccount_ballot">
+    <ul class="socialaccount_providers">
+      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+    </ul>
+    <div class="login-or">{% trans 'or' %}</div>
+  </div>
+  {% include "socialaccount/snippets/login_extra.html" %}
+  {% else %}
+  {% endif %}
 
-<div class="socialaccount_ballot">
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
-  <div class="login-or">{% trans 'or' %}</div>
-</div>
-{% include "socialaccount/snippets/login_extra.html" %}
-{% else %}
-{% endif %}
-    
-<form class="login allauth_form" method="POST" action="{% url 'account_login' %}">
-    {% csrf_token %}
-    <h2>{% trans "Sign In" %}</h2>
+  <div class="container py-3 mt-1">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <form class="mt-4" method="POST" action="{% url 'account_login' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="id_login" class="form-label">{% trans "Email address" %}</label>
+                <input type="email" class="form-control" id="id_login" name="{{ form.login.name }}">
+                <div id="emailHelp" class="form-text">{% trans "お客様のメールアドレスはログイン以外の利用は致しません。" %}</div>
+              </div>
+              <div class="mb-3">
+                <label for="id_password" class="form-label">{% trans "Password" %}</label>
+                <input type="password" class="form-control" id="id_password" name="{{ form.password.name }}">
+                <div id="passwordHelp" >
+                  <a class="form-text" href="{% url 'account_reset_password' %}">
+                  {% trans "Forgot Password?" %}</a>
+                </div>
+              </div>
+              {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+              {% endif %}
+              <button class="btn btn-success w-100 my-3" type="submit">{% trans "Sign In" %}</button>      
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    {{ form | crispy }}
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-    {% endif %}    
-    
-    <button class="primaryAction btn btn-primary my-3" type="submit">{% trans "Sign In" %}</button>
-    <a class="button secondaryAction" href="{% url 'account_reset_password' %}">
-        <span>
-            {% trans "Forgot Password?" %}
-        </span>
-    </a>
-    <p>ユーザー登録は <a href="{{ signup_url }}">こちら</a><p>
-</form>
-</div>
+  <div class="container py-3 mt-1 ">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+              <p class="fs-4 text-center mt-3">
+                このアプリは初めてですか？
+                <a class="" href="{% url 'account_signup' %}">{% trans "ユーザー登録" %}</a>
+              </p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}

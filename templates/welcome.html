@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome{% endblock %}
+{% block title %}プロジェクト管理アプリ（仮称）の開発ホーム画面{% endblock %}
 
 {% block content %}
-  <div class="welcome">
-    <h1>Welcome to My Website</h1>
-    <p>Thank you for visiting our website. We provide high-quality services and products to meet your needs.</p>
-    <p>Feel free to explore our website and discover what we have to offer.</p>
-    <p>If you have any questions or inquiries, please don't hesitate to contact us. We're here to help!</p>
-    <a href="{% url 'admin:index' %}" class="btn">Admin</a>
-    <a href="{% url 'account_login' %}" class="btn">Login</a>
-    <a href="{% url 'project_list' %}" class="btn">View Projects</a>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h1 class="mb-4">プロジェクト管理アプリ（仮称）の開発ホーム画面です。</h1>
+        <p class="mb-4">Djangoで開発しているプロジェクト管理アプリです。</p>
+        <p class="mb-4">階層でプロジェクトを管理することができます。</p>
+        <p class="mb-4">以下のボタンから移動できます。</p>
+        <a href="{% url 'admin:index' %}" class="btn btn-primary me-3">Adminページへ</a>
+        <a href="{% url 'account_login' %}" class="btn btn-primary">ログインページへ</a>
+      </div>
+    </div>
   </div>
 {% endblock %}

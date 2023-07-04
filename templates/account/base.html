@@ -10,18 +10,6 @@
   </head>
   <body>
     {% include 'header.html' %}
-    {% block allauth %}
-      {% if messages %}
-      <div>
-      <strong>Messages:</strong>
-      <ul>
-          {% for message in messages %}
-          <li>{{message}}</li>
-          {% endfor %}
-      </ul>
-      </div>
-      {% endif %}
-    {% endblock %}
     {% block content %}{% endblock %}
     {% block body %}{% endblock %}
     {% include 'footer.html' %}

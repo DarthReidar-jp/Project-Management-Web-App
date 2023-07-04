@@ -1,0 +1,42 @@
+以下のDjangoのpythonコードを実装しなさい
+[概要]
+プロジェクト管理アプリの開発中です。
+開発用ホーム画面を実装しています。
+
+プロジェクト管理アプリの説明や指示を表示します。
+また機能として二つのボタンを作成します。
+機能
+・adminページに飛ぶ
+・loginページに飛ぶ
+
+表示する文章
+タイトル
+「プロジェクト管理アプリ（仮称）の開発ホーム画面です。」
+説明
+「Djangoで開発しているプロジェクト管理アプリです。
+階層でプロジェクトを管理することができます。」
+「以下のボタンから移動できます。」
+
+デザインはモダンでかっこよくbootstrap5を使ってください
+
+[指示]
+情報を元に実装しなさい
+
+[html]
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+  <div class="welcome">
+    <h1>Welcome to My Website</h1>
+    <p>Thank you for visiting our website. We provide high-quality services and products to meet your needs.</p>
+    <p>Feel free to explore our website and discover what we have to offer.</p>
+    <p>If you have any questions or inquiries, please don't hesitate to contact us. We're here to help!</p>
+    <a href="{% url 'admin:index' %}" class="btn">Admin</a>
+    <a href="{% url 'account_login' %}" class="btn">Login</a>
+    <a href="{% url 'project_list' %}" class="btn">View Projects</a>
+  </div>
+{% endblock %}
+[views]
+#開発用初期画面（削除予定）
+def welcome_view(request):
+    return render(request, 'welcome.html')
