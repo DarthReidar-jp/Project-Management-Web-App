@@ -248,7 +248,7 @@ def phase_create(request, project_id):
     }
     return render(request, 'phase_create.html', context)
     
-#フェーズ編集機能
+# フェーズ編集機能 
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     if request.method == 'POST':
@@ -261,8 +261,19 @@ def phase_edit(request, project_id, phase_id):
         
     context = {
         'form': form,
+        'project_id': project_id,
+        'phase_id': phase_id
     }
     return render(request, 'phase_edit.html', context)
+
+#フェーズ削除
+def phase_delete(request, project_id, phase_id):
+    phase = get_object_or_404(Phase, id=phase_id)
+    if request.method == 'POST':
+        phase.delete()
+        return redirect('phase_list', project_id=project_id)
+    return redirect('phase_edit', project_id=project_id, phase_id=phase_id)
+
 
 #ユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
@@ -342,22 +353,52 @@ def unit_edit(request, project_id, phase_id, unit_id):
 
     context = {
         'form': form,
+        'project_id': project_id,
+        'phase_id': phase_id,
+        'unit_id': unit_id
     }
 
     return render(request, 'unit_edit.html', context)
+
+#ユニット削除
+def unit_delete(request, project_id, phase_id, unit_id):
+    unit = get_object_or_404(Unit, id=unit_id)
+    if request.method == 'POST':
+        unit.delete()
+        return redirect('unit_list', project_id=project_id , phase_id=phase_id)
+    return redirect('unit_edit', project_id=project_id, phase_id=phase_id, unit_id=unit_id)
 
 #タスク詳細表示機能
 def task_detail(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
 
+    if request.method == 'POST':
+        form = TaskCreateForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+    else:
+        form = TaskCreateForm(instance=task)
+
     context = {
+        'form': form,
         'project_id': project_id,
         'phase_id': phase_id,
         'unit_id': unit_id,
-        'task': task
+        'task_id':task_id,
     }
 
     return render(request, 'task_detail.html', context)
+
+
+#タスク削除
+def task_delete(request, project_id, phase_id, unit_id, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == 'POST':
+        task.delete()
+        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
+    return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task_id)
+
 
 #タスク作成機能
 def task_create(request, project_id, phase_id, unit_id):

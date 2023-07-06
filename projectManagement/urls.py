@@ -27,14 +27,17 @@ urlpatterns = [
     path('<int:project_id>/', views.phase_list, name='phase_list'),
     path('<int:project_id>/phases/create/', views.phase_create, name='phase_create'), 
     path('<int:project_id>/phases/<int:phase_id>/edit/', views.phase_edit, name='phase_edit'),
+    path('<int:project_id>/phase/<int:phase_id>/delete/', views.phase_delete, name='phase_delete'),
 
     #unit type <project_id><phase_id>
     path('<int:project_id>/phases/<int:phase_id>/', views.unit_list, name='unit_list'),
     path('<int:project_id>/phases/<int:phase_id>/units/create/', views.unit_create, name='unit_create'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/edit/', views.unit_edit, name='unit_edit'),
+    path('<int:project_id>/phases/<int:phase_id>/unit/<int:unit_id>/delete/', views.unit_delete, name='unit_delete'),
 
     #task type <project_id><phase_id><unit_id>
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/', views.task_detail, name='task_detail'),
+    path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/delete/', views.task_delete, name='task_delete'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/create/', views.task_create, name='task_create'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.task_edit, name='task_edit'),
     path('task_toggle/<int:project_id>/<int:phase_id>/<int:unit_id>/<int:task_id>/', views.task_toggle, name='task_toggle'),
