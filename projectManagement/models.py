@@ -67,6 +67,19 @@ class ProjectMember(models.Model):
     def __str__(self):
         return f"{self.user} - {self.project}"
 
+class FavoriteProject(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'project')
+
+    def __str__(self):
+        return f"{self.user} - {self.project}"
+
+
+
 class Notification(models.Model):
     NOTIFICATION_TYPE_CHOICES = [
         ('deadline', 'Deadline Reminder'),  # 締め切りリマインダー

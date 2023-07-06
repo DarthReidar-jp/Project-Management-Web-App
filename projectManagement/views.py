@@ -13,7 +13,7 @@ from django.forms import formset_factory
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate, login, get_user_model
-from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification,FavoriteProject
 from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm
 
 #開発用初期画面（削除予定）
@@ -80,6 +80,7 @@ def project_invitation(request):
     return render(request,'invitation_signup.html')
 
 #プロジェクト一覧表示機能
+@login_required
 def project_list(request):
     if request.method == 'GET':
         search_option = request.GET.get('search')
@@ -88,6 +89,9 @@ def project_list(request):
         #ログインユーザーが参加しているプロジェクトのみを表示
         user_projects = ProjectMember.objects.filter(user=request.user, status='joined').values_list('project', flat=True)
         projects = Project.objects.filter(id__in=user_projects)
+
+        user_favorites = FavoriteProject.objects.filter(user=request.user)
+        favorite_projects = [fav.project for fav in user_favorites]
 
         #検索オプションが指定された場合は、プロジェクト名でフィルタリング
         if search_option:
@@ -102,6 +106,9 @@ def project_list(request):
             projects = projects.order_by('project_name')
         elif sort_option == 'priority':
             projects = projects.order_by('priority')
+        elif sort_option == 'favorite':
+            favorite_project_ids = FavoriteProject.objects.filter(user=request.user).values_list('project', flat=True)
+            projects = projects.filter(id__in=favorite_project_ids).order_by('created_at')
 
         project_data = []
         for project in projects:
@@ -125,6 +132,7 @@ def project_list(request):
                 'priority': project.priority,
                 'responsible': project.responsible,
                 'project_kind': project.project_kind,
+                'is_favorite': project in favorite_projects,
             }
             project_data.append(project_info)
 
@@ -137,18 +145,26 @@ def project_list(request):
         return render(request, 'project_list.html', context)
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#プロジェクト削除機能
-def project_delete(request, project_id):
+@csrf_exempt
+def toggle_favorite(request, project_id):
     if request.method == 'POST':
-        try:
-            project = Project.objects.get(id=project_id)
-            project.delete()
-            return JsonResponse({'success': True})
-        except Project.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
+        project = get_object_or_404(Project, id=project_id)
+        favorite, created = FavoriteProject.objects.get_or_create(user=request.user, project=project)
+        if not created:
+            favorite.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
-    return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
+#プロジェクト削除機能
+@login_required
+def project_delete(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    if request.method == 'POST':
+        project.delete()
+        return redirect('project_list')
+    return redirect('project_list')
+    
 #参加プロジェクト検索機能
 @login_required
 def project_search(request):
@@ -212,6 +228,7 @@ def project_edit(request, project_id):
         
     context = {
         'form': form,
+        'project_id':project_id
     }
     return render(request, 'project_edit.html', context)
 

@@ -22,6 +22,7 @@ urlpatterns = [
     path('projects/<int:project_id>/delete/', views.project_delete, name='project_delete'), 
     path('projects/create/', views.project_create, name='project_create'),
     path('projects/<int:project_id>/edit/', views.project_edit, name='project_edit'),
+    path('toggle_favorite/<int:project_id>/', views.toggle_favorite, name='toggle_favorite'),
 
     #phase type <int:project_id>
     path('<int:project_id>/', views.phase_list, name='phase_list'),
