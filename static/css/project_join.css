@@ -1,26 +1,23 @@
 .project-join {
-    color: black;
-    background-color: white;
+  color: black;
+  background-color: white;
+}
+
+.project-join .mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.project-join .mt-5 {
+  margin-top: 3rem !important;
+}
+
+.project-join #join-btn {
+  padding: 10px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .project-join {
+      color: white;
+      background-color: black;
   }
-  
-  .project-join .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .project-join #search-results div {
-    border: 1px solid gray;
-    padding: 20px;
-    margin-top: 20px;
-  }
-  
-  .project-join #search-results div button {
-    color: white;
-    background-color: blue;
-    border: none;
-    padding: 10px;
-  }
-  
-  .project-join #search-results div button:hover {
-    background-color: red;
-  }
-  
+}

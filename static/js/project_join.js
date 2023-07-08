@@ -1,18 +1,25 @@
-document.getElementById('search-btn').addEventListener('click', function() {
-    var invitationId = document.getElementById('invitation-id').value;
-    fetch(`/app/projects/join/?joined_id=${invitationId}`)
+window.addEventListener('DOMContentLoaded', (event) => {
+  const params = new URLSearchParams(window.location.search);
+  const projectId = params.get('joined_id');
+
+  if (projectId) {
+      fetch(`/app/projects/join/?joined_id=${projectId}`)
       .then(response => response.json())
       .then(data => {
-        var searchResults = document.getElementById('search-results');
-        searchResults.innerHTML = '';
-        if (data.project) {
-          var tile = document.createElement('div');
-          tile.innerHTML = `<h3>${data.project.name}</h3>
-                            <p>${data.project.responsible}</p>
-                            <button onclick="location.href='/app/projects/join/?joined_id=${data.project.id}'">参加する</button>`;
-          searchResults.appendChild(tile);
-        } else {
-          searchResults.innerText = 'プロジェクトが見つかりませんでした';
-        }
+          if (data.project) {
+              document.getElementById('project-name').textContent = data.project.name;
+              document.getElementById('project-description').textContent = data.project.description;
+
+              const joinBtn = document.getElementById('join-btn');
+              joinBtn.onclick = function () {
+                  window.location.href = `/app/projects/join/?joined_id=${data.project.id}`;
+              }
+          } else {
+              alert('プロジェクトが見つかりませんでした');
+          }
       });
-  });
+  } else {
+      alert('プロジェクトIDが指定されていません');
+  }
+});
+
