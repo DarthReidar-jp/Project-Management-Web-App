@@ -34,7 +34,7 @@
 
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
-      <div class="project-info">
+      <div class="create-project-info">
         <h3>新規プロジェクト作成</h3>
         <p>新しいプロジェクトを作成します</p>
       </div>
@@ -45,28 +45,30 @@
   </div>
   {% for project in projects %}
   <div class="project-tile">
-    <div class="favorite-icon">
-      {% if project.is_favorite %}
-      <i class="fas fa-star " onclick="toggleFavorite('{{ project.project.id }}')"></i>
-      {% else %}
-      <i class="far fa-star" onclick="toggleFavorite('{{ project.project.id }}')"></i>
-      {% endif %}
-    </div>
     <a href="{% url 'phase_list' project.project.id %}">
-      <div class="project-info">
-        <h3>{{ project.project.project_name }}</h3>
-        
-        <p>進捗: {{ project.progress }}%</p>
-        <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
-        <p>責任者: {{ project.responsible }}</p>
-        {% if project.project_kind %}
-        <p>種類: {{ project.project_kind }}</p>
+      <div class="liquid-container">
+        <div class="project-info">
+          <h3>{{ project.project.project_name }}</h3>
+          <p>進捗: {{ project.progress }}%</p>
+          <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
+          <p>責任者: {{ project.responsible }}</p>
+          {% if project.project_kind %}
+          <p>種類: {{ project.project_kind }}</p>
+          {% endif %}
+        </div>
+        <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas"></canvas>
+      </div>
+      <div class="favorite-icon">
+        {% if project.is_favorite %}
+        <i class="fas fa-star " onclick="toggleFavorite('{{ project.project.id }}')"></i>
+        {% else %}
+        <i class="far fa-star" onclick="toggleFavorite('{{ project.project.id }}')"></i>
         {% endif %}
-
       </div>
     </a>
   </div>
-  {% endfor %}
+ {% endfor %}
+
 </div>
 
 
@@ -92,5 +94,5 @@
 {% block scripts %}
 {% load static %}
 <script src="{% static 'js/project_list.js' %}"></script>
-
+<script src="{% static 'js/liquid-anim.js' %}"></script>
 {% endblock %}

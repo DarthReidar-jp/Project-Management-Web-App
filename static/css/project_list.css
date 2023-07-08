@@ -2,84 +2,6 @@
   max-width: 1000px;
   padding: 20px;
 }
-
-.create-project-tile {
-  border: 2px dashed #ccc;
-  background-color: #fff;
-  color: #ccc;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.create-project-tile:hover {
-  background-color: #f2f2f2;
-  color: #333;
-}
-
-.create-project-tile a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.create-icon {
-  font-size: 30px;
-}
-
-.project-tile {
-  width: calc(33% - 20px);
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  background-color: #f2f2f2;
-  border-radius: 15px;
-  padding: 20px;
-  position: relative;
-  cursor: pointer;
-}
-
-.project-tile:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.project-tile a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.project-info {
-  margin-bottom: 10px;
-}
-
-.project-info h3 {
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-
-.delete-project {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.delete-project button {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-}
-
-
-.project-actions {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  text-align: right;
-}
-
 .join-project-button {
   margin-bottom: 10px;
   background-color: #4c6ef5;
@@ -122,11 +44,97 @@
   border-radius: 4px;
 }
 
+.project-tile {
+  width: calc(33% - 20px);
+  height: auto;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  background-color: #f2f2f2;
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.project-tile:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.project-tile a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-info {
+  position: absolute;
+  z-index: 1;
+}
+
+.project-info h3 {
+  font-size: 16px;
+  margin: 1rem;
+}
+
+.project-info p {
+  font-size: 16px;
+  margin: 1rem;
+}
+
+.create-project-tile {
+  width: calc(33% - 20px);
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  padding: 20px;
+  position: relative;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  background-color: #fff;
+  color: #ccc;
+  transition: background-color 0.3s, color 0.3s;
+ overflow: visible;
+}
+
+.create-project-tile:hover {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.create-project-tile a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.create-project-info h3{
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.create-icon {
+  font-size: 30px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.project-actions {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
 .favorite-icon {
   position: absolute;
   top: 10px;
   right: 10px;
-
 }
 
 .fas.fa-star {
@@ -134,3 +142,16 @@
   stroke: #333;
   stroke-width: 1px;
 }
+
+
+
+.liquid-container {
+  position: relative;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+}
+
+
