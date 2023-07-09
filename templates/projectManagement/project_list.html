@@ -6,27 +6,15 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-lg my-3 project-list">
-  <div class="project-tile create-project-tile">
-    <a href="{% url 'project_create' %}">
-      <div class="create-project-info">
-        <h3>新規プロジェクト作成</h3>
-        <p>新しいプロジェクトを作成します</p>
-      </div>
-      <div class="create-icon">
-        <i class="fas fa-plus-circle"></i>
-      </div>
-    </a>
-  </div>
+<div class="container-lg my-5 project-list">
   {% for project in projects %}
   <div class="project-tile">
     <a href="{% url 'phase_list' project.project.id %}">
       <div class="liquid-container">
         <div class="project-info">
           <h3>{{ project.project.project_name }}</h3>
-          <p>進捗: {{ project.progress }}%</p>
           <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
-          <p>責任者: {{ project.responsible }}</p>
+          <p>責任者:<i class="fa-regular fa-user"></i> {{ project.responsible }}</p>
           {% if project.project_kind %}
           <p>種類: {{ project.project_kind }}</p>
           {% endif %}
@@ -43,7 +31,17 @@
     </a>
   </div>
  {% endfor %}
-
+  <div class="project-tile create-project-tile">
+    <a href="{% url 'project_create' %}">
+      <div class="create-project-info">
+        <h3>新規プロジェクト作成</h3>
+        <p>新しいプロジェクトを作成します</p>
+      </div>
+      <div class="create-icon">
+        <i class="fas fa-plus-circle"></i>
+      </div>
+    </a>
+  </div>
 </div>
 
 
