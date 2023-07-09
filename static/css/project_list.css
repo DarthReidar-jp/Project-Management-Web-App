@@ -2,48 +2,35 @@
   max-width: 1000px;
   padding: 20px;
 }
-.join-project-button {
-  margin-bottom: 10px;
-  background-color: #4c6ef5;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+
+/*header content*/
+.fa-user {
+  color: #fe0016;
+}
+.fa-envelope {
+  color: #dba102;
 }
 
-.join-project-button:hover {
-  background-color: #3b56d1;
+.btn-outline-secondary {
+  background-color: #fff;
+  padding: .5rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  border-color: #fff;
 }
-
-.search-bar {
-  margin-bottom: 10px;
-}
-
 .search-bar input[type="text"] {
-  width: 40%;
+  width: 30rem;
   padding: 8px;
-  border-radius: 4px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   text-align: center;
 }
 
-.sort-options {
-  margin-bottom: 10px;
+.search-bar .form-size{
+  width:auto;
 }
 
-.sort-options label {
-  font-weight: bold;
-  margin-right: 10px;
-}
-
-.sort-options select {
-  padding: 6px;
-  border-radius: 4px;
-}
-
+/*project list content*/
 .project-tile {
   width: calc(33% - 20px);
   height: auto;
@@ -144,7 +131,6 @@
 }
 
 
-
 .liquid-container {
   position: relative;
   overflow: hidden;
@@ -155,3 +141,28 @@
 }
 
 
+
+.bg-light{
+  background-color: #ededed!important;
+}
+
+
+/*footer content*/
+.footer-content{
+  border-top:solid 2px rgb(155, 155, 155);
+}
+
+.sort-options {
+  margin-bottom: 10px;
+}
+
+.sort-options label {
+  font-weight: bold;
+  color: #333;
+  margin:auto
+}
+
+.sort-options select {
+  padding: 6px;
+  border-radius: 10px;
+}

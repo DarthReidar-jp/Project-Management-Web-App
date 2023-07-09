@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-5 py-3">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between w-100 align-items-center">
+                <a class="btn btn-outline-secondary btn-lg mx-3" href="{% url 'project_list' %}" role="button" >
+                    <i class="fa-brands fa-react"></i>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                    <div class="search-bar mx-auto d-flex justify-content-center align-items-center">
+                        <form class="form-size" method="GET" action="#">
+                            <input class="form-control-lg" type="text" placeholder="検索" name="search" value="">
+                        </form>
+                        <button type="button" class="join-project-button btn btn-outline-secondary btn-lg mx-3"><i class="fa-solid fa-arrows-down-to-people"></i></button>
+                        
+                    </div>
+                    <div class="d-flex align-items-center mx-3">
+                        <a href="#" class="btn btn-outline-secondary btn-lg mx-3">
+                            <i class="fa-regular fa-envelope"></i>
+                        </a>
+                        <div class="nav-item dropdown">
+                            <a class="btn btn-outline-secondary btn-lg mx-3" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-regular fa-user"></i>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">アカウント設定</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">{{ request.user.email }} </a></li>
+                                <li><a class="dropdown-item" href="/accounts/logout/">ログアウト</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+  
