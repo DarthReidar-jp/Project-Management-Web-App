@@ -226,8 +226,12 @@ body:not(.focus-within) .input-group .form-control {
 /*footer content*/
 .footer-content{
   border-top:solid 2px rgb(155, 155, 155);
+
 }
 
+.project-list-footer{
+  background-color: #ededed;
+}
 .sort-options {
   margin-bottom: 10px;
 }
