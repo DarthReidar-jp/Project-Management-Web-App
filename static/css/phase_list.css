@@ -1,48 +1,4 @@
-.project-detail {
-  padding: 20px;
-}
-
-.project-header {
-  display: flex;
-  align-items: center;
-  justify-content:space-between;
-  margin-bottom: 20px;
-}
-
-.project-header h2 {
-  font-size: 24px;
-  margin-right: 20px;
-}
-
-.edit-button {
-  font-size: 16px;
-  color: #f8f9fa;
-  margin-right: 20px;
-}
-
-.project-name-editbutton{
-  justify-content:left;
-}
-
-
-.btn-back {
-  font-size: 16px;
-  color: #f8f9fa;
-  background-color: #6c757d;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  margin-left: 50%;
-}
-
-.btn-back:hover {
-  background-color: #5a6268;
-}
-
-.phases{
-  padding: 40px;
-}
-
+/*クリエイトフェーズ*/
 .create-phase-button {
   display: flex;
   align-items: center;
@@ -72,6 +28,7 @@
   margin-bottom: 5px;
 }
 
+/*フェーズリスト*/
 .phase-list {
   margin-bottom: 40px;
 }
@@ -80,6 +37,7 @@
   font-size: 30px;
   margin-bottom: 20px;
 }
+
 
 .phase-tile {
   display: flex;
@@ -93,6 +51,11 @@
   color: #212529;
 }
 
+.card a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .phase-info {
   flex-grow: 1;
 }
@@ -102,18 +65,6 @@
   margin-bottom: 5px;
 }
 
-.invite-button {
-  font-size: 16px;
-  color: #f8f9fa;
-  background-color: #007bff;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  margin-bottom: 20px;
-}
 
-.invite-button:hover {
-  background-color: #0056b3;
-}
 
 

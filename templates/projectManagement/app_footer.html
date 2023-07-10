@@ -1,24 +1,10 @@
-<footer class="bg-dark">
-    <div id="footer-logo">
-      <a href="#">
-          <i class="bi bi-bootstrap-fill footer-logo" style="font-size: 3rem;"></i>
-      </a>
+<footer class="project-list-footer">
+    <div class="footer-content mx-3">
+        {% if is_manager %}
+        <a href="{% url 'project_edit' project.id %}" class="btn btn-primary edit-button">編集</a>
+        {% endif %}
     </div>
-    <div class="footer-content">
-        <div>
-            <a href="#">
-                プライバシーポリシー
-           </a>
-        </div>
-        <div>|</div>
-        <div>
-            <a href="#">
-                利用規約
-            </a>        
-        </div>
-        <div>|</div>
-        <div>
-            <small>Copyright &copy; 2023</small>
-        </div>
+    <div class="project-header">
+        <a href="{% url 'project_list' %}" class="btn btn-back">プロジェクト一覧画面へ戻る</a>
     </div>
   </footer>

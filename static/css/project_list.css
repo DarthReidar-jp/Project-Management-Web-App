@@ -4,9 +4,8 @@
 }
 
 /*header content*/
-
 .bg-light{
-  background-color: #4e4e4e!important;
+  background-color: #ededed!important;
 }
 
 
@@ -29,20 +28,22 @@
   border-radius: 10px;
   border: 2px solid #ccc;
   text-align: center;
+  margin-left: 12rem;
 }
 
 .input-group .form-control {
-  background-color: #4e4e4e!important;
+  background-color: #ededed!important;
   border: 0px;
   border-radius: 10px;
   color: #ffffff; /* 追加 */
+
 }
 
 .input-group .btn {
   display: inline-block;
   font-weight: 400;
   line-height: 1.5;
-  color: #ffffff;
+  color: #6c757d;
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
@@ -66,7 +67,7 @@
 }
 
 body:not(.focus-within) .input-group .form-control {
-  background-color: #4e4e4e!important;
+  background-color: #ededed!important;
 }
 
 
@@ -218,15 +219,9 @@ body:not(.focus-within) .input-group .form-control {
 }
 
 
-
-
-
-
-
 /*footer content*/
 .footer-content{
   border-top:solid 2px rgb(155, 155, 155);
-
 }
 
 .project-list-footer{
