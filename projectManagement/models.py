@@ -5,9 +5,17 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 class Project(models.Model):
+    PROJECT_KIND = [
+        ('Web', 'Web'),
+        ('Software', 'Software'),
+        ('Hardware', 'Hardware'),
+    ]
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()
-    project_kind = models.CharField(max_length=255)
+    project_kind = models.CharField(
+        max_length=50,
+        choices=PROJECT_KIND,
+    )
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     priority = models.IntegerField(null=True)
     joined_id = models.CharField(max_length=255,unique=True)

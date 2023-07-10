@@ -8,34 +8,48 @@
 {% block content %}
 <div class="container-lg my-5 project-list">
   {% for project in projects %}
-  <div class="project-tile">
+  <div class="card p-2">
+    <h3 class="card-title text-center">{{ project.project.project_name }}</h3>
     <a href="{% url 'phase_list' project.project.id %}">
-      <div class="liquid-container">
-        <div class="project-info">
-          <h3>{{ project.project.project_name }}</h3>
-          <p>期限: {{ project.project.dead_line|date:"Y/m/d" }}</p>
-          <p>責任者:<i class="fa-regular fa-user"></i> {{ project.responsible }}</p>
-          {% if project.project_kind %}
-          <p>種類: {{ project.project_kind }}</p>
-          {% endif %}
+    <div class="beaker text-center">
+      <div class="card-body mt-3">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><i class="card-icon fa-regular fa-user "></i></td>
+              <td class="card-text fw-bold">{{ project.responsible }}</td>
+            </tr>
+            <tr>
+              <td><i class="card-icon fa-regular fa-user"></i></td>
+              <td class="pe-5 card-text fw-bold">{{ project.project_kind }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="dead-line">
+          <p class="text-white bg-primary text-center fw-bold">{{ project.project.dead_line|date:"Y/m/d" }}</p>
         </div>
-        <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas"></canvas>
+        <div class="mt-5">
+          <p class="progress-text fw-bold"> {{ project.progress }}%</p>
+        </div>
       </div>
-      <div class="favorite-icon">
-        {% if project.is_favorite %}
-        <i class="fas fa-star " onclick="toggleFavorite('{{ project.project.id }}')"></i>
-        {% else %}
-        <i class="far fa-star" onclick="toggleFavorite('{{ project.project.id }}')"></i>
-        {% endif %}
-      </div>
+      <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas" data-progress="{{ project.progress }}"></canvas>
+    </div>
     </a>
+    <div class="favorite-icon">
+      {% if project.is_favorite %}
+      <i class="fas fa-star " onclick="toggleFavorite('{{ project.project.id }}')"></i>
+      {% else %}
+      <i class="far fa-star" onclick="toggleFavorite('{{ project.project.id }}')"></i>
+      {% endif %}
+    </div>
   </div>
  {% endfor %}
+
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
       <div class="create-project-info">
         <h3>新規プロジェクト作成</h3>
-        <p>新しいプロジェクトを作成します</p>
+        <p >新しいプロジェクトを作成します</p>
       </div>
       <div class="create-icon">
         <i class="fas fa-plus-circle"></i>

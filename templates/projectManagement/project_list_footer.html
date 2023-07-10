@@ -2,7 +2,7 @@
     <div class="footer-content mx-">
         <div class="project-actions">
             <div class="sort-options d-flex justify-content-center">
-              <label for="sort-select">プロジェクト並び替え:</label>
+              <label for="sort-select"><i class="fa-solid fa-filter"></i></label>
               <form method="GET" action="{% url 'project_list' %}">
                 <div class="input-group">
                   <select id="sort-select" name="sort" onchange="this.form.submit()" class="form-select">
