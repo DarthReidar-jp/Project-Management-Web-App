@@ -4,7 +4,7 @@ var canvases = document.getElementsByClassName("liquid-canvas"),
 
 //parameters
 var particles = [],  //particle array
-    level =20,
+    level =[],
     fill = false,
     color = "skyblue",
     c;
@@ -25,51 +25,49 @@ function particle(x, y, d){
 
 //function to start or restart the animation
 function init(){
-    c = 0;
-    particles = [];
-    for(let canvas of canvases) {
-        canvas.width = 300; // Changed from clientWidth to offsetWidth
-        canvas.height = 250; // Changed from clientHeight to offsetHeight
-        let ctx = canvas.getContext("2d");
-        for(var i=0; i < 40; i++) {
-            var obj = new particle(0,0,0);
-            obj.respawn(canvas.width, canvas.height);
-            particles.push(obj);
-        }
+  c = 0;
+  particles = [];
+  levels = []; // reset levels array
+  for(let canvas of canvases) {
+    levels.push(parseInt(canvas.dataset.progress)); // 進捗状況に応じてレベルを設定
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight;
+      let ctx = canvas.getContext("2d");
+      for(var i=0; i < 40; i++) {
+          var obj = new particle(0,0,0);
+          obj.respawn(canvas.width, canvas.height);
+          particles.push(obj);
+      }
 
-        aniId = window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height));
-    }
+      aniId = window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height, levels[Array.from(canvases).indexOf(canvas)]));
+  }
 }
 
-
 //function that draws into the canvas in a loop
-// function that draws into the canvas in a loop
-// function that draws into the canvas in a loop
-function draw(ctx, w, h) {
-    ctx.clearRect(0, 0, w, h);
-  
-    // draw the liquid only when level is greater than 0
-    if (level > 0) {
-      ctx.fillStyle = color;
-      ctx.strokeStyle = color;
-  
-      // draw the liquid
-      if (level === 100) {
-        ctx.fillRect(0, 0, w, h);
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(w, h - (h - 100) * level / 100 - 50);
-        ctx.lineTo(w, h);
-        ctx.lineTo(0, h);
-        ctx.lineTo(0, h - (h - 100) * level / 100 - 50);
-        var temp = amplitude * Math.sin(c * frequency);
-        ctx.bezierCurveTo((w / 3), h - (h - 100) * level / 100 - 50 - temp,
-          (2 * w / 3), h - (h - 100) * level / 100 - 50 + temp,
-          w, h - (h - 100) * level / 100 - 50);
-        ctx.fill();
-      }
+function draw(ctx, w, h, level) {  // level parameter added to draw function
+  ctx.clearRect(0, 0, w, h);
+
+  // draw the liquid only when level is greater than 0
+  if (level > 0) {
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+
+    // draw the liquid
+    if (level === 100) {
+      ctx.fillRect(0, 0, w, h);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(w, h - (h - 100) * level / 100 - 50);
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.lineTo(0, h - (h - 100) * level / 100 - 50);
+      var temp = amplitude * Math.sin(c * frequency);
+      ctx.bezierCurveTo((w / 3), h - (h - 100) * level / 100 - 50 - temp,
+        (2 * w / 3), h - (h - 100) * level / 100 - 50 + temp,
+        w, h - (h - 100) * level / 100 - 50);
+      ctx.fill();
     }
-  
+  }
     /* draw the bubbles
     for (var i = 0; i < 40; i++) {
       ctx.beginPath();
@@ -79,10 +77,11 @@ function draw(ctx, w, h) {
       else
         ctx.stroke();
     }*/
+  update(w, h);
+  aniId = window.requestAnimationFrame(() => draw(ctx, w, h, level));  // level parameter added to the call
+}
+
   
-    update(w, h);
-    aniId = window.requestAnimationFrame(() => draw(ctx, w, h));
-  }
 
 //function that updates variables
 function update(w, h) {
@@ -100,9 +99,9 @@ function update(w, h) {
 
 //update canvas size when resizing the window
 window.addEventListener('resize', function() {
-    //stop the animation before restarting it
-    window.cancelAnimationFrame(aniId);
-    init();
+  //stop the animation before restarting it
+  window.cancelAnimationFrame(aniId);
+  init();  // レベルの更新のためにinit関数を再呼び出し
 });
 
 //start animation

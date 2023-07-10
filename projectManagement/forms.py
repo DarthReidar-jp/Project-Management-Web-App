@@ -4,35 +4,28 @@ from django.core.exceptions import ValidationError
 from .models import Project,ProjectMember,Phase,Unit,Task,TaskAssignment 
 
 class ProjectCreateForm(forms.ModelForm):
-    PRIORITY_CHOICES = [
-        (1, 'high'),
-        (2, 'middle'),
-        (3, 'low'),
+    KIND_CHOICES = [
+        ('Web', 'Web'),
+        ('Software', 'Software'),
+        ('Hardware', 'Hardware'),
     ]
     project_name = forms.CharField(label='プロジェクト名', required=True)
     project_description = forms.CharField(label='プロジェクトの説明', widget=forms.Textarea, required=False)
-    project_kind = forms.CharField(label='プロジェクト種類', required=False)
+    project_kind = forms.ChoiceField(
+        label='プロジェクトの種類', 
+        choices=KIND_CHOICES, 
+        initial=2,
+        required=True,
+        widget=forms.Select(attrs={'id': 'one',}))
     #start_day追加予定
     dead_line = forms.DateField(
         label='プロジェクト期限',
         widget=forms.DateInput(attrs={'type': 'date'}), 
         required=True)
-    priority = forms.ChoiceField(
-        label='プロジェクトの優先度設定', 
-        choices=PRIORITY_CHOICES, 
-        initial=2,
-        required=True,
-        widget=forms.Select(attrs={'id': 'one',}))
 
     class Meta:
         model = Project
-        fields = ['project_name', 'project_description', 'project_kind', 'dead_line','priority']
-
-    def clean_project_priority(self):
-        priority = self.cleaned_data.get('priority')
-        if not priority:
-            raise forms.ValidationError('プロジェクト優先度は必須です。')
-        return int(priority)
+        fields = ['project_name', 'project_description', 'project_kind', 'dead_line',]
 
     def clean_project_deadline(self):
         dead_line = self.cleaned_data.get('dead_line')

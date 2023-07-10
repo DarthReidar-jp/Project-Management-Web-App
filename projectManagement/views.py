@@ -104,8 +104,6 @@ def project_list(request):
             projects = projects.order_by('-updated_at')
         elif sort_option == 'name':
             projects = projects.order_by('project_name')
-        elif sort_option == 'priority':
-            projects = projects.order_by('priority')
         elif sort_option == 'favorite':
             favorite_project_ids = FavoriteProject.objects.filter(user=request.user).values_list('project', flat=True)
             projects = projects.filter(id__in=favorite_project_ids).order_by('created_at')
@@ -123,13 +121,12 @@ def project_list(request):
 
             progress = 0
             if total_tasks > 0:
-                progress = completed_tasks / total_tasks * 100
+                 progress = round(completed_tasks / total_tasks * 100)
 
             project_info = {
                 'project': project,
                 'progress': progress,
                 'deadline': project.dead_line,
-                'priority': project.priority,
                 'responsible': project.responsible,
                 'project_kind': project.project_kind,
                 'is_favorite': project in favorite_projects,

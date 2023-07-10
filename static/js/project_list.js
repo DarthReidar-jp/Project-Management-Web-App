@@ -8,11 +8,13 @@ document.addEventListener('DOMContentLoaded',
 });
 
 
-const searchInput = document.querySelector('input[name="search"]');
-searchInput.addEventListener('input', function() {
-  const searchQuery = searchInput.value;
-  window.location.href = `/app/projects/list/?search=${searchQuery}`;  // "app"を追加
+const searchForm = document.querySelector('.form-size');
+searchForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const searchQuery = document.querySelector('input[name="search"]').value;
+  window.location.href = `/app/projects/list/?search=${searchQuery}`;  
 });
+
 
 function toggleFavorite(projectId) {
   console.log(`Toggling favorite for project id: ${projectId}`);
