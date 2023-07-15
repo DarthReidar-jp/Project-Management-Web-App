@@ -8,10 +8,12 @@
     <button type="submit" class="search-project-button">検索</button>
   </form>
   {% if project %}
-  <div class="project-details">
-    <h3>{{ project.project_name }}</h3>
-    <!-- Display other project details here -->
-    <button type="button" class="join-project-button" data-project-id="{{ project.id }}">プロジェクトに参加</button>
+  <div class="project-details card">
+      <div class="card-body">
+        <h5 class="card-title">{{ project.project_name }}</h5>
+        <p class="card-text">{{ project.description }}</p>
+        <button type="button" class="join-project-button btn btn-success" data-project-id="{{ project.id }}">プロジェクトに参加</button>
+    </div>
   </div>
   {% elif message %}
   <p>{{ message }}</p>

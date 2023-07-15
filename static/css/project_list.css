@@ -1,64 +1,178 @@
 .project-list {
-  max-width: 1000px;
-  margin: 0 auto;
+  max-width: 70rem;
   padding: 20px;
 }
 
-h2 {
-  margin-bottom: 20px;
+/*header content*/
+.bg-light{
+  background-color: #ededed!important;
 }
 
-.project-tile {
-  width: calc(33% - 20px);
+
+
+.btn-outline-secondary {
+  background-color: #fff;
+  padding: .5rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  border-color: #fff;
+}
+
+
+.search-bar .form-size {
+  width: auto;
+}
+
+.input-group {
+  width: 30rem;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  text-align: center;
+  margin-left: 12rem;
+}
+
+.input-group .form-control {
+  background-color: #ededed!important;
+  border: 0px;
+  border-radius: 10px;
+  color: #ffffff; /* 追加 */
+
+}
+
+.input-group .btn {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #6c757d;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 0px;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  border-radius: .25rem;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  z-index: 0;
+}
+
+/* 追加 */
+.input-group .form-control:focus {
+  background-color: #fff;
+  outline: none;
+}
+
+body:not(.focus-within) .input-group .form-control {
+  background-color: #ededed!important;
+}
+
+
+/*project list content*/
+.project-list .card {
+  width: calc(33% - 30px);
+  height: auto;
   display: inline-block;
   vertical-align: top;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  background-color: #f2f2f2;
+  margin-right: 30px;
+  margin-bottom: 60px;
+  background-color: #ededed;;
+  position: relative;
+  cursor: pointer;
+  border: none;
+}
+
+
+
+.project-list .card a {
+  text-decoration: none;
+  color: inherit;
+}
+.project-list .card h3 {
+  font-size: 1.3rem;
+  margin: 0.5rem;
+}
+
+.beaker{
+  position: relative;
+  border-top: none;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-left: 2px solid;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  overflow: hidden;
+}
+
+.beaker:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+.card .card-body {
+  position: relative;
+  z-index: 2;
+}
+
+.card-body .card-icon{
+  font-size: 2rem;
+}
+
+.card-body .card-text{
+  font-size: 1.2rem;
+}
+
+.card-text p {
+  font-size: 16px;
+  margin-bottom: 0rem;
+}
+
+.card-body .dead-line{
+  font-size: 1.2rem;
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0.2rem 4rem;
+}
+
+.card-body .dead-line .bg-primary{
+  font-size: 1.2rem;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.progress-text{
+ font-size: 3rem;
+ margin-bottom: 0;
+}
+
+.liquid-canvas {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  
+}
+
+/*クリエイトタイル*/
+.create-project-tile {
+  width: calc(33% - 20px);
+  height: 250px;
+  display: inline-block;
+  vertical-align: top;
   border-radius: 15px;
   padding: 20px;
   position: relative;
   cursor: pointer;
-}
-
-.project-tile:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.project-tile a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.project-info {
-  margin-bottom: 10px;
-}
-
-.project-info h3 {
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-
-.delete-project {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.delete-project button {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-}
-
-.create-project-tile {
   border: 2px dashed #ccc;
   background-color: #fff;
   color: #ccc;
   transition: background-color 0.3s, color 0.3s;
+  overflow: visible;
 }
 
 .create-project-tile:hover {
@@ -71,11 +185,18 @@ h2 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+}
+
+
+.create-project-info h3{
+  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .create-icon {
   font-size: 30px;
+  bottom: 10px;
+  right: 10px;
 }
 
 .project-actions {
@@ -84,44 +205,40 @@ h2 {
   text-align: right;
 }
 
-.join-project-button {
-  margin-bottom: 10px;
-  background-color: #4c6ef5;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.favorite-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
 }
 
-.join-project-button:hover {
-  background-color: #3b56d1;
+.fas.fa-star {
+  color: yellow;
+  stroke: #333;
+  stroke-width: 1px;
 }
 
-.search-bar {
-  margin-bottom: 10px;
+
+/*footer content*/
+.footer-content{
+  border-top:solid 2px rgb(155, 155, 155);
 }
 
-.search-bar input[type="text"] {
-  width: 40%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  text-align: center;
+.project-list-footer{
+  background-color: #ededed;
 }
-
 .sort-options {
   margin-bottom: 10px;
 }
 
 .sort-options label {
   font-weight: bold;
-  margin-right: 10px;
+  color: #333;
+  margin:auto
 }
 
 .sort-options select {
   padding: 6px;
-  border-radius: 4px;
+  border-radius: 10px;
 }
+

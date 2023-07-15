@@ -1,0 +1,35 @@
+
+.bg-light{
+    background-color: #ededed!important;
+  }
+  
+.project{
+    width: 20rem;
+}
+
+.project-name{
+    white-space: nowrap;
+    margin-right: 0.5rem;
+    margin-bottom: 0;
+}
+
+.edit-btn{
+    padding: .1rem 0.6rem!important;
+    font-size: 1rem!important;  
+}
+
+.container-fluid a{
+    text-decoration: none;
+    color: inherit;
+}
+  
+.btn-outline-secondary {
+    background-color: #fff;
+    padding: .5rem 1rem;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    border-color: #fff;
+  }
+.navbar-expand-lg .navbar-collapse {
+    display: block!important;
+}

@@ -1,19 +1,28 @@
+import uuid
 from django.db import models
 from django.conf import settings
-import uuid
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
-#Account User Substitution
 User = settings.AUTH_USER_MODEL
 
 class Project(models.Model):
-    
+    PROJECT_KIND = [
+        ('Web', 'Web'),
+        ('Software', 'Software'),
+        ('Hardware', 'Hardware'),
+    ]
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()
-    project_kind = models.CharField(max_length=255)
+    project_kind = models.CharField(
+        max_length=50,
+        choices=PROJECT_KIND,
+    )
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
     priority = models.IntegerField(null=True)
     joined_id = models.CharField(max_length=255,unique=True)
     invitation_code = models.UUIDField(default=uuid.uuid4, unique=True)
+    #start_day追加予定
     dead_line = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,24 +34,19 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
     
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
+    def update_is_completed_project(self):
         phases = self.phases.all()
-        if not self.pk or not phases.exists():
+        if not phases.exists() or phases.filter(is_completed_phase=False).exists():
             self.is_completed_project = False
-        elif phases.exists() and not phases.filter(is_completed_phase=False).exists():
-            self.is_completed_project = True
         else:
-            self.is_completed_project = False
-
+            self.is_completed_project = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
 
 class ProjectMember(models.Model):
     PROJECT_ROLE_CHOICES = [
-        ('manager', 'Manager'),  # マネージャー
-        ('worker', 'Worker'),  # ワーカー
-        ('stakeholder', 'Stakeholder'),  # ステークホルダー
+        ('manager', 'Manager'),
+        ('worker', 'Worker'),
+        ('stakeholder', 'Stakeholder'),
     ]
     STATUS_CHOICES = [
         ('applying', '申請中'),
@@ -52,53 +56,66 @@ class ProjectMember(models.Model):
     project = models.ForeignKey(Project,on_delete=models.CASCADE)
     role = models.CharField(
         max_length=20,
-        choices=PROJECT_ROLE_CHOICES,  # 役割の選択肢
+        choices=PROJECT_ROLE_CHOICES,
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='not_participating',
     )
-    created_at = models.DateTimeField(auto_now_add=True)  # 作成日時
-    updated_at = models.DateTimeField(auto_now=True)  # 更新日時
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('user', 'project')  # ユーザーとプロジェクトの組み合わせが一意
+        unique_together = ('user', 'project')
 
     def __str__(self):
         return f"{self.user} - {self.project}"
+
+class FavoriteProject(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'project')
+
+    def __str__(self):
+        return f"{self.user} - {self.project}"
+
+
 
 class Notification(models.Model):
     NOTIFICATION_TYPE_CHOICES = [
         ('deadline', 'Deadline Reminder'),  # 締め切りリマインダー
         ('invitation', 'Project Invitation'),  # プロジェクトへの招待
+        ('join', 'Project joined')
         # 他の通知の種類をここに追加
     ]
     STATUS_CHOICES = [
-        ('unread', 'Unread'),  # 未読
-        ('read', 'Read'),  # 既読
+        ('unread', 'Unread'),
+        ('read', 'Read'),
     ]
-    title = models.CharField(max_length=255)  # 通知のタイトル
-    detail = models.TextField()  # 通知の詳細情報
+    title = models.CharField(max_length=255)
+    detail = models.TextField()
     notification_type = models.CharField(
         max_length=20,
-        choices=NOTIFICATION_TYPE_CHOICES,  # 通知の種類の選択肢
+        choices=NOTIFICATION_TYPE_CHOICES,
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='unread',  # デフォルトは未読
+        default='unread', 
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 通知を受け取るユーザー
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)  # 通知が関連するプロジェクト
-    created_at = models.DateTimeField(auto_now_add=True)  # 通知が作成された時間
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
 
     class Meta:
-        ordering = ['-created_at']  # 最新の通知が先に来るように
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.title} - {self.user}"
-
 
 class Phase(models.Model):
     phase_name = models.CharField(max_length=255)
@@ -109,6 +126,7 @@ class Phase(models.Model):
     is_completed_phase = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    #責任者を追加予定　responsible = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-start_day']
@@ -118,16 +136,16 @@ class Phase(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.project.update_is_completed_project()
 
+    def update_is_completed_phase(self):
         units = self.units.all()
-        if not self.pk or not units.exists():
+        if not units.exists() or units.filter(is_completed_unit=False).exists():
             self.is_completed_phase = False
-        elif units.exists() and not units.filter(is_completed_unit=False).exists():
-            self.is_completed_phase = True
         else:
-            self.is_completed_phase = False
-
+            self.is_completed_phase = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
+
 
 class Unit(models.Model):
     unit_name = models.CharField(max_length=255)
@@ -138,21 +156,21 @@ class Unit(models.Model):
     is_completed_unit = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    #責任者追加予定
 
     def __str__(self):
         return self.unit_name
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.phase.update_is_completed_phase()
 
+    def update_is_completed_unit(self):
         tasks = self.tasks.all()
-        if not self.pk or not tasks.exists():
+        if not tasks.exists() or tasks.filter(is_completed_task=False).exists():
             self.is_completed_unit = False
-        elif tasks.exists() and not tasks.filter(is_completed_task=False).exists():
-            self.is_completed_unit = True
         else:
-            self.is_completed_unit = False
-
+            self.is_completed_unit = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
 
 class Task(models.Model):
@@ -169,21 +187,24 @@ class Task(models.Model):
         return self.task_name
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # 保存処理を先に実行
+        super().save(*args, **kwargs)
+        self.unit.update_is_completed_unit()
 
+    def update_is_completed_task(self):
         assignments = self.assignments.all()
-        if not self.pk or not assignments.exists():
+        if not assignments.exists() or assignments.filter(is_completed_member=False).exists():
             self.is_completed_task = False
-        elif assignments.exists() and not assignments.filter(is_completed_member=False).exists():
-            self.is_completed_task = True
         else:
-            self.is_completed_task = False
-
-        # `is_completed_task`のみを更新
+            self.is_completed_task = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_task=self.is_completed_task)
 
+    def get_assignee_emails(self):
+        return [assignment.project_member.user.email for assignment in self.assignments.all()]
+
+
+
+
 class TaskAssignment(models.Model):
-    """タスク割り当てモデル"""
     task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name="assignments")
     project_member = models.ForeignKey(ProjectMember, on_delete=models.CASCADE)
     is_completed_member= models.BooleanField(default=False)
@@ -192,6 +213,8 @@ class TaskAssignment(models.Model):
 
     def __str__(self):
         return f"{self.task} - {self.project_member}"
-    
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.task.update_is_completed_task()
 

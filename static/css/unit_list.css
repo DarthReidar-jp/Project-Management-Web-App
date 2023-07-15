@@ -126,3 +126,7 @@ button.completed {
   margin: 4px 2px;
   cursor: pointer;
 }
+
+.completed-task{
+  background-color: #4CAF50; /* 緑色 */
+}

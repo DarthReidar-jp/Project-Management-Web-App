@@ -4,7 +4,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/phase_edit.css' %}">
 {% endblock %}
-
+ 
 {% block content %}
 <div class="phase-edit">
   <h2>フェーズ編集</h2>
@@ -12,17 +12,43 @@
     {% csrf_token %}
     <div class="form-group">
       <label for="phase-name">フェーズ名</label>
-      <input type="text" id="phase-name" name="phase_name" value="{{ phase.phase_name }}" required>
+      <input type="text" id="phase-name" name="phase_name" value="{{ form.phase_name.value }}" required>
     </div>
     <div class="form-group">
       <label for="phase-description">フェーズの説明</label>
-      <textarea id="phase-description" name="phase_description" rows="4" required>{{ phase.phase_description }}</textarea>
+      <textarea id="phase-description" name="phase_description" rows="4" required>{{ form.phase_description.value }}</textarea>
     </div>
     <div class="form-group">
       <label for="phase-deadline">フェーズ期限</label>
-      <input type="date" id="phase-deadline" name="phase_deadline" value="{{ phase.dead_line }}" required>
+      <input type="date" id="phase-deadline" name="phase_deadline" value="{{ form.dead_line.value }}" required>
     </div>
     <button type="submit" class="btn-save">保存する</button>
+    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+      このフェーズを削除する
+    </button>
   </form>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">フェーズ削除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        本当にこのフェーズを削除しますか？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <form method="POST" action="{% url 'phase_delete' project_id phase_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">削除する</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

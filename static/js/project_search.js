@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const joinedId = document.querySelector('input[name="joined_id"]').value;
       window.location.href = `/app/projects/search/?joined_id=${joinedId}`;
     });
-  
+   
     const joinProjectButton = document.querySelector('.join-project-button');
     if (joinProjectButton) { // Check if the button exists
       joinProjectButton.addEventListener('click', function() {
