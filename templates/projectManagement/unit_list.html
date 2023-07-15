@@ -20,26 +20,37 @@
             <thead>
               <tr>
                 <th>Task Name</th>
-                <th>Deadline</th>
+                <th>Start Day </th>
+                <th>Dead line</th>
+                <th>assinment member</th>
                 <th>Check</th>
               </tr>
             </thead>
             <tbody>
-              {% for task in unit.tasks.all %}
-              <tr>
-                <td><a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{ task.task_name }}</a></td>
-                <td>{{ task.dead_line }}</td>
-                <td>
-                  <form method="post" action="{% url 'task_toggle' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">
-                    {% csrf_token %}
-                    <button type="submit" name="check-task" class="{% if task.is_completed_task %}completed{% else %}uncompleted{% endif %}">
-                      {% if task.is_completed_task %}Completed{% else %}Complete{% endif %}
-                    </button>
-                  </form>
-                </td>
-              </tr>
+              {% for user_task in user_tasks %}
+                <tr class="{% if user_task.task.is_completed_task %}completed-task{% else %}uncompleted-task{% endif %}">
+                  <td><a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=user_task.task.unit.id task_id=user_task.task.id %}">{{ user_task.task.task_name }}</a></td>
+                  <td>{{ user_task.task.start_day}}</td>
+                  <td>{{ user_task.task.dead_line }}</td>
+                  <td>{% for email in user_task.task.get_assignee_emails %}
+                    {{ email }}
+                  {% endfor %}</td>                
+                  <td>
+                    {% if user_task.is_assigned %}
+                      <form method="post" action="{% url 'task_toggle' project_id=project.id phase_id=phase.id unit_id=user_task.task.unit.id task_id=user_task.task.id %}">
+                        {% csrf_token %}
+                        <button type="submit" name="check-task" class="{% if user_task.is_completed %}completed{% else %}uncompleted{% endif %}">
+                          {% if user_task.is_completed %}Completed{% else %}Complete{% endif %}
+                        </button>
+                      </form>
+                    {% endif %}
+                  </td>
+                </tr>
               {% endfor %}
+
+
             </tbody>
+            
           </table>
           <a href="{% url 'task_create' project_id=project.id phase_id=phase.id unit_id=unit.id %}" class="add-task-button">Add New Task</a>
         </div>

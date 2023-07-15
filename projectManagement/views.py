@@ -293,7 +293,17 @@ def phase_delete(request, project_id, phase_id):
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
-    return render(request, 'unit_list.html', {'phase': phase, 'project': project})
+    tasks = Task.objects.filter(unit__phase=phase)
+    user_tasks = []
+    for task in tasks:
+        assignment = task.assignments.filter(Q(project_member__user=request.user)).first()
+        user_tasks.append({
+            'task': task,
+            'is_assigned': assignment is not None,
+            'is_completed': assignment.is_completed_member if assignment else False
+        })
+    return render(request, 'unit_list.html', {'user_tasks': user_tasks, 'project': project, 'phase': phase})
+
 
 #タスクの完了・未完了を切り替える新しいビュー
 def task_toggle(request, project_id, phase_id, unit_id, task_id):
@@ -301,6 +311,7 @@ def task_toggle(request, project_id, phase_id, unit_id, task_id):
     assignment = get_object_or_404(TaskAssignment, task=task, project_member__user=request.user)
     assignment.is_completed_member = not assignment.is_completed_member
     assignment.save()
+    task.update_is_completed_task()
     task.save()
     return redirect('unit_list', project_id=project_id, phase_id=phase_id)
 
@@ -443,10 +454,3 @@ def task_create(request, project_id, phase_id, unit_id):
 #タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
-
-class ProjectMembersView(View):
-    def get(self, request, *args, **kwargs):
-        project_id = kwargs.get('project_id')
-        project_members = ProjectMember.objects.filter(project_id=project_id)
-        members = [{"id": pm.user.id, "name": pm.user.username} for pm in project_members]
-        return JsonResponse(members, safe=False, status=200)

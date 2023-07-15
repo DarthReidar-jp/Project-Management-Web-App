@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
@@ -32,17 +34,12 @@ class Project(models.Model):
     def __str__(self):
         return self.project_name
     
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
+    def update_is_completed_project(self):
         phases = self.phases.all()
-        if not self.pk or not phases.exists():
+        if not phases.exists() or phases.filter(is_completed_phase=False).exists():
             self.is_completed_project = False
-        elif phases.exists() and not phases.filter(is_completed_phase=False).exists():
-            self.is_completed_project = True
         else:
-            self.is_completed_project = False
-
+            self.is_completed_project = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
 
 class ProjectMember(models.Model):
@@ -139,14 +136,16 @@ class Phase(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.project.update_is_completed_project()
+
+    def update_is_completed_phase(self):
         units = self.units.all()
-        if not self.pk or not units.exists():
+        if not units.exists() or units.filter(is_completed_unit=False).exists():
             self.is_completed_phase = False
-        elif units.exists() and not units.filter(is_completed_unit=False).exists():
-            self.is_completed_phase = True
         else:
-            self.is_completed_phase = False
+            self.is_completed_phase = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
+
 
 class Unit(models.Model):
     unit_name = models.CharField(max_length=255)
@@ -164,14 +163,14 @@ class Unit(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        tasks = self.tasks.all()
-        if not self.pk or not tasks.exists():
-            self.is_completed_unit = False
-        elif tasks.exists() and not tasks.filter(is_completed_task=False).exists():
-            self.is_completed_unit = True
-        else:
-            self.is_completed_unit = False
+        self.phase.update_is_completed_phase()
 
+    def update_is_completed_unit(self):
+        tasks = self.tasks.all()
+        if not tasks.exists() or tasks.filter(is_completed_task=False).exists():
+            self.is_completed_unit = False
+        else:
+            self.is_completed_unit = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
 
 class Task(models.Model):
@@ -188,17 +187,22 @@ class Task(models.Model):
         return self.task_name
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # 保存処理を先に実行
-        assignments = self.assignments.all()
-        if not self.pk or not assignments.exists():
-            self.is_completed_task = False
-        elif assignments.exists() and not assignments.filter(is_completed_member=False).exists():
-            self.is_completed_task = True
-        else:
-            self.is_completed_task = False
+        super().save(*args, **kwargs)
+        self.unit.update_is_completed_unit()
 
-        # `is_completed_task`のみを更新
+    def update_is_completed_task(self):
+        assignments = self.assignments.all()
+        if not assignments.exists() or assignments.filter(is_completed_member=False).exists():
+            self.is_completed_task = False
+        else:
+            self.is_completed_task = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_task=self.is_completed_task)
+
+    def get_assignee_emails(self):
+        return [assignment.project_member.user.email for assignment in self.assignments.all()]
+
+
+
 
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name="assignments")
@@ -209,6 +213,8 @@ class TaskAssignment(models.Model):
 
     def __str__(self):
         return f"{self.task} - {self.project_member}"
-    
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.task.update_is_completed_task()
 

@@ -1,6 +1,5 @@
 from . import views
 from django.urls import path
-from .views import ProjectMembersView
 
 urlpatterns = [
 
@@ -44,5 +43,5 @@ urlpatterns = [
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.task_edit, name='task_edit'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/task_toggle/', views.task_toggle, name='task_toggle'),
 
-    path('api/project-members/<int:project_id>/', ProjectMembersView.as_view(), name='project-members'),
+
 ]

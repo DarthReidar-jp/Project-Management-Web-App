@@ -45,6 +45,7 @@ class UnitAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     list_display = ['task_name', 'unit', 'start_day', 'dead_line', 'is_completed_task']
     list_filter = ['unit']
+    inlines = [TaskAssignmentInline]
     list_per_page = 10
     list_select_related = ['unit__phase__project']
 

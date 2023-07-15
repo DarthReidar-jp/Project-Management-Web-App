@@ -64,6 +64,9 @@ class UnitCreateForm(forms.ModelForm):
         model = Unit
         fields = ['unit_name', 'unit_description', 'start_day','dead_line']
 
+
+
+
 class TaskCreateForm(forms.ModelForm):
     task_name = forms.CharField(label='タスク名', required=True)
     task_description = forms.CharField(label='タスクの説明', widget=forms.Textarea, required=False)
