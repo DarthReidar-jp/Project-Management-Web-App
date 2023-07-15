@@ -1,10 +1,9 @@
 {% extends 'phase_base.html' %}
-{% block title %}{{ project.project_name }} - プロジェクト詳細{% endblock %}
+{% block title %}{{ project.project_name }} - Project Details{% endblock %}
 {% block styles %}
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/phase_list.css' %}">
 {% endblock %}
-
 
 {% block content %}
 <div class="container mb-5">
@@ -14,7 +13,7 @@
     <div class="card create-phase-tile text-center"> 
       <a href="{% url 'phase_create' project.id %}">
         <div class="card-body">
-          <h4> 新規フェーズ作成</h4>
+          <h4> Create New Phase</h4>
           <i class="fas fa-plus-circle create-icon"></i>
         </div>
       </a>
@@ -22,26 +21,25 @@
     {% endif %}
 
     <div class="phase-list">
-      <h3>フェーズ一覧</h3>    
+      <h3>Phase List</h3>    
       {% if phases %}
         {% for phase in phases %}
         <div class="card phase-tile mb-3">
           <a href="{% url 'unit_list' project.id phase.id %}">
             <div class="card-body phase-info">
               <h4>{{ phase.phase_name }}</h4>
-              <p>開始予定日: {{ phase.start_day|date:"Y/m/d"  }}</p>
-              <p>期限: {{ phase.dead_line|date:"Y/m/d" }}</p>
-              <p>責任者: {{ phase.responsible }}</p>
+              <p>Planned Start Date: {{ phase.start_day|date:"Y/m/d"  }}</p>
+              <p>Deadline: {{ phase.dead_line|date:"Y/m/d" }}</p>
+              <p>Responsible: {{ phase.responsible }}</p>
             </div>
           </a>
         </div>
         {% endfor %}
 
       {% else %}
-        <p>フェーズがありません。</p>
+        <p>No phases available.</p>
       {% endif %}
     </div>
   </div>
 </div>
 {% endblock %}
-

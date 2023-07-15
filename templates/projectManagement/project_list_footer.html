@@ -6,11 +6,11 @@
               <form method="GET" action="{% url 'project_list' %}">
                 <div class="input-group">
                   <select id="sort-select" name="sort" onchange="this.form.submit()" class="form-select">
-                    <option selected disabled>並び替え</option>
-                    <option value="favorite" {% if sort_option == 'favorite' %}selected{% endif %}>お気に入り</option>
-                    <option value="created" {% if sort_option == 'created' %}selected{% endif %}>作成順</option>
-                    <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>更新順</option>
-                    <option value="name" {% if sort_option == 'name' %}selected{% endif %}>名前順</option>
+                    <option selected disabled>sort</option>
+                    <option value="favorite" {% if sort_option == 'favorite' %}selected{% endif %}>favorite</option>
+                    <option value="created" {% if sort_option == 'created' %}selected{% endif %}>created</option>
+                    <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>updated</option>
+                    <option value="name" {% if sort_option == 'name' %}selected{% endif %}>name</option>
                   </select>
                 </div>
               </form>

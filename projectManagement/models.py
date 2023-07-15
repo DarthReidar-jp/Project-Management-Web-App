@@ -11,6 +11,7 @@ class Project(models.Model):
         ('Web', 'Web'),
         ('Software', 'Software'),
         ('Hardware', 'Hardware'),
+        ('test', 'test'),
     ]
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()
@@ -19,10 +20,9 @@ class Project(models.Model):
         choices=PROJECT_KIND,
     )
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
-    priority = models.IntegerField(null=True)
     joined_id = models.CharField(max_length=255,unique=True)
     invitation_code = models.UUIDField(default=uuid.uuid4, unique=True)
-    #start_day追加予定
+    start_day = models.DateField(null=True)
     dead_line = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -126,7 +126,7 @@ class Phase(models.Model):
     is_completed_phase = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    #責任者を追加予定　responsible = models.ForeignKey(User, on_delete=models.CASCADE)
+    responsible = models.ForeignKey(ProjectMember, on_delete=models.CASCADE,null=True)
 
     class Meta:
         ordering = ['-start_day']
@@ -157,7 +157,7 @@ class Unit(models.Model):
     is_completed_unit = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    #責任者追加予定
+    responsible = models.ForeignKey(ProjectMember, on_delete=models.CASCADE,null=True)
 
     def __str__(self):
         return self.unit_name

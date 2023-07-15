@@ -1,5 +1,5 @@
 {% extends 'phase_base.html' %}
-{% block title %}プロジェクト編集{% endblock %}
+{% block title %}edit project{% endblock %}
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_edit.css' %}">
@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="project-edit">
-  <h2>プロジェクト編集</h2>
+  <h2>edit project</h2>
 
   <form method="post">
     {% csrf_token %}

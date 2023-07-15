@@ -1,5 +1,5 @@
 {% extends 'app_base.html' %}
-{% block title %}プロジェクト作成{% endblock %}
+{% block title %}Create New Project{% endblock %}
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_create.css' %}">
@@ -7,14 +7,14 @@
 
 {% block content %}
 <div class="project-create">
-  <h2>プロジェクト作成</h2>
+  <h2>Create New Project</h2>
 
   <form method="post" action="{% url 'project_create' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <div class="buttons">
-      <button type="submit" class="btn-create">作成する</button>
-      <a href="{% url 'project_list' %}" class="btn-back">プロジェクト一覧画面へ戻る</a>
+      <button type="submit" class="btn-create">Create</button>
+      <a href="{% url 'project_list' %}" class="btn-back">back</a>
     </div>
   </form>
 </div>

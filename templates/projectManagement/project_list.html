@@ -1,5 +1,5 @@
 {% extends 'project_list_base.html' %}
-{% block title %}プロジェクト一覧{% endblock %}
+{% block title %}Project List{% endblock %}
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/project_list.css' %}">
@@ -48,8 +48,8 @@
   <div class="project-tile create-project-tile">
     <a href="{% url 'project_create' %}">
       <div class="create-project-info">
-        <h3>新規プロジェクト作成</h3>
-        <p >新しいプロジェクトを作成します</p>
+        <h3>Create New Project</h3>
+        <p>Create your awesome new project now!</p>
       </div>
       <div class="create-icon">
         <i class="fas fa-plus-circle"></i>
@@ -64,13 +64,13 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="projectSearchModalLabel">プロジェクト検索</h5>
+        <h5 class="modal-title" id="projectSearchModalLabel">search project</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form method="GET" action="{% url 'project_search' %}">
-          <input type="text" class="form-control" placeholder="参加IDを入力" name="joined_id" required>
-          <button type="submit" class="btn btn-success my-3 search-project-button">検索</button>
+          <input type="text" class="form-control" placeholder="fill joinID" name="joined_id" required>
+          <button type="submit" class="btn btn-success my-3 search-project-button">search</button>
         </form>
       </div>
     </div>
