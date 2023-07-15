@@ -1,0 +1,23 @@
+.project-join {
+  color: black;
+  background-color: white;
+}
+
+.project-join .mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.project-join .mt-5 {
+  margin-top: 3rem !important;
+}
+
+.project-join #join-btn {
+  padding: 10px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .project-join {
+      color: white;
+      background-color: black;
+  }
+}

@@ -1,0 +1,16 @@
+.navbar{
+    background: #F2BE25;
+}
+.bi-bootstrap-fill{
+    color: white;
+}
+.btn-info{
+    color: white;
+    background-color: #63a0dc;
+    border-color: #63a0dc;
+}
+.btn-info:hover{
+    color: white;
+    background-color: #5992ca;
+    border-color: #5992ca;
+}

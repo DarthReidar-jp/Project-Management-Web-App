@@ -1,0 +1,70 @@
+/*クリエイトフェーズ*/
+.create-phase-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.create-phase-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.create-phase-tile h4 {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.create-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+/*フェーズリスト*/
+.phase-list {
+  margin-bottom: 40px;
+}
+
+.phase-list h3 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+
+.phase-tile {
+  display: flex;
+  align-items: left;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+  text-decoration: none;
+  color: #212529;
+}
+
+.card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.phase-info {
+  flex-grow: 1;
+}
+
+.phase-info h4 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+
+
+

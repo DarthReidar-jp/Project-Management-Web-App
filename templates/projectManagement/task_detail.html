@@ -1,0 +1,51 @@
+{% extends 'app_base.html' %}
+
+{% block title %}タスク詳細{% endblock %}
+
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/task_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="task-detail container">
+  <h2 class="my-4">タスク詳細</h2>
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">更新する</button>
+    </div>
+  </form>
+  <div class="row mt-3">
+    <div class="col-12">
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+        このタスクを削除する
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">タスク削除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        本当にこのタスクを削除しますか？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <form method="POST" action="{% url 'task_delete' project_id phase_id unit_id task_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">削除する</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

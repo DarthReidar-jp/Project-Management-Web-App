@@ -1,0 +1,63 @@
+/* project_edit.css */
+.project-edit {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  button[type="button"],
+  button[type="submit"] {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button[type="button"]:hover,
+  button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  #send-invitation {
+    margin-top: 10px;
+  }
+  
+  #change-permissions,
+  #delete-member {
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  
+  .btn-update {
+    background-color: #4CAF50;
+  }
+  
+  .btn-update:hover {
+    background-color: #45a049;
+  }
+  

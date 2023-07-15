@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include 'css.html' %}
+    {% block styles %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    {% include 'header.html' %}
+    {% block content %}{% endblock %}
+    {% block body %}{% endblock %}
+    {% include 'footer.html' %}
+    {% include 'js.html' %}
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

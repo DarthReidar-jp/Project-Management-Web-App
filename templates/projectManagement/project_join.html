@@ -1,0 +1,25 @@
+{% extends 'app_base.html' %}
+{% block title %}プロジェクト参加{% endblock %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/project_join.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="project-join container">
+  <h2>プロジェクト参加</h2>
+
+  <div id="project-info" class="mt-4">
+    <h3 id="project-name"></h3>
+    <p id="project-description"></p>
+  </div>
+
+  <div class="text-center mt-5">
+    <button id="join-btn" class="btn btn-primary">参加する</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/project_join.js' %}"></script>
+{% endblock %}
