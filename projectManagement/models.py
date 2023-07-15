@@ -136,6 +136,7 @@ class Phase(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.update_is_completed_phase()
         self.project.update_is_completed_project()
 
     def update_is_completed_phase(self):
@@ -163,7 +164,9 @@ class Unit(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.update_is_completed_unit()
         self.phase.update_is_completed_phase()
+        self.phase.project.update_is_completed_project()
 
     def update_is_completed_unit(self):
         tasks = self.tasks.all()
@@ -189,6 +192,8 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.unit.update_is_completed_unit()
+        self.unit.phase.update_is_completed_phase()
+        self.unit.phase.project.update_is_completed_project()
 
     def update_is_completed_task(self):
         assignments = self.assignments.all()
@@ -217,4 +222,3 @@ class TaskAssignment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.task.update_is_completed_task()
-
