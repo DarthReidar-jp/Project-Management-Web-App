@@ -3,6 +3,7 @@ import string
 import random
 from datetime import date
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -142,6 +143,7 @@ def project_list(request):
         return render(request, 'project_list.html', context)
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
+#お気に入り登録機能
 @csrf_exempt
 def toggle_favorite(request, project_id):
     if request.method == 'POST':
@@ -151,7 +153,6 @@ def toggle_favorite(request, project_id):
             favorite.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
 
 #プロジェクト削除機能
 @login_required
@@ -288,7 +289,6 @@ def phase_delete(request, project_id, phase_id):
         return redirect('phase_list', project_id=project_id)
     return redirect('phase_edit', project_id=project_id, phase_id=phase_id)
 
-
 #ユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
@@ -323,19 +323,23 @@ def unit_create(request, project_id, phase_id):
                 task_name = request.POST.get(f'task_name_{i}')
                 task_description = request.POST.get(f'task_description_{i}')
                 task_deadline = request.POST.get(f'task_deadline_{i}')
+                task_member = request.POST.get(f'task_member_{i}')  # Get the assigned member ID
                 start_day = date.today()
 
-                if not task_name and not task_description and not task_deadline:
+                if not task_name and not task_description and not task_deadline and not task_member:
                     break
 
                 if task_name:  # Only create task if name is present
-                    Task.objects.create(
+                    task = Task.objects.create(
                         unit=unit,
                         task_name=task_name,
                         task_description=task_description,
                         dead_line=task_deadline,
                         start_day=start_day
                     )
+                    # Assign the member to the task
+                    member = get_object_or_404(ProjectMember, pk=task_member)
+                    TaskAssignment.objects.create(task=task, project_member=member)
                 i += 1
 
             return redirect('unit_list', project_id=project_id, phase_id=phase_id)
@@ -346,6 +350,7 @@ def unit_create(request, project_id, phase_id):
 
     context = {
         'form': form,
+        'project':project,
         'phase': phase,
         'project_id': project_id,
         'phase_id': phase_id,
@@ -404,7 +409,6 @@ def task_detail(request, project_id, phase_id, unit_id, task_id):
 
     return render(request, 'task_detail.html', context)
 
-
 #タスク削除
 def task_delete(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -412,7 +416,6 @@ def task_delete(request, project_id, phase_id, unit_id, task_id):
         task.delete()
         return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task_id)
-
 
 #タスク作成機能
 def task_create(request, project_id, phase_id, unit_id):
@@ -440,3 +443,10 @@ def task_create(request, project_id, phase_id, unit_id):
 #タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
+
+class ProjectMembersView(View):
+    def get(self, request, *args, **kwargs):
+        project_id = kwargs.get('project_id')
+        project_members = ProjectMember.objects.filter(project_id=project_id)
+        members = [{"id": pm.user.id, "name": pm.user.username} for pm in project_members]
+        return JsonResponse(members, safe=False, status=200)

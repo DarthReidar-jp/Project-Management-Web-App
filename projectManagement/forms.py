@@ -70,7 +70,7 @@ class TaskCreateForm(forms.ModelForm):
     start_day = forms.DateField(
         label='タスク開始日',
         widget=forms.DateInput(attrs={'type': 'date'}), 
-        required=True)
+        required=False)
     dead_line = forms.DateField(
         label='タスク期限',
         widget=forms.DateInput(attrs={'type': 'date'}), 

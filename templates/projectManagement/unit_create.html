@@ -1,4 +1,4 @@
-{% extends 'app_base.html' %}
+{% extends 'unit_base.html' %}
 {% block title %}ユニット作成{% endblock %}
 {% block styles %}
 {% load static %}
@@ -8,7 +8,7 @@
 {% block content %}
 <div class="unit-create">
   <h2>ユニット作成</h2>
-  <form method="post" id="unitForm">
+  <form method="post" id="unitForm" data-project-id="{{ project_id }}">
     {% csrf_token %}
     {{ form.as_p }}
     <div class="task-table">
@@ -20,6 +20,7 @@
             <th>タスク名</th>
             <th>タスク説明</th>
             <th>期限</th>
+            <th>アサイン</th>
           </tr>
         </thead>
 
