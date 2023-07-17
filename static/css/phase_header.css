@@ -20,7 +20,10 @@
 
 .container-fluid a{
     text-decoration: none;
-    color: inherit;
+}
+
+.project-name{
+    color:#6c757d ;
 }
   
 .btn-outline-secondary {
@@ -30,6 +33,7 @@
     border-radius: 50%;
     border-color: #fff;
   }
+
 .navbar-expand-lg .navbar-collapse {
     display: block!important;
 }

@@ -4,7 +4,6 @@ var canvases = document.getElementsByClassName("liquid-canvas")
 //parameters
 var level =[],
     color = "skyblue",
-    c;
     amplitude = 15,  // 揺れの振幅
     frequency = 0.02;  // 揺れの周波数
 
@@ -22,7 +21,7 @@ function init(){
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight;
     let ctx = canvas.getContext("2d");
-    window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height, levels[Array.from(canvases).indexOf(canvas)]));
+    window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height, levels[Array.from(canvases).indexOf(canvas)], canvas.state)); // Added canvas.state here
   }
 }
 
@@ -52,16 +51,16 @@ function draw(ctx, w, h, level, state) {  // level parameter added to draw funct
     }
   }
   update(state);
-  window.requestAnimationFrame(() => draw(ctx, w, h, level));  // level parameter added to the call
+  window.requestAnimationFrame(() => draw(ctx, w, h, level, state));  // Add state here
 }
 
   
 
 //function that updates variables
-function update(w, h) {
-    c++;
-    if (100 * Math.PI <= c)
-      c = 0;
+function update(state) {
+    state.c++;
+    if (100 * Math.PI <= state.c)
+      state.c = 0;
     // Smoothly update the amplitude
     state.amplitude += (Math.random() - 0.5) * 2;
     // Ensure amplitude stays within a reasonable range

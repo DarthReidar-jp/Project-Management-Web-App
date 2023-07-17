@@ -1,7 +1,7 @@
 import json
 import string
 import random
-from datetime import date
+from datetime import date,datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.http import JsonResponse
@@ -109,30 +109,42 @@ def project_list(request):
             favorite_project_ids = FavoriteProject.objects.filter(user=request.user).values_list('project', flat=True)
             projects = projects.filter(id__in=favorite_project_ids).order_by('created_at')
 
+
         project_data = []
         for project in projects:
-            # 進捗の計算
-            total_tasks = 0
-            completed_tasks = 0
-            for phase in project.phases.all():
-                for unit in phase.units.all():
-                    tasks = unit.tasks.all()
-                    total_tasks += tasks.count()
-                    completed_tasks += tasks.filter(is_completed_task=True).count()
+                project_phases = project.phases.all()
+                phase_weight = 1.0 / project_phases.count() if project_phases.count() > 0 else 0
+                project_progress = 0.0
 
-            progress = 0
-            if total_tasks > 0:
-                 progress = round(completed_tasks / total_tasks * 100)
+                for phase in project_phases:
+                    phase_progress = 0.0
+                    phase_units = phase.units.all()
+                    unit_weight = 1.0 / phase_units.count() if phase_units.count() > 0 else 0
 
-            project_info = {
-                'project': project,
-                'progress': progress,
-                'deadline': project.dead_line,
-                'responsible': project.responsible,
-                'project_kind': project.project_kind,
-                'is_favorite': project in favorite_projects,
-            }
-            project_data.append(project_info)
+                    for unit in phase_units:
+                        unit_progress = 0.0
+                        tasks = unit.tasks.all()
+                        task_weight = 1.0 / tasks.count() if tasks.count() > 0 else 0
+
+                        for task in tasks:
+                            task_progress = 1 if task.is_completed_task else 0
+                            unit_progress += task_progress * task_weight
+
+                        phase_progress += unit_progress * unit_weight
+
+                    project_progress += phase_progress * phase_weight
+
+                progress = round(project_progress * 100)
+
+                project_info = {
+                        'project': project,
+                        'progress': progress,
+                        'deadline': project.dead_line,
+                        'responsible': project.responsible,
+                        'project_kind': project.project_kind,
+                        'is_favorite': project in favorite_projects,
+                    }
+                project_data.append(project_info)
 
         context = {
             'projects': project_data,
@@ -236,9 +248,17 @@ def phase_list(request, project_id):
     phases = project.phases.order_by('start_day')
     is_manager = ProjectMember.objects.filter(user=request.user, project=project, role='manager').exists()
 
+    current_time = datetime.now().date() 
+
+    current_phases = []
+    for phase in phases:
+        if phase.start_day <= current_time <= phase.dead_line:
+            current_phases.append(phase)
+
     context = {
         'project': project,
         'phases': phases,
+        'current_phases': current_phases,
         'is_manager': is_manager,
     }
     return render(request, 'phase_list.html', context)
