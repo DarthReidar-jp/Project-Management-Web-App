@@ -17,7 +17,10 @@ class ProjectCreateForm(forms.ModelForm):
         initial=2,
         required=True,
         widget=forms.Select(attrs={'id': 'one',}))
-    # start_day will be added
+    start_day = forms.DateField(
+        label='Project Start Day',
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=True)
     dead_line = forms.DateField(
         label='Project Deadline',
         widget=forms.DateInput(attrs={'type': 'date'}),
@@ -25,7 +28,7 @@ class ProjectCreateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['project_name', 'project_description', 'project_kind', 'dead_line',]
+        fields = ['project_name', 'project_description', 'project_kind', 'start_day', 'dead_line',]
 
     def clean_project_deadline(self):
         dead_line = self.cleaned_data.get('dead_line')

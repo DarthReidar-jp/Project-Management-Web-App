@@ -116,7 +116,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATIC_ROOT = '/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = [BASE_DIR / "media_local"]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -150,4 +150,6 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 #Emailのターミナルでの確認
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
 

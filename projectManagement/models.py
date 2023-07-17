@@ -1,4 +1,6 @@
-import uuid
+import uuid 
+import string
+import random
 from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
@@ -6,8 +8,47 @@ from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
+def AppUser():
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    account_name = models.CharField(
+        verbose_name='アカウント名',
+        max_length=50,
+        unique=True,
+        null=True,
+    )
+    last_name = models.CharField(
+        verbose_name='姓',
+        max_length=30,
+        default='law'
+    )
+    first_name = models.CharField(
+        verbose_name='名',
+        max_length=30,
+        default='Out'
+    )
+    profile_image = models.ImageField(
+        verbose_name='アカウント画像',
+        upload_to='profile_images',
+        default='/static/default_images/default_plofile.png'
+    )
+    country = models.CharField(
+        verbose_name='在住国',
+        max_length=50,
+        default='Outlaw'
+    )
+
+#プロジェクトモデルのjoined_idの計算関数
+def generate_joined_id():
+    characters = string.ascii_letters
+    joined_id = ''.join(random.choice(characters) for _ in range(10))
+    return joined_id
+
 class Project(models.Model):
     PROJECT_KIND = [
+        ('Web', 'Web'),
+        ('Software', 'Software'),
+        ('Hardware', 'Hardware'),
+        ('test', 'test'),
         ('Web', 'Web'),
         ('Software', 'Software'),
         ('Hardware', 'Hardware'),
@@ -20,7 +61,7 @@ class Project(models.Model):
         choices=PROJECT_KIND,
     )
     responsible = models.ForeignKey(User, on_delete=models.CASCADE)
-    joined_id = models.CharField(max_length=255,unique=True)
+    joined_id = models.CharField(max_length=255, unique=True, default=generate_joined_id)
     invitation_code = models.UUIDField(default=uuid.uuid4, unique=True)
     start_day = models.DateField(null=True)
     dead_line = models.DateField(null=True)
@@ -42,6 +83,7 @@ class Project(models.Model):
             self.is_completed_project = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
 
+
 class ProjectMember(models.Model):
     PROJECT_ROLE_CHOICES = [
         ('manager', 'Manager'),
@@ -49,6 +91,7 @@ class ProjectMember(models.Model):
         ('stakeholder', 'Stakeholder'),
     ]
     STATUS_CHOICES = [
+        ('not_joined', '未参加'),
         ('applying', '申請中'),
         ('joined', '参加済み'),
     ]
@@ -71,51 +114,6 @@ class ProjectMember(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.project}"
-
-class FavoriteProject(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'project')
-
-    def __str__(self):
-        return f"{self.user} - {self.project}"
-
-
-
-class Notification(models.Model):
-    NOTIFICATION_TYPE_CHOICES = [
-        ('deadline', 'Deadline Reminder'),  # 締め切りリマインダー
-        ('invitation', 'Project Invitation'),  # プロジェクトへの招待
-        ('join', 'Project joined')
-        # 他の通知の種類をここに追加
-    ]
-    STATUS_CHOICES = [
-        ('unread', 'Unread'),
-        ('read', 'Read'),
-    ]
-    title = models.CharField(max_length=255)
-    detail = models.TextField()
-    notification_type = models.CharField(
-        max_length=20,
-        choices=NOTIFICATION_TYPE_CHOICES,
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='unread', 
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True) 
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.title} - {self.user}"
 
 class Phase(models.Model):
     phase_name = models.CharField(max_length=255)
@@ -222,3 +220,46 @@ class TaskAssignment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.task.update_is_completed_task()
+
+class FavoriteProject(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'project')
+
+    def __str__(self):
+        return f"{self.user} - {self.project}"
+
+class Notification(models.Model):
+    NOTIFICATION_TYPE_CHOICES = [
+        ('deadline', 'Deadline Reminder'),  # 締め切りリマインダー
+        ('invitation', 'Project Invitation'),  # プロジェクトへの招待
+        ('join', 'Project joined')
+        # 他の通知の種類をここに追加
+    ]
+    STATUS_CHOICES = [
+        ('unread', 'Unread'),
+        ('read', 'Read'),
+    ]
+    title = models.CharField(max_length=255)
+    detail = models.TextField()
+    notification_type = models.CharField(
+        max_length=20,
+        choices=NOTIFICATION_TYPE_CHOICES,
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='unread', 
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.user}"

@@ -6,6 +6,8 @@
 {% block content %}
 {% load static %}
 <script src="{% static '/js/Blob-by-Jeffrey.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
 <div class="container">
   <h1 class="text-center mt-3">Sign up for ProjectManagement</h1>
 
@@ -14,7 +16,7 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-body">
-            <form class="mt-4" method="POST" action="{% url 'account_signup' %}">
+            <form class="mt-4" method="POST" action="{% url 'account_signup' %}" enctype="multipart/form-data">
               {% csrf_token %}
               <div class="mb-3">
                 <label for="id_email" class="form-label">{% trans "Email address" %}</label>
@@ -54,5 +56,6 @@
       </div>
     </div>
   </div>
+
 
 {% endblock %}
