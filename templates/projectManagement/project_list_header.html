@@ -29,7 +29,7 @@
                                 <i class="fa-regular fa-user"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">accounts setting</a></li>
+                                <li><a class="dropdown-item" href="{% url 'account_setting' %}">accounts setting</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">{{ request.user.email }} </a></li>
                                 <li><a class="dropdown-item" href="/accounts/logout/">Log out</a></li>

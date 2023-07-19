@@ -2,6 +2,13 @@ from django import forms
 from django.forms import formset_factory
 from django.core.exceptions import ValidationError
 from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment
+from accounts.models import User
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'country', 'profile_image']
+
 
 class ProjectCreateForm(forms.ModelForm):
     project_name = forms.CharField(label='Project Name', required=True)

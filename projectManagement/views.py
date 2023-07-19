@@ -15,7 +15,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate, login, get_user_model
 from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification,FavoriteProject
-from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm
+from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm,UserProfileForm
 
 #開発用初期画面（削除予定）
 def welcome_view(request):
@@ -469,6 +469,18 @@ def task_edit(request):
 
 
 #tool group
+@login_required
+def account_setting(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('account_setting')
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, 'account_setting.html', {'form': form})
+
 #通知リスト機能(未完成)
 def notification_list(request):
     notifications = Notification.objects.filter(user=request.user)
