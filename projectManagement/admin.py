@@ -22,9 +22,9 @@ class ProjectMemberInline(admin.TabularInline):
     model = ProjectMember
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['project_name', 'responsible', 'priority', 'is_completed_project']
-    list_filter = ['is_completed_project']
-    inlines = [ProjectMemberInline, PhaseInline]
+    list_display = ['project_name', 'responsible', 'is_completed_project','joined_id']
+    list_filter = ['is_completed_project','responsible']
+    inlines = [ProjectMemberInline]
     list_per_page = 10
     list_select_related = ['responsible']
 
@@ -56,7 +56,7 @@ class TaskAssignmentAdmin(admin.ModelAdmin):
     list_select_related = ['task__unit__phase__project']
 
 class ProjectMemberAdmin(admin.ModelAdmin):
-    list_display = ['user', 'project', 'role']
+    list_display = ['user', 'project', 'role','status']
     list_filter = ['project']
     list_per_page = 10
     list_select_related = ['user', 'project']

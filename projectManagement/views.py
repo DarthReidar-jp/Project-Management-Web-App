@@ -1,7 +1,7 @@
 import json
 import string
 import random
-from datetime import date
+from datetime import date,datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.http import JsonResponse
@@ -21,65 +21,7 @@ from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateFo
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#通知リスト機能(未完成)
-def notification_list(request):
-    notifications = Notification.objects.filter(user=request.user)
-    return render(request, 'notification_list.html', {'notifications': notifications})
-
-#通知詳細表示機能（未完成）
-def notification_detail(request, notification_id):
-    notification = get_object_or_404(Notification, id=notification_id)
-    return render(request, 'notification_detail.html', {'notification': notification})
-
-#招待機能（未完成）
-def invite_user(request, project_id):
-    project = Project.objects.get(id=project_id)
-    if request.method == 'POST':
-        form = InviteUserForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            # send email with invitation link
-            send_mail(
-                'プロジェクトへのご招待',
-                '私たちのプロジェクトに参加してください!Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
-                settings.EMAIL_HOST_USER,
-                [email],
-                fail_silently=False,
-            )
-            return render(request, 'phase_list.html')
-    else:
-        form = InviteUserForm()
-    return render(request, 'invite_user.html', {'form': form})
-
-#招待ユーザーのログイン(未完成)
-def invitation_login(request, invitation_code):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
-        else:
-            # 認証失敗時の処理
-            pass
-    return render(request, 'invitation_login.html')
-
-#招待ユーザーの登録(未完成)
-def invitation_signup(request, invitation_code):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        User = get_user_model()
-        user = User.objects.create_user(email, password)
-        login(request, user)
-        return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
-    return render(request, 'invitation_signup.html')
-
-#招待ユーザーのプロジェクト参加（未完成）
-def project_invitation(request):
-    return render(request,'invitation_signup.html')
-
+#project group
 #プロジェクト一覧表示機能
 @login_required
 def project_list(request):
@@ -109,30 +51,42 @@ def project_list(request):
             favorite_project_ids = FavoriteProject.objects.filter(user=request.user).values_list('project', flat=True)
             projects = projects.filter(id__in=favorite_project_ids).order_by('created_at')
 
+
         project_data = []
         for project in projects:
-            # 進捗の計算
-            total_tasks = 0
-            completed_tasks = 0
-            for phase in project.phases.all():
-                for unit in phase.units.all():
-                    tasks = unit.tasks.all()
-                    total_tasks += tasks.count()
-                    completed_tasks += tasks.filter(is_completed_task=True).count()
+                project_phases = project.phases.all()
+                phase_weight = 1.0 / project_phases.count() if project_phases.count() > 0 else 0
+                project_progress = 0.0
 
-            progress = 0
-            if total_tasks > 0:
-                 progress = round(completed_tasks / total_tasks * 100)
+                for phase in project_phases:
+                    phase_progress = 0.0
+                    phase_units = phase.units.all()
+                    unit_weight = 1.0 / phase_units.count() if phase_units.count() > 0 else 0
 
-            project_info = {
-                'project': project,
-                'progress': progress,
-                'deadline': project.dead_line,
-                'responsible': project.responsible,
-                'project_kind': project.project_kind,
-                'is_favorite': project in favorite_projects,
-            }
-            project_data.append(project_info)
+                    for unit in phase_units:
+                        unit_progress = 0.0
+                        tasks = unit.tasks.all()
+                        task_weight = 1.0 / tasks.count() if tasks.count() > 0 else 0
+
+                        for task in tasks:
+                            task_progress = 1 if task.is_completed_task else 0
+                            unit_progress += task_progress * task_weight
+
+                        phase_progress += unit_progress * unit_weight
+
+                    project_progress += phase_progress * phase_weight
+
+                progress = round(project_progress * 100)
+
+                project_info = {
+                        'project': project,
+                        'progress': progress,
+                        'deadline': project.dead_line,
+                        'responsible': project.responsible,
+                        'project_kind': project.project_kind,
+                        'is_favorite': project in favorite_projects,
+                    }
+                project_data.append(project_info)
 
         context = {
             'projects': project_data,
@@ -193,9 +147,6 @@ def project_create(request):
         if form.is_valid():
             project = form.save(commit=False)
             project.responsible = request.user
-            #ランダムな招待IDを生成
-            joined_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            project.joined_id= joined_id
             project.save()
 
             #プロジェクト作成者をメンバーとして追加
@@ -230,15 +181,74 @@ def project_edit(request, project_id):
     }
     return render(request, 'project_edit.html', context)
 
+#招待機能（未完成）
+def invite_user(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if request.method == 'POST':
+        form = InviteUserForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            # send email with invitation link
+            send_mail(
+                'プロジェクトへのご招待',
+                '私たちのプロジェクトに参加してください!Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
+                settings.EMAIL_HOST_USER,
+                [email],
+                fail_silently=False,
+            )
+            return render(request, 'phase_list.html')
+    else:
+        form = InviteUserForm()
+    return render(request, 'invite_user.html', {'form': form})
+
+#招待ユーザーのログイン(未完成)
+def invitation_login(request, invitation_code):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        user = authenticate(request, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
+        else:
+            # 認証失敗時の処理
+            pass
+    return render(request, 'invitation_login.html')
+
+#招待ユーザーの登録(未完成)
+def invitation_signup(request, invitation_code):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        User = get_user_model()
+        user = User.objects.create_user(email, password)
+        login(request, user)
+        return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
+    return render(request, 'invitation_signup.html')
+
+#招待ユーザーのプロジェクト参加（未完成）
+def project_invitation(request):
+    return render(request,'invitation_signup.html')
+
+
+#phase group
 #フェーズ一覧表示
 def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('start_day')
     is_manager = ProjectMember.objects.filter(user=request.user, project=project, role='manager').exists()
 
+    current_time = datetime.now().date() 
+
+    current_phases = []
+    for phase in phases:
+        if phase.start_day <= current_time <= phase.dead_line:
+            current_phases.append(phase)
+
     context = {
         'project': project,
         'phases': phases,
+        'current_phases': current_phases,
         'is_manager': is_manager,
     }
     return render(request, 'phase_list.html', context)
@@ -289,6 +299,8 @@ def phase_delete(request, project_id, phase_id):
         return redirect('phase_list', project_id=project_id)
     return redirect('phase_edit', project_id=project_id, phase_id=phase_id)
 
+
+#unit group
 #ユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
@@ -303,7 +315,6 @@ def unit_list(request, project_id, phase_id):
             'is_completed': assignment.is_completed_member if assignment else False
         })
     return render(request, 'unit_list.html', {'user_tasks': user_tasks, 'project': project, 'phase': phase})
-
 
 #タスクの完了・未完了を切り替える新しいビュー
 def task_toggle(request, project_id, phase_id, unit_id, task_id):
@@ -398,6 +409,7 @@ def unit_delete(request, project_id, phase_id, unit_id):
         return redirect('unit_list', project_id=project_id , phase_id=phase_id)
     return redirect('unit_edit', project_id=project_id, phase_id=phase_id, unit_id=unit_id)
 
+#task group
 #タスク詳細表示機能
 def task_detail(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -454,3 +466,24 @@ def task_create(request, project_id, phase_id, unit_id):
 #タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
+
+
+#tool group
+#通知リスト機能(未完成)
+def notification_list(request):
+    notifications = Notification.objects.filter(user=request.user)
+    return render(request, 'notification_list.html', {'notifications': notifications})
+
+#通知詳細表示機能（未完成）
+def notification_detail(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+    return render(request, 'notification_detail.html', {'notification': notification})
+
+
+
+
+
+
+
+
+

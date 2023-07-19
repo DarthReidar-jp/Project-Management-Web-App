@@ -1,3 +1,11 @@
+.container {
+  margin-bottom: 5rem;
+}
+
+.main {
+  padding: 5rem;
+}
+
 /*クリエイトフェーズ*/
 .create-phase-button {
   display: flex;
@@ -28,43 +36,73 @@
   margin-bottom: 5px;
 }
 
-/*フェーズリスト*/
-.phase-list {
-  margin-bottom: 40px;
+
+.phase-tile {
+  margin-top: 1rem;
+  padding: 1rem;
 }
 
-.phase-list h3 {
-  font-size: 30px;
-  margin-bottom: 20px;
+.phase-name {
+  font-size: 1.6rem;
 }
 
+.unit-list {
+  margin-top: 20px;
+}
 
 .phase-tile {
   display: flex;
-  align-items: left;
   justify-content: space-between;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 40px;
-  text-decoration: none;
-  color: #212529;
+  font-size: 24px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
 }
 
-.card a {
-  text-decoration: none;
-  color: inherit;
+.phase-info-list{
+  display: flex;
 }
 
-.phase-info {
-  flex-grow: 1;
+.phase-info-card{
+  flex-basis: calc(30% - 1rem);
+  margin: 0.5rem;
 }
 
-.phase-info h4 {
-  font-size: 18px;
-  margin-bottom: 5px;
+.unit-list {
+  display: flex;
+  flex-wrap: wrap;
 }
 
+.unit-card .card {
+  width: calc(50% - 30px);
+  height: 80%;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 30px;
+  margin-bottom: 60px;
+  background-color: #ededed;;
+  position: relative;
+  cursor: pointer;
+  border: none;
+}
 
+.card-body h5 {
+  font-size: 1.3rem;
+  margin: 0.5rem;
+}
 
+.unit-card{
+  position: relative;
+  border-top: none;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-left: 2px solid;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  overflow: hidden;
+}
+
+.unit-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
 

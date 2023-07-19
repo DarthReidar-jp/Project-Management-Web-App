@@ -116,7 +116,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 STATIC_ROOT = '/static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = [BASE_DIR / "media_local"]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -130,11 +130,15 @@ AUTHENTICATION_BACKENDS = [
   'allauth.account.auth_backends.AuthenticationBackend',
 ] 
 
+ACCOUNT_FORMS = {
+'signup': 'accounts.forms.SignupForm',
+}
+
 SITE_ID = 1
 
 #ユーザーネームは使わない
-ACCOUNT_USERNAME_REQUIRED = False 
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 
 #認証にはメールアドレスを使用する
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -150,4 +154,6 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 #Emailのターミナルでの確認
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
 

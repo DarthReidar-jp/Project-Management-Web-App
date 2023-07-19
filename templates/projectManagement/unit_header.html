@@ -9,7 +9,10 @@
             <a href="{% url 'project_list' %}">
                 <h3 class="project-name text-start">{{ phase.phase_name }}</h3>
             </a>
+            {% if is_manager %}
             <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}" class="btn btn-outline-secondary edit-btn"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% endif %}
+            
         </div>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

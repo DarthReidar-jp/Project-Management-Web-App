@@ -1,5 +1,5 @@
 {% extends 'phase_base.html' %}
-{% block title %}フェーズ作成{% endblock %}
+{% block title %}Create Phase{% endblock %}
 {% block styles %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/phase_create.css' %}">
@@ -7,11 +7,11 @@
 
 {% block content %}
 <div class="phase-create">
-  <h2>フェーズ作成</h2>
+  <h2>Create Phase</h2>
   <form method="post" action="{% url 'phase_create' project.id %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn-create">作成する</button>
+    <button type="submit" class="btn-create">create</button>
   </form>
 </div>
 {% endblock %}
