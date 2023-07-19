@@ -60,6 +60,14 @@ class Project(models.Model):
         else:
             self.is_completed_project = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
+    
+    def calculate_progress(self):
+        project_phases = self.phases.all()
+        phase_weight = 1.0 / project_phases.count() if project_phases.count() > 0 else 0
+        project_progress = 0.0
+        for phase in project_phases:
+            project_progress += phase.calculate_progress() * phase_weight
+        return project_progress
 
 
 class ProjectMember(models.Model):
@@ -122,6 +130,14 @@ class Phase(models.Model):
         else:
             self.is_completed_phase = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
+    
+    def calculate_progress(self):
+        phase_units = self.units.all()
+        unit_weight = 1.0 / phase_units.count() if phase_units.count() > 0 else 0
+        phase_progress = 0.0
+        for unit in phase_units:
+            phase_progress += unit.calculate_progress() * unit_weight
+        return phase_progress
 
 
 class Unit(models.Model):
@@ -151,6 +167,15 @@ class Unit(models.Model):
         else:
             self.is_completed_unit = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
+
+    def calculate_progress(self):
+        tasks = self.tasks.all()
+        task_weight = 1.0 / tasks.count() if tasks.count() > 0 else 0
+        unit_progress = 0.0
+        for task in tasks:
+            task_progress = 1 if task.is_completed_task else 0
+            unit_progress += task_progress * task_weight
+        return unit_progress
 
 class Task(models.Model):
     task_name = models.CharField(max_length=255)

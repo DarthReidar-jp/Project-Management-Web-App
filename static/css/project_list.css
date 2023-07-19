@@ -157,6 +157,20 @@ body:not(.focus-within) .input-group .form-control {
   height: 100%;
   
 }
+.profile-image-icon {
+  width: 30px;  /* アイコンの幅を調整 */
+  height: 30px;  /* アイコンの高さを調整 */
+  border-radius: 50%;  /* 画像を円形にする */
+  object-fit: cover;  /* 画像のアスペクト比を保つ */
+}
+
+.profile-image-icon-lg {
+  width: 50px;  /* アイコンの幅を調整 */
+  height: 50px;  /* アイコンの高さを調整 */
+  border-radius: 50%;  /* 画像を円形にする */
+  object-fit: cover;  /* 画像のアスペクト比を保つ */
+}
+
 
 /*クリエイトタイル*/
 .create-project-tile {

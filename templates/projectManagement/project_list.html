@@ -16,7 +16,9 @@
         <table class="table">
           <tbody>
             <tr>
-              <td><i class="card-icon fa-regular fa-user "></i></td>
+              <td>
+                <img class="profile-image-icon" src="{{ project.responsible.profile_image.url }}" alt="{{ project.responsible.username }}'s profile picture">
+              </td>
               <td class="card-text fw-bold">{{ project.responsible }}</td>
             </tr>
             <tr>
