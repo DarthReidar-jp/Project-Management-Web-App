@@ -10,60 +10,64 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
 <div class="container">
   <h1 class="text-center mt-3">Sign up for ProjectManagement</h1>
-
-  <!-- signup.html -->
-
   <div class="container py-3 mt-1">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-body">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="form-group">
-                {{ form.username.label_tag }} {{ form.username }}
-              </div>
-              <div class="form-group">
-                {{ form.email.label_tag }} {{ form.email }}
-              </div>
-              <div class="form-group">
-                {{ form.first_name.label_tag }} {{ form.first_name }}
-              </div>
-              <div class="form-group">
-                {{ form.last_name.label_tag }} {{ form.last_name }}
-              </div>
-              <div class="form-group">
-                {{ form.country.label_tag }} {{ form.country }}
-              </div>
-              <div class="form-group">
-                {{ form.password1.label_tag }} {{ form.password1 }}
-              </div>
-              <div class="form-group">
-                {{ form.password2.label_tag }} {{ form.password2 }}
-              </div>
-              <button type="submit">Sign up</button>
-            </form>
-          </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form class="mt-4" method="POST" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">{% trans "Username" %}</label>
+                            <input type="text" class="form-control" id="id_username" name="{{ form.username.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">{% trans "Email address" %}</label>
+                            <input type="email" class="form-control" id="id_email" name="{{ form.email.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">{% trans "First Name" %}</label>
+                            <input type="text" class="form-control" id="id_first_name" name="{{ form.first_name.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">{% trans "Last Name" %}</label>
+                            <input type="text" class="form-control" id="id_last_name" name="{{ form.last_name.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_country" class="form-label">{% trans "Country" %}</label>
+                            <input type="text" class="form-control" id="id_country" name="{{ form.country.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">{% trans "Password" %}</label>
+                            <input type="password" class="form-control" id="id_password1" name="{{ form.password1.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">{% trans "Confirm Password" %}</label>
+                            <input type="password" class="form-control" id="id_password2" name="{{ form.password2.name }}">
+                        </div>
+                        <button class="btn btn-success w-100 my-3" type="submit">{% trans "Sign Up" %}</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-
-  <div class="container py-3 mt-1 ">
+<div class="container py-3 mt-1">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-body">
-            <p class="fs-4 text-center mt-3">
-              Already have an account?
-              <a class="" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
-            </p>
-          </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <p class="fs-4 text-center mt-3">
+                        Already have an account?
+                        <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
 
 
   {% endblock %}

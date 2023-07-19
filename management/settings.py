@@ -130,6 +130,10 @@ AUTHENTICATION_BACKENDS = [
   'allauth.account.auth_backends.AuthenticationBackend',
 ] 
 
+ACCOUNT_FORMS = {
+'signup': 'accounts.forms.SignupForm',
+}
+
 SITE_ID = 1
 
 #ユーザーネームは使わない
