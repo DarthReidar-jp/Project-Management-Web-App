@@ -83,7 +83,18 @@
     </div>
     
     {% else %}
+
     <p>No phases available.</p>
+    {% if is_manager %}
+      <div class="create-phase-tile card  text-center">
+        <a href="{% url 'phase_create' project.id %}">
+          <div class="card-body">
+            <h4> Create New Phase</h4>
+            <i class="fas fa-plus-circle create-icon"></i>
+          </div>
+        </a>
+      </div>
+      {% endif %}
     {% endif %}
   </div>
 </div>

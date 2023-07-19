@@ -8,35 +8,6 @@ from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
-def AppUser():
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    account_name = models.CharField(
-        verbose_name='アカウント名',
-        max_length=50,
-        unique=True,
-        null=True,
-    )
-    last_name = models.CharField(
-        verbose_name='姓',
-        max_length=30,
-        default='law'
-    )
-    first_name = models.CharField(
-        verbose_name='名',
-        max_length=30,
-        default='Out'
-    )
-    profile_image = models.ImageField(
-        verbose_name='アカウント画像',
-        upload_to='profile_images',
-        default='/static/default_images/default_plofile.png'
-    )
-    country = models.CharField(
-        verbose_name='在住国',
-        max_length=50,
-        default='Outlaw'
-    )
-
 #プロジェクトモデルのjoined_idの計算関数
 def generate_joined_id():
     characters = string.ascii_letters
@@ -47,12 +18,19 @@ class Project(models.Model):
     PROJECT_KIND = [
         ('Web', 'Web'),
         ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-        ('test', 'test'),
-        ('Web', 'Web'),
-        ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-        ('test', 'test'),
+        ('Mobile App', 'Mobile App'),
+        ('Data Science', 'Data Science'),
+        ('Game Development', 'Game Development'),
+        ('Blockchain', 'Blockchain'),
+        ('IoT', 'Internet of Things'),
+        ('AR/VR', 'Augmented Reality/Virtual Reality'),
+        ('E-commerce', 'E-commerce'),
+        ('Healthcare', 'Healthcare'),
+        ('Education', 'Education'),
+        ('Fashion', 'Fashion'),
+        ('Food and Beverage', 'Food and Beverage'),
+        ('Music', 'Music'),
+        ('Art and Design', 'Art and Design'),
     ]
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()

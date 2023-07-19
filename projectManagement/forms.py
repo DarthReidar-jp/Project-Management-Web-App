@@ -4,16 +4,11 @@ from django.core.exceptions import ValidationError
 from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment
 
 class ProjectCreateForm(forms.ModelForm):
-    KIND_CHOICES = [
-        ('Web', 'Web'),
-        ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-    ]
     project_name = forms.CharField(label='Project Name', required=True)
     project_description = forms.CharField(label='Project Description', widget=forms.Textarea, required=False)
     project_kind = forms.ChoiceField(
         label='Kind of Project',
-        choices=KIND_CHOICES,
+        choices=Project.PROJECT_KIND,
         initial=2,
         required=True,
         widget=forms.Select(attrs={'id': 'one',}))
