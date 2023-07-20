@@ -3,6 +3,8 @@ from django.forms import formset_factory
 from django.core.exceptions import ValidationError
 from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment
 from accounts.models import User
+from colorfield.fields import ColorField
+from colorfield.widgets import ColorWidget
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -30,7 +32,7 @@ class ProjectCreateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['project_name', 'project_description', 'project_kind', 'start_day', 'dead_line',]
+        fields = ['project_name', 'project_description', 'project_kind', 'start_day', 'dead_line']
 
     def clean_project_deadline(self):
         dead_line = self.cleaned_data.get('dead_line')

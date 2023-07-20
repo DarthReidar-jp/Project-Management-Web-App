@@ -70,6 +70,7 @@ def project_list(request):
                 'responsible': project.responsible,
                 'project_kind': project.project_kind,
                 'is_favorite': project in favorite_projects,
+                'project_color':project.project_color,
             }
             project_data.append(project_info)
 
@@ -121,7 +122,7 @@ def project_join(request, project_id):
     try:
         project = Project.objects.get(id=project_id)
         ProjectMember.objects.create(
-            user=request.user, project=project, status='joined')
+            user=request.user, project=project, role="worker" ,status='joined')
         return redirect('phase_list', project_id=project_id)
     except Project.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})

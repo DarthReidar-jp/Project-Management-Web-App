@@ -34,7 +34,7 @@
           <p class="progress-text fw-bold"> {{ project.progress }}%</p>
         </div>
       </div>
-      <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas" data-progress="{{ project.progress }}"></canvas>
+      <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas" data-progress="{{ project.progress }}" data-color="{{ project.project_color }}"></canvas>
     </div>
     </a>
     <div class="favorite-icon">

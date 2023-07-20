@@ -32,6 +32,25 @@ class Project(models.Model):
         ('Music', 'Music'),
         ('Art and Design', 'Art and Design'),
     ]
+
+    KIND_TO_COLOR = {
+        'Web': '#0000FF',  # ブルー
+        'Software': '#008000',  # グリーン
+        'Mobile App': '#FFA500',  # オレンジ
+        'Data Science': '#800080',  # パープル
+        'Game Development': '#FF0000',  # レッド
+        'Blockchain': '#FFFF00',  # イエロー
+        'IoT': '#ADD8E6',  # ライトブルー
+        'AR/VR': '#FFC0CB',  # ピンク
+        'E-commerce': '#FFD700',  # ゴールド
+        'Healthcare': '#90EE90',  # ライトグリーン
+        'Education': '#008080',  # ティール
+        'Fashion': '#FF007F',  # ローズ
+        'Food and Beverage': '#FFF700',  # レモンイエロー
+        'Music': '#FF00FF',  # マゼンタ
+        'Art and Design': '#00FFFF'  # シアン
+    }
+
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()
     project_kind = models.CharField(
@@ -45,6 +64,7 @@ class Project(models.Model):
     dead_line = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    project_color = models.CharField(max_length=7, default='#342186',null=True)
     is_completed_project = models.BooleanField(default=False)
 
     class Meta:
@@ -68,6 +88,21 @@ class Project(models.Model):
         for phase in project_phases:
             project_progress += phase.calculate_progress() * phase_weight
         return project_progress
+
+    def assign_color_based_on_kind(self):
+        if self.project_kind in self.KIND_TO_COLOR:
+            self.project_color = self.KIND_TO_COLOR[self.project_kind]
+        else:
+            self.project_color = '#342186'  # デフォルトの色
+
+    def set_project_color(self, color):
+        self.project_color = color
+        self.save()
+    
+    def save(self, *args, **kwargs):
+        if self.project_color == '#342186':  # default color
+            self.assign_color_based_on_kind()
+        super().save(*args, **kwargs)
 
 
 class ProjectMember(models.Model):

@@ -1,19 +1,19 @@
 <footer class="project-list-footer">
     <div class="footer-content mx-3">
         <div class="project-actions">
-            <div class="sort-options d-flex justify-content-center">
-              <label for="sort-select"><i class="fa-solid fa-filter"></i></label>
-              <form method="GET" action="{% url 'project_list' %}">
-                <div class="input-group">
-                  <select id="sort-select" name="sort" onchange="this.form.submit()" class="form-select">
-                    <option selected disabled>sort</option>
-                    <option value="favorite" {% if sort_option == 'favorite' %}selected{% endif %}>favorite</option>
-                    <option value="created" {% if sort_option == 'created' %}selected{% endif %}>created</option>
-                    <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>updated</option>
-                    <option value="name" {% if sort_option == 'name' %}selected{% endif %}>name</option>
-                  </select>
+            <div class="sort-options row justify-content-center">
+                <div class="col-4">
+                    <label for="sort-select"><i class="fa-solid fa-filter"></i></label>
+                    <form method="GET" action="{% url 'project_list' %}">
+                      <select id="sort-select" name="sort" onchange="this.form.submit()" class="form-select">
+                        <option selected disabled>sort</option>
+                        <option value="favorite" {% if sort_option == 'favorite' %}selected{% endif %}>favorite</option>
+                        <option value="created" {% if sort_option == 'created' %}selected{% endif %}>created</option>
+                        <option value="updated" {% if sort_option == 'updated' %}selected{% endif %}>updated</option>
+                        <option value="name" {% if sort_option == 'name' %}selected{% endif %}>name</option>
+                      </select>
+                    </form>
                 </div>
-              </form>
             </div>
           </div>
     </div>

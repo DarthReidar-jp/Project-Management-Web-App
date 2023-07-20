@@ -3,7 +3,6 @@ var canvases = document.getElementsByClassName("liquid-canvas")
 
 //parameters
 var level =[],
-    color = "skyblue",
     amplitude = 15,  // 揺れの振幅
     frequency = 0.02;  // 揺れの周波数
 
@@ -13,6 +12,7 @@ function init(){
   for(let canvas of canvases) {
       canvas.state = {
         c: 0,
+        color: canvas.dataset.color,
         amplitude: Math.random() * 30,  // 揺れの振幅（ランダムに設定）
         frequency: 0.01 + Math.random() * 0.04  // 揺れの周波数（ランダムに設定）
       };
@@ -31,8 +31,8 @@ function draw(ctx, w, h, level, state) {  // level parameter added to draw funct
 
   // draw the liquid only when level is greater than 0
   if (level > 0) {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
+    ctx.fillStyle = state.color;
+    ctx.strokeStyle = state.color;
 
     // draw the liquid
     if (level === 100) {
