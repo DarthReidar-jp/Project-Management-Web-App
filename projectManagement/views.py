@@ -83,8 +83,6 @@ def project_list(request):
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
 # お気に入り登録機能
-
-
 @csrf_exempt
 def toggle_favorite(request, project_id):
     if request.method == 'POST':
@@ -97,8 +95,6 @@ def toggle_favorite(request, project_id):
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
 # プロジェクト削除機能
-
-
 @login_required
 def project_delete(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -108,8 +104,6 @@ def project_delete(request, project_id):
     return redirect('project_list')
 
 # 参加プロジェクト検索機能
-
-
 @login_required
 def project_search(request):
     if request.method == 'GET':
@@ -122,8 +116,6 @@ def project_search(request):
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
 # プロジェクト参加機能
-
-
 @login_required
 def project_join(request, project_id):
     try:
@@ -135,8 +127,6 @@ def project_join(request, project_id):
         return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
 
 # プロジェクト作成機能
-
-
 @login_required
 def project_create(request):
     if request.method == 'POST':
@@ -160,8 +150,6 @@ def project_create(request):
     return render(request, 'project_create.html', {'form': form})
 
 # プロジェクト編集機能
-
-
 def project_edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 

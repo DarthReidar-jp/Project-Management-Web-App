@@ -12,7 +12,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ project.project_name }}</h5>
         <p class="card-text">{{ project.description }}</p>
-        <button type="button" class="join-project-button btn btn-success" data-project-id="{{ project.id }}">プロジェクトに参加</button>
+        <button type="button" id="join-project-button" class="join-project-button btn btn-success" data-project-id="{{ project.id }}">プロジェクトに参加</button>
     </div>
   </div>
   {% elif message %}
@@ -23,5 +23,4 @@
 {% block scripts %}
 {% load static %}
 <script src="{% static 'js/project_search.js' %}"></script>
-
 {% endblock %}
