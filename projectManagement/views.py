@@ -170,8 +170,6 @@ def project_edit(request, project_id):
     return render(request, 'project_edit.html', context)
 
 # 招待機能（未完成）
-
-
 def invite_user(request, project_id):
     project = Project.objects.get(id=project_id)
     if request.method == 'POST':
@@ -193,8 +191,6 @@ def invite_user(request, project_id):
     return render(request, 'invite_user.html', {'form': form})
 
 # 招待ユーザーのログイン(未完成)
-
-
 def invitation_login(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -210,8 +206,6 @@ def invitation_login(request, invitation_code):
     return render(request, 'invitation_login.html')
 
 # 招待ユーザーの登録(未完成)
-
-
 def invitation_signup(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -224,15 +218,11 @@ def invitation_signup(request, invitation_code):
     return render(request, 'invitation_signup.html')
 
 # 招待ユーザーのプロジェクト参加（未完成）
-
-
 def project_invitation(request):
     return render(request, 'invitation_signup.html')
 
 # phase group
 # フェーズ一覧表示
-
-
 def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('start_day')
@@ -245,14 +235,33 @@ def phase_list(request, project_id):
     for phase in phases:
         if phase.start_day <= current_time <= phase.dead_line:
             current_phases.append(phase)
+        
+     # 各フェーズの進捗を計算
+    phases = project.phases.all()
+    phase_progresses = [(phase, phase.calculate_progress()) for phase in phases]
+    
+    # 各ユニットの進捗を計算
+    units = Unit.objects.filter(phase__in=phases)
+    unit_progresses = [(unit, round(unit.calculate_progress() * 100)) for unit in units]  # 値をパーセンテージに変換
 
+    unit_data = []  # ユニット情報を格納するリストを作成します
+    for unit, progress in unit_progresses:
+        unit_info = {
+            'unit': unit,
+            'progress': progress,
+        }
+        unit_data.append(unit_info)
+    
     context = {
         'project': project,
         'phases': phases,
         'current_phases': current_phases,
         'is_manager': is_manager,
+        'phase_progresses': phase_progresses,
+        'unit_data': unit_data,  # ユニットデータをコンテキストに追加
     }
     return render(request, 'phase_list.html', context)
+
 
 # フェーズ作成機能
 

@@ -34,6 +34,16 @@
     border-color: #fff;
   }
 
+  
+
 .navbar-expand-lg .navbar-collapse {
     display: block!important;
 }
+
+.profile-image-icon-lg {
+    width: 50px;  /* アイコンの幅を調整 */
+    height: 50px;  /* アイコンの高さを調整 */
+    border-radius: 50%;  /* 画像を円形にする */
+    object-fit: cover;  /* 画像のアスペクト比を保つ */
+  }
+  

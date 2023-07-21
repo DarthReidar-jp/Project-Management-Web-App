@@ -6,15 +6,16 @@
   padding: 5rem;
 }
 
-/*クリエイトフェーズ*/
-.create-phase-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: #007bff;
+a {
+  color: black;
+  text-decoration:none;
+}
+a:hover{
+  color: rgb(70, 70, 70);
+  text-decoration:none;
 }
 
+/*クリエイトフェーズ*/
 .create-phase-tile {
   display: flex;
   align-items: center;
@@ -36,58 +37,34 @@
   margin-bottom: 5px;
 }
 
-
+/*フェーズタイル*/
 .phase-tile {
-  margin-top: 1rem;
-  padding: 1rem;
+  background-color: rgb(237, 237, 237);
+  border-radius: 10px;
+  border: 5px solid blue;
 }
 
 .phase-name {
-  font-size: 1.6rem;
-}
-
-.unit-list {
-  margin-top: 20px;
-}
-
-.phase-tile {
-  display: flex;
-  justify-content: space-between;
-  font-size: 24px;
-  background-color: #f8f8f8;
-  border-radius: 4px;
+  font-size: 1.8rem;
 }
 
 .phase-info-list{
   display: flex;
 }
 
+.phase-info p {
+  font-size:1rem;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
+
 .phase-info-card{
-  flex-basis: calc(30% - 1rem);
-  margin: 0.5rem;
+  width: 400px;
 }
 
 .unit-list {
   display: flex;
-  flex-wrap: wrap;
-}
-
-.unit-card .card {
-  width: calc(50% - 30px);
-  height: 80%;
-  display: inline-block;
-  vertical-align: top;
-  margin-right: 30px;
-  margin-bottom: 60px;
-  background-color: #ededed;;
-  position: relative;
-  cursor: pointer;
-  border: none;
-}
-
-.card-body h5 {
-  font-size: 1.3rem;
-  margin: 0.5rem;
+  overflow-x: scroll;
 }
 
 .unit-card{
@@ -99,10 +76,30 @@
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 20px;
   overflow: hidden;
+  background-color: rgb(237, 237, 237);
 }
 
-.unit-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-3px);
+.unit-list .card {
+  width: 150px;
+  min-width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+.unit-info h5 {
+  font-size: 0.8rem;
+  margin-top: 2rem;
+  background-color: rgb(255, 255, 255);
+  padding: 0.3rem;
+  z-index: 1;
+}
+
+.liquid-canvas {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
 }
 
