@@ -1,14 +1,7 @@
-.project-list {
-  max-width: 70rem;
-  padding: 20px;
-}
-
 /*header content*/
 .bg-light{
   background-color: #ededed!important;
 }
-
-
 
 .btn-outline-secondary {
   background-color: #fff;
@@ -17,7 +10,6 @@
   border-radius: 50%;
   border-color: #fff;
 }
-
 
 .search-bar .form-size {
   width: auto;
@@ -36,7 +28,6 @@
   border: 0px;
   border-radius: 10px;
   color: #ffffff; /* 追加 */
-
 }
 
 .input-group .btn {
@@ -60,7 +51,6 @@
   z-index: 0;
 }
 
-/* 追加 */
 .input-group .form-control:focus {
   background-color: #fff;
   outline: none;
@@ -70,10 +60,21 @@ body:not(.focus-within) .input-group .form-control {
   background-color: #ededed!important;
 }
 
+.profile-image-icon-lg {
+  width: 50px;  /* アイコンの幅を調整 */
+  height: 50px;  /* アイコンの高さを調整 */
+  border-radius: 50%;  /* 画像を円形にする */
+  object-fit: cover;  /* 画像のアスペクト比を保つ */
+}
 
 /*project list content*/
+.project-list {
+  max-width: 70rem;
+  padding: 20px;
+}
+
 .project-list .card {
-  width: calc(33% - 30px);
+  width: calc(30% - 30px);
   height: auto;
   display: inline-block;
   vertical-align: top;
@@ -85,13 +86,12 @@ body:not(.focus-within) .input-group .form-control {
   border: none;
 }
 
-
-
-.project-list .card a {
+.project-list a {
   text-decoration: none;
   color: inherit;
 }
-.project-list .card h3 {
+
+.card-title {
   font-size: 1.3rem;
   margin: 0.5rem;
 }
@@ -99,22 +99,31 @@ body:not(.focus-within) .input-group .form-control {
 .beaker{
   position: relative;
   border-top: none;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-  border-left: 2px solid;
+  border-bottom: 8px solid #808080;
+  border-right: 6px solid #808080;
+  border-left: 6px solid #808080;
   border-bottom-right-radius: 20px;
   border-bottom-left-radius: 20px;
   overflow: hidden;
+  transition: transform 0.5s ease-in-out; /* 揺れる動きの時間を設定 */
+}
+
+@keyframes shake {
+  0% { transform: translateX(0px); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0px); }
 }
 
 .beaker:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-3px);
+  animation: shake 0.4s; /* shakeアニメーションを適用 */
 }
 
 .card .card-body {
   position: relative;
   z-index: 2;
+  height: 300px;
 }
 
 .card-body .card-icon{
@@ -122,30 +131,30 @@ body:not(.focus-within) .input-group .form-control {
 }
 
 .card-body .card-text{
-  font-size: 1.2rem;
+  font-size: 1rem;
+  margin-bottom: 0;
 }
 
 .card-text p {
   font-size: 16px;
-  margin-bottom: 0rem;
+
 }
 
-.card-body .dead-line{
-  font-size: 1.2rem;
+.card-body .project-deadline{
   border: 2px solid #dee2e6;
   border-radius: 10px;
   overflow: hidden;
-  padding: 0.2rem 4rem;
+  padding: 0.2rem 1.5rem;
 }
 
-.card-body .dead-line .bg-primary{
-  font-size: 1.2rem;
+.card-body .project-deadline .bg-primary{
+  font-size: 1rem;
   margin: 0;
   border-radius: 5px;
 }
 
 .progress-text{
- font-size: 3rem;
+ font-size: 2.8rem;
  margin-bottom: 0;
 }
 
@@ -164,12 +173,7 @@ body:not(.focus-within) .input-group .form-control {
   object-fit: cover;  /* 画像のアスペクト比を保つ */
 }
 
-.profile-image-icon-lg {
-  width: 50px;  /* アイコンの幅を調整 */
-  height: 50px;  /* アイコンの高さを調整 */
-  border-radius: 50%;  /* 画像を円形にする */
-  object-fit: cover;  /* 画像のアスペクト比を保つ */
-}
+
 
 
 /*クリエイトタイル*/
@@ -180,6 +184,8 @@ body:not(.focus-within) .input-group .form-control {
   vertical-align: top;
   border-radius: 15px;
   padding: 20px;
+  margin-right: 30px;
+  margin-bottom: 60px;
   position: relative;
   cursor: pointer;
   border: 2px dashed #ccc;
@@ -256,3 +262,36 @@ body:not(.focus-within) .input-group .form-control {
   border-radius: 10px;
 }
 
+
+/* スマホ対応レスポンシブデザイン */
+@media (max-width: 600px) {
+  /* スマートフォン向けスタイルをここに追加 */
+  .input-group {
+    width: 90%; /* 余白を考慮し、幅を90%にします */
+    margin: 0 auto; /* センタリングのためのマージン */
+  }
+
+  .btn-outline-secondary {
+    font-size: 1rem; /* ボタンのサイズを小さくします */
+  }
+
+  .project-list {
+    padding: 10px;
+  }
+
+  .project-list .card {
+    width: calc(100% - 20px);
+    margin-right: 10px;
+    margin-bottom: 30px;
+  }
+
+  .input-group {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .create-project-tile {
+    width: calc(100% - 20px);
+  }
+}

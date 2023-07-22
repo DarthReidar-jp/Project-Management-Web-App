@@ -231,33 +231,34 @@ def phase_list(request, project_id):
     for phase in phases:
         if phase.start_day <= current_time <= phase.dead_line:
             current_phases.append(phase)
-        
-     # 各フェーズの進捗を計算
+
+    # 各フェーズの進捗を計算
     phases = project.phases.all()
     phase_progresses = [(phase, phase.calculate_progress()) for phase in phases]
     
-    # 各ユニットの進捗を計算
-    units = Unit.objects.filter(phase__in=phases)
-    unit_progresses = [(unit, round(unit.calculate_progress() * 100)) for unit in units]  # 値をパーセンテージに変換
+    phase_unit_data = []  # 各フェーズごとのユニット情報を格納するリストを作成します
+    for phase in current_phases:
+        # フェーズに所属するユニットの進捗を計算
+        units = Unit.objects.filter(phase=phase)
+        unit_progresses = [(unit, round(unit.calculate_progress() * 100)) for unit in units]  # 値をパーセンテージに変換
+        unit_data = []  # ユニット情報を格納するリストを作成します
+        for unit, progress in unit_progresses:
+            unit_info = {
+                'unit': unit,
+                'progress': progress,
+            }
+            unit_data.append(unit_info)
+        phase_unit_data.append((phase, unit_data))  # フェーズとそれに所属するユニットデータをリストに追加
 
-    unit_data = []  # ユニット情報を格納するリストを作成します
-    for unit, progress in unit_progresses:
-        unit_info = {
-            'unit': unit,
-            'progress': progress,
-        }
-        unit_data.append(unit_info)
-    
     context = {
         'project': project,
         'phases': phases,
         'current_phases': current_phases,
         'is_manager': is_manager,
         'phase_progresses': phase_progresses,
-        'unit_data': unit_data,  # ユニットデータをコンテキストに追加
+        'phase_unit_data': phase_unit_data,  # フェーズごとのユニットデータをコンテキストに追加
     }
     return render(request, 'phase_list.html', context)
-
 
 # フェーズ作成機能
 def phase_create(request, project_id):
