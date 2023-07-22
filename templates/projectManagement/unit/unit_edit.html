@@ -1,20 +1,21 @@
-{% extends 'phase_base.html' %}
-{% block title %}edit project{% endblock %}
+{% extends 'app_base.html' %}
+
+{% block title %}ユニット編集{% endblock %}
+
 {% block styles %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/project_edit.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/projectManagement/unit/unit_edit.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="project-edit">
-  <h2>edit project</h2>
-
+<div class="unit-edit">
+  <h2>ユニット編集</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn-update">更新する</button>
+    <button type="submit" class="btn-save">保存する</button>
     <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
-      このプロジェクトを削除する
+      このユニットを削除する
     </button>
   </form>
 </div>
@@ -28,11 +29,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        本当にこのフェーズを削除しますか？
+        本当にこのユニットを削除しますか？
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-        <form method="POST" action="{% url 'project_delete' project_id %}">
+        <form method="POST" action="{% url 'unit_delete' project_id phase_id unit_id %}">
           {% csrf_token %}
           <button type="submit" class="btn btn-danger">削除する</button>
         </form>
@@ -40,7 +41,6 @@
     </div>
   </div>
 </div>
+
 {% endblock %}
 
-{% block scripts %}
-{% endblock %}

@@ -18,15 +18,11 @@ from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, N
 from .forms import ProjectCreateForm, PhaseCreateForm, UnitCreateForm, TaskCreateForm, InviteUserForm, UserProfileForm
 
 # 開発用初期画面（削除予定）
-
-
 def welcome_view(request):
     return render(request, 'welcome.html')
 
 # project group
 # プロジェクト一覧表示機能
-
-
 @login_required
 def project_list(request):
     if request.method == 'GET':
@@ -264,8 +260,6 @@ def phase_list(request, project_id):
 
 
 # フェーズ作成機能
-
-
 def phase_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -286,8 +280,6 @@ def phase_create(request, project_id):
     return render(request, 'phase_create.html', context)
 
 # フェーズ編集機能
-
-
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     if request.method == 'POST':
@@ -306,8 +298,6 @@ def phase_edit(request, project_id, phase_id):
     return render(request, 'phase_edit.html', context)
 
 # フェーズ削除
-
-
 def phase_delete(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     if request.method == 'POST':
@@ -317,8 +307,6 @@ def phase_delete(request, project_id, phase_id):
 
 # unit group
 # ユニット一覧表示機能
-
-
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
@@ -335,8 +323,6 @@ def unit_list(request, project_id, phase_id):
     return render(request, 'unit_list.html', {'user_tasks': user_tasks, 'project': project, 'phase': phase})
 
 # タスクの完了・未完了を切り替える新しいビュー
-
-
 def task_toggle(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
     assignment = get_object_or_404(
@@ -348,8 +334,6 @@ def task_toggle(request, project_id, phase_id, unit_id, task_id):
     return redirect('unit_list', project_id=project_id, phase_id=phase_id)
 
 # ユニット作成機能
-
-
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
     project = get_object_or_404(Project, pk=project_id)
@@ -405,8 +389,6 @@ def unit_create(request, project_id, phase_id):
     return render(request, 'unit_create.html', context)
 
 # ユニット編集機能
-
-
 def unit_edit(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
@@ -428,8 +410,6 @@ def unit_edit(request, project_id, phase_id, unit_id):
     return render(request, 'unit_edit.html', context)
 
 # ユニット削除
-
-
 def unit_delete(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
     if request.method == 'POST':
@@ -439,8 +419,6 @@ def unit_delete(request, project_id, phase_id, unit_id):
 
 # task group
 # タスク詳細表示機能
-
-
 def task_detail(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
 
@@ -463,8 +441,6 @@ def task_detail(request, project_id, phase_id, unit_id, task_id):
     return render(request, 'task_detail.html', context)
 
 # タスク削除
-
-
 def task_delete(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
     if request.method == 'POST':
@@ -473,8 +449,6 @@ def task_delete(request, project_id, phase_id, unit_id, task_id):
     return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task_id)
 
 # タスク作成機能
-
-
 def task_create(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
@@ -499,14 +473,10 @@ def task_create(request, project_id, phase_id, unit_id):
     return render(request, 'task_create.html', {'form': form, 'project_id': project_id, 'phase_id': phase_id, 'unit_id': unit_id})
 
 # タスク編集機能(未完成)
-
-
 def task_edit(request):
     return render(request, 'task_edit.html')
 
 # tool group
-
-
 @login_required
 def account_setting(request):
     if request.method == 'POST':
@@ -521,15 +491,11 @@ def account_setting(request):
     return render(request, 'account_setting.html', {'form': form})
 
 # 通知リスト機能(未完成)
-
-
 def notification_list(request):
     notifications = Notification.objects.filter(user=request.user)
     return render(request, 'notification_list.html', {'notifications': notifications})
 
 # 通知詳細表示機能（未完成）
-
-
 def notification_detail(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     return render(request, 'notification_detail.html', {'notification': notification})
