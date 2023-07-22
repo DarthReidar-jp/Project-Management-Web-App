@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
     country = models.CharField(max_length=255)
     profile_image = models.ImageField(
         upload_to='profile_images',
-        default='/static/default_images/default_plofile.png',
+        default='default_images/default_profile.png',
         null=True, 
         blank=True)
 

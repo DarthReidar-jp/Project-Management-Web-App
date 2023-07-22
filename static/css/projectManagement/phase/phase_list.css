@@ -1,0 +1,106 @@
+.container {
+  margin-bottom: 5rem;
+}
+
+.main {
+  padding: 5rem;
+}
+
+a {
+  color: black;
+  text-decoration:none;
+}
+a:hover{
+  color: rgb(70, 70, 70);
+  text-decoration:none;
+}
+
+/*クリエイトフェーズ*/
+.create-phase-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.create-phase-tile h4 {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.create-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+/*フェーズタイル*/
+.phase-tile {
+  background-color: rgb(237, 237, 237);
+  border-radius: 10px;
+  border: 5px solid blue;
+}
+
+.phase-name {
+  font-size: 1.8rem;
+}
+
+.phase-info-list{
+  display: flex;
+}
+
+.phase-info p {
+  font-size:1rem;
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
+
+.phase-info-card{
+  width: 400px;
+}
+
+.unit-list {
+  display: flex;
+  overflow-x: scroll;
+}
+
+.unit-card{
+  position: relative;
+  border-top: none;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+  border-left: 2px solid;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  overflow: hidden;
+  background-color: rgb(237, 237, 237);
+}
+
+.unit-list .card {
+  width: 150px;
+  min-width: 150px;
+  height: 150px;
+  z-index: 1;
+}
+
+.unit-info h5 {
+  font-size: 0.8rem;
+  margin-top: 2rem;
+  background-color: rgb(255, 255, 255);
+  padding: 0.3rem;
+  z-index: 1;
+}
+
+.liquid-canvas {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+

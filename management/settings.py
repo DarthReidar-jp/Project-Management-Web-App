@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'bootstrap4',
+    'colorfield',
     'crispy_bootstrap4',
     'projectManagement',
     'accounts',    
@@ -53,7 +54,13 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'templates' ,'account'),
+            os.path.join(BASE_DIR, 'templates' ,'account','base'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','project'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','phase'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','unit'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','function'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','app_base'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -107,7 +114,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    ]
+
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

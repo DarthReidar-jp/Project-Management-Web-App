@@ -7,3 +7,4 @@ RUN pip install django-crispy-forms
 RUN pip install django-bootstrap4
 RUN pip install crispy-bootstrap4
 RUN pip install Pillow
+RUN pip install django-colorfield

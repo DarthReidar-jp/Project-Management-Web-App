@@ -8,35 +8,6 @@ from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
-def AppUser():
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    account_name = models.CharField(
-        verbose_name='アカウント名',
-        max_length=50,
-        unique=True,
-        null=True,
-    )
-    last_name = models.CharField(
-        verbose_name='姓',
-        max_length=30,
-        default='law'
-    )
-    first_name = models.CharField(
-        verbose_name='名',
-        max_length=30,
-        default='Out'
-    )
-    profile_image = models.ImageField(
-        verbose_name='アカウント画像',
-        upload_to='profile_images',
-        default='/static/default_images/default_plofile.png'
-    )
-    country = models.CharField(
-        verbose_name='在住国',
-        max_length=50,
-        default='Outlaw'
-    )
-
 #プロジェクトモデルのjoined_idの計算関数
 def generate_joined_id():
     characters = string.ascii_letters
@@ -47,13 +18,39 @@ class Project(models.Model):
     PROJECT_KIND = [
         ('Web', 'Web'),
         ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-        ('test', 'test'),
-        ('Web', 'Web'),
-        ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-        ('test', 'test'),
+        ('Mobile App', 'Mobile App'),
+        ('Data Science', 'Data Science'),
+        ('Game Development', 'Game Development'),
+        ('Blockchain', 'Blockchain'),
+        ('IoT', 'Internet of Things'),
+        ('AR/VR', 'Augmented Reality/Virtual Reality'),
+        ('E-commerce', 'E-commerce'),
+        ('Healthcare', 'Healthcare'),
+        ('Education', 'Education'),
+        ('Fashion', 'Fashion'),
+        ('Food and Beverage', 'Food and Beverage'),
+        ('Music', 'Music'),
+        ('Art and Design', 'Art and Design'),
     ]
+
+    KIND_TO_COLOR = {
+        'Web': '#0000FF',  # ブルー
+        'Software': '#008000',  # グリーン
+        'Mobile App': '#FFA500',  # オレンジ
+        'Data Science': '#800080',  # パープル
+        'Game Development': '#FF0000',  # レッド
+        'Blockchain': '#FFFF00',  # イエロー
+        'IoT': '#ADD8E6',  # ライトブルー
+        'AR/VR': '#FFC0CB',  # ピンク
+        'E-commerce': '#FFD700',  # ゴールド
+        'Healthcare': '#90EE90',  # ライトグリーン
+        'Education': '#008080',  # ティール
+        'Fashion': '#FF007F',  # ローズ
+        'Food and Beverage': '#FFF700',  # レモンイエロー
+        'Music': '#FF00FF',  # マゼンタ
+        'Art and Design': '#00FFFF'  # シアン
+    }
+
     project_name = models.CharField(max_length=255)
     project_description = models.TextField()
     project_kind = models.CharField(
@@ -67,6 +64,7 @@ class Project(models.Model):
     dead_line = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    project_color = models.CharField(max_length=7, default='#342186',null=True)
     is_completed_project = models.BooleanField(default=False)
 
     class Meta:
@@ -82,6 +80,29 @@ class Project(models.Model):
         else:
             self.is_completed_project = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_project=self.is_completed_project)
+    
+    def calculate_progress(self):
+        project_phases = self.phases.all()
+        phase_weight = 1.0 / project_phases.count() if project_phases.count() > 0 else 0
+        project_progress = 0.0
+        for phase in project_phases:
+            project_progress += phase.calculate_progress() * phase_weight
+        return project_progress
+
+    def assign_color_based_on_kind(self):
+        if self.project_kind in self.KIND_TO_COLOR:
+            self.project_color = self.KIND_TO_COLOR[self.project_kind]
+        else:
+            self.project_color = '#342186'  # デフォルトの色
+
+    def set_project_color(self, color):
+        self.project_color = color
+        self.save()
+    
+    def save(self, *args, **kwargs):
+        if self.project_color == '#342186':  # default color
+            self.assign_color_based_on_kind()
+        super().save(*args, **kwargs)
 
 
 class ProjectMember(models.Model):
@@ -144,6 +165,14 @@ class Phase(models.Model):
         else:
             self.is_completed_phase = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_phase=self.is_completed_phase)
+    
+    def calculate_progress(self):
+        phase_units = self.units.all()
+        unit_weight = 1.0 / phase_units.count() if phase_units.count() > 0 else 0
+        phase_progress = 0.0
+        for unit in phase_units:
+            phase_progress += unit.calculate_progress() * unit_weight
+        return phase_progress
 
 
 class Unit(models.Model):
@@ -173,6 +202,15 @@ class Unit(models.Model):
         else:
             self.is_completed_unit = True
         self.__class__.objects.filter(pk=self.pk).update(is_completed_unit=self.is_completed_unit)
+
+    def calculate_progress(self):
+        tasks = self.tasks.all()
+        task_weight = 1.0 / tasks.count() if tasks.count() > 0 else 0
+        unit_progress = 0.0
+        for task in tasks:
+            task_progress = 1 if task.is_completed_task else 0
+            unit_progress += task_progress * task_weight
+        return unit_progress
 
 class Task(models.Model):
     task_name = models.CharField(max_length=255)

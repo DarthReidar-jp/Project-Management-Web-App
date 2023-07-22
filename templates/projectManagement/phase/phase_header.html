@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light px-5 py-3">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <a class="btn btn-outline-secondary btn-lg mx-3" href="{% url 'project_list' %}" role="button" >
+          <i class="fa-brands fa-react"></i>
+        </a>
+        
+        <div class="d-flex project align-items-center">
+            <a href="{% url 'project_list' %}">
+                <h3 class="project-name text-start">{{ project.project_name }}</h3>
+            </a>
+            {% if is_manager %}
+            <a href="{% url 'project_edit' project.id %}" class="btn btn-outline-secondary edit-btn"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% endif %}
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+  
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="d-flex align-items-center justify-content-end mx-3">
+          {% if is_manager %}
+            <a href="{% url 'invite_user' project.id %}" class="btn btn-outline-secondary btn-lg mx-3 invite-button">
+              <i class="fa-solid fa-users"></i>
+            </a>
+          {% endif %}
+  
+          <a href="#" class="btn btn-outline-secondary btn-lg mx-3">
+            <i class="fa-regular fa-envelope"></i>
+          </a>
+          <div class="nav-item dropdown">
+            <a class="btn" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="profile-image-icon-lg" src="{{ request.user.profile_image.url }}" alt="{{ request.user.username }}'s profile picture">
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="{% url 'account_setting' %}">accounts setting</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">{{ request.user.email }} </a></li>
+                <li><a class="dropdown-item" href="/accounts/logout/">Log out</a></li>
+            </ul>
+        </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  

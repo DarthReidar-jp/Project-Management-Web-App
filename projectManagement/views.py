@@ -1,7 +1,7 @@
 import json
 import string
 import random
-from datetime import date,datetime
+from datetime import date, datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.http import JsonResponse
@@ -14,29 +14,30 @@ from django.forms import formset_factory
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import authenticate, login, get_user_model
-from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification,FavoriteProject
-from .forms import ProjectCreateForm,PhaseCreateForm,UnitCreateForm,TaskCreateForm,InviteUserForm
+from .models import Project, Phase, ProjectMember, Unit, Task, TaskAssignment, Notification, FavoriteProject
+from .forms import ProjectCreateForm, PhaseCreateForm, UnitCreateForm, TaskCreateForm, InviteUserForm, UserProfileForm
 
-#開発用初期画面（削除予定）
+# 開発用初期画面（削除予定）
 def welcome_view(request):
     return render(request, 'welcome.html')
 
-#project group
-#プロジェクト一覧表示機能
+# project group
+# プロジェクト一覧表示機能
 @login_required
 def project_list(request):
     if request.method == 'GET':
         search_option = request.GET.get('search')
         sort_option = request.GET.get('sort')
 
-        #ログインユーザーが参加しているプロジェクトのみを表示
-        user_projects = ProjectMember.objects.filter(user=request.user, status='joined').values_list('project', flat=True)
+        # ログインユーザーが参加しているプロジェクトのみを表示
+        user_projects = ProjectMember.objects.filter(
+            user=request.user, status='joined').values_list('project', flat=True)
         projects = Project.objects.filter(id__in=user_projects)
 
         user_favorites = FavoriteProject.objects.filter(user=request.user)
         favorite_projects = [fav.project for fav in user_favorites]
 
-        #検索オプションが指定された場合は、プロジェクト名でフィルタリング
+        # 検索オプションが指定された場合は、プロジェクト名でフィルタリング
         if search_option:
             projects = projects.filter(project_name__icontains=search_option)
 
@@ -48,45 +49,26 @@ def project_list(request):
         elif sort_option == 'name':
             projects = projects.order_by('project_name')
         elif sort_option == 'favorite':
-            favorite_project_ids = FavoriteProject.objects.filter(user=request.user).values_list('project', flat=True)
-            projects = projects.filter(id__in=favorite_project_ids).order_by('created_at')
-
+            favorite_project_ids = FavoriteProject.objects.filter(
+                user=request.user).values_list('project', flat=True)
+            projects = projects.filter(
+                id__in=favorite_project_ids).order_by('created_at')
 
         project_data = []
         for project in projects:
-                project_phases = project.phases.all()
-                phase_weight = 1.0 / project_phases.count() if project_phases.count() > 0 else 0
-                project_progress = 0.0
+            project_progress = project.calculate_progress()
+            progress = round(project_progress * 100)
 
-                for phase in project_phases:
-                    phase_progress = 0.0
-                    phase_units = phase.units.all()
-                    unit_weight = 1.0 / phase_units.count() if phase_units.count() > 0 else 0
-
-                    for unit in phase_units:
-                        unit_progress = 0.0
-                        tasks = unit.tasks.all()
-                        task_weight = 1.0 / tasks.count() if tasks.count() > 0 else 0
-
-                        for task in tasks:
-                            task_progress = 1 if task.is_completed_task else 0
-                            unit_progress += task_progress * task_weight
-
-                        phase_progress += unit_progress * unit_weight
-
-                    project_progress += phase_progress * phase_weight
-
-                progress = round(project_progress * 100)
-
-                project_info = {
-                        'project': project,
-                        'progress': progress,
-                        'deadline': project.dead_line,
-                        'responsible': project.responsible,
-                        'project_kind': project.project_kind,
-                        'is_favorite': project in favorite_projects,
-                    }
-                project_data.append(project_info)
+            project_info = {
+                'project': project,
+                'progress': progress,
+                'deadline': project.dead_line,
+                'responsible': project.responsible,
+                'project_kind': project.project_kind,
+                'is_favorite': project in favorite_projects,
+                'project_color':project.project_color,
+            }
+            project_data.append(project_info)
 
         context = {
             'projects': project_data,
@@ -97,18 +79,19 @@ def project_list(request):
         return render(request, 'project_list.html', context)
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#お気に入り登録機能
+# お気に入り登録機能
 @csrf_exempt
 def toggle_favorite(request, project_id):
     if request.method == 'POST':
         project = get_object_or_404(Project, id=project_id)
-        favorite, created = FavoriteProject.objects.get_or_create(user=request.user, project=project)
+        favorite, created = FavoriteProject.objects.get_or_create(
+            user=request.user, project=project)
         if not created:
             favorite.delete()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
-#プロジェクト削除機能
+# プロジェクト削除機能
 @login_required
 def project_delete(request, project_id):
     project = get_object_or_404(Project, id=project_id)
@@ -116,8 +99,8 @@ def project_delete(request, project_id):
         project.delete()
         return redirect('project_list')
     return redirect('project_list')
-    
-#参加プロジェクト検索機能
+
+# 参加プロジェクト検索機能
 @login_required
 def project_search(request):
     if request.method == 'GET':
@@ -129,17 +112,18 @@ def project_search(request):
             return render(request, 'project_search.html', {'message': '見つかりませんでした'})
     return JsonResponse({'success': False, 'message': '無効なリクエストメソッドです。'})
 
-#プロジェクト参加機能
+# プロジェクト参加機能
 @login_required
 def project_join(request, project_id):
     try:
         project = Project.objects.get(id=project_id)
-        ProjectMember.objects.create(user=request.user, project=project, status='joined')
+        ProjectMember.objects.create(
+            user=request.user, project=project, role="worker" ,status='joined')
         return redirect('phase_list', project_id=project_id)
     except Project.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'プロジェクトが存在しません。'})
 
-#プロジェクト作成機能
+# プロジェクト作成機能
 @login_required
 def project_create(request):
     if request.method == 'POST':
@@ -149,7 +133,7 @@ def project_create(request):
             project.responsible = request.user
             project.save()
 
-            #プロジェクト作成者をメンバーとして追加
+            # プロジェクト作成者をメンバーとして追加
             ProjectMember.objects.create(
                 user=request.user,
                 project=project,
@@ -157,12 +141,12 @@ def project_create(request):
                 status='joined'
             )
             return redirect('project_list')  # 作成後にプロジェクト一覧ページにリダイレクト
-            #メンバーの招待機能やら責任者の設定を追加したい
+            # メンバーの招待機能やら責任者の設定を追加したい
     else:
         form = ProjectCreateForm()
     return render(request, 'project_create.html', {'form': form})
 
-#プロジェクト編集機能
+# プロジェクト編集機能
 def project_edit(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
@@ -171,17 +155,17 @@ def project_edit(request, project_id):
         if form.is_valid():
             form.save()
             return redirect('project_list')
-            #招待IDの変更や確認をしたい、責任者やプロジェクトメンバーの編集もしたい
+            # 招待IDの変更や確認をしたい、責任者やプロジェクトメンバーの編集もしたい
     else:
         form = ProjectCreateForm(instance=project)
-        
+
     context = {
         'form': form,
-        'project_id':project_id
+        'project_id': project_id
     }
     return render(request, 'project_edit.html', context)
 
-#招待機能（未完成）
+# 招待機能（未完成）
 def invite_user(request, project_id):
     project = Project.objects.get(id=project_id)
     if request.method == 'POST':
@@ -191,7 +175,8 @@ def invite_user(request, project_id):
             # send email with invitation link
             send_mail(
                 'プロジェクトへのご招待',
-                '私たちのプロジェクトに参加してください!Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(project.invitation_code),
+                '私たちのプロジェクトに参加してください!Please click the link below:\nhttp://localhost:8000/app/invitation_login/{}/'.format(
+                    project.invitation_code),
                 settings.EMAIL_HOST_USER,
                 [email],
                 fail_silently=False,
@@ -201,7 +186,7 @@ def invite_user(request, project_id):
         form = InviteUserForm()
     return render(request, 'invite_user.html', {'form': form})
 
-#招待ユーザーのログイン(未完成)
+# 招待ユーザーのログイン(未完成)
 def invitation_login(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -209,13 +194,14 @@ def invitation_login(request, invitation_code):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
+            # 招待URLにリダイレクト
+            return redirect('project_invitation', invitation_code=invitation_code)
         else:
             # 認証失敗時の処理
             pass
     return render(request, 'invitation_login.html')
 
-#招待ユーザーの登録(未完成)
+# 招待ユーザーの登録(未完成)
 def invitation_signup(request, invitation_code):
     if request.method == 'POST':
         email = request.POST['email']
@@ -223,40 +209,60 @@ def invitation_signup(request, invitation_code):
         User = get_user_model()
         user = User.objects.create_user(email, password)
         login(request, user)
-        return redirect('project_invitation', invitation_code=invitation_code)  # 招待URLにリダイレクト
+        # 招待URLにリダイレクト
+        return redirect('project_invitation', invitation_code=invitation_code)
     return render(request, 'invitation_signup.html')
 
-#招待ユーザーのプロジェクト参加（未完成）
+# 招待ユーザーのプロジェクト参加（未完成）
 def project_invitation(request):
-    return render(request,'invitation_signup.html')
+    return render(request, 'invitation_signup.html')
 
-
-#phase group
-#フェーズ一覧表示
+# phase group
+# フェーズ一覧表示
 def phase_list(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     phases = project.phases.order_by('start_day')
-    is_manager = ProjectMember.objects.filter(user=request.user, project=project, role='manager').exists()
+    is_manager = ProjectMember.objects.filter(
+        user=request.user, project=project, role='manager').exists()
 
-    current_time = datetime.now().date() 
+    current_time = datetime.now().date()
 
     current_phases = []
     for phase in phases:
         if phase.start_day <= current_time <= phase.dead_line:
             current_phases.append(phase)
+        
+     # 各フェーズの進捗を計算
+    phases = project.phases.all()
+    phase_progresses = [(phase, phase.calculate_progress()) for phase in phases]
+    
+    # 各ユニットの進捗を計算
+    units = Unit.objects.filter(phase__in=phases)
+    unit_progresses = [(unit, round(unit.calculate_progress() * 100)) for unit in units]  # 値をパーセンテージに変換
 
+    unit_data = []  # ユニット情報を格納するリストを作成します
+    for unit, progress in unit_progresses:
+        unit_info = {
+            'unit': unit,
+            'progress': progress,
+        }
+        unit_data.append(unit_info)
+    
     context = {
         'project': project,
         'phases': phases,
         'current_phases': current_phases,
         'is_manager': is_manager,
+        'phase_progresses': phase_progresses,
+        'unit_data': unit_data,  # ユニットデータをコンテキストに追加
     }
     return render(request, 'phase_list.html', context)
 
-#フェーズ作成機能
+
+# フェーズ作成機能
 def phase_create(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    
+
     if request.method == 'POST':
         form = PhaseCreateForm(request.POST)
         if form.is_valid():
@@ -272,8 +278,8 @@ def phase_create(request, project_id):
         'project': project,
     }
     return render(request, 'phase_create.html', context)
-    
-# フェーズ編集機能 
+
+# フェーズ編集機能
 def phase_edit(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     if request.method == 'POST':
@@ -283,7 +289,7 @@ def phase_edit(request, project_id, phase_id):
             return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     else:
         form = PhaseCreateForm(instance=phase)
-        
+
     context = {
         'form': form,
         'project_id': project_id,
@@ -291,7 +297,7 @@ def phase_edit(request, project_id, phase_id):
     }
     return render(request, 'phase_edit.html', context)
 
-#フェーズ削除
+# フェーズ削除
 def phase_delete(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     if request.method == 'POST':
@@ -299,16 +305,16 @@ def phase_delete(request, project_id, phase_id):
         return redirect('phase_list', project_id=project_id)
     return redirect('phase_edit', project_id=project_id, phase_id=phase_id)
 
-
-#unit group
-#ユニット一覧表示機能
+# unit group
+# ユニット一覧表示機能
 def unit_list(request, project_id, phase_id):
     phase = get_object_or_404(Phase, id=phase_id)
     project = phase.project
     tasks = Task.objects.filter(unit__phase=phase)
     user_tasks = []
     for task in tasks:
-        assignment = task.assignments.filter(Q(project_member__user=request.user)).first()
+        assignment = task.assignments.filter(
+            Q(project_member__user=request.user)).first()
         user_tasks.append({
             'task': task,
             'is_assigned': assignment is not None,
@@ -316,17 +322,18 @@ def unit_list(request, project_id, phase_id):
         })
     return render(request, 'unit_list.html', {'user_tasks': user_tasks, 'project': project, 'phase': phase})
 
-#タスクの完了・未完了を切り替える新しいビュー
+# タスクの完了・未完了を切り替える新しいビュー
 def task_toggle(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
-    assignment = get_object_or_404(TaskAssignment, task=task, project_member__user=request.user)
+    assignment = get_object_or_404(
+        TaskAssignment, task=task, project_member__user=request.user)
     assignment.is_completed_member = not assignment.is_completed_member
     assignment.save()
     task.update_is_completed_task()
     task.save()
     return redirect('unit_list', project_id=project_id, phase_id=phase_id)
 
-#ユニット作成機能
+# ユニット作成機能
 def unit_create(request, project_id, phase_id):
     phase = get_object_or_404(Phase, pk=phase_id)
     project = get_object_or_404(Project, pk=project_id)
@@ -345,7 +352,8 @@ def unit_create(request, project_id, phase_id):
                 task_name = request.POST.get(f'task_name_{i}')
                 task_description = request.POST.get(f'task_description_{i}')
                 task_deadline = request.POST.get(f'task_deadline_{i}')
-                task_member = request.POST.get(f'task_member_{i}')  # Get the assigned member ID
+                # Get the assigned member ID
+                task_member = request.POST.get(f'task_member_{i}')
                 start_day = date.today()
 
                 if not task_name and not task_description and not task_deadline and not task_member:
@@ -361,18 +369,18 @@ def unit_create(request, project_id, phase_id):
                     )
                     # Assign the member to the task
                     member = get_object_or_404(ProjectMember, pk=task_member)
-                    TaskAssignment.objects.create(task=task, project_member=member)
+                    TaskAssignment.objects.create(
+                        task=task, project_member=member)
                 i += 1
 
             return redirect('unit_list', project_id=project_id, phase_id=phase_id)
-
 
     else:
         form = UnitCreateForm()
 
     context = {
         'form': form,
-        'project':project,
+        'project': project,
         'phase': phase,
         'project_id': project_id,
         'phase_id': phase_id,
@@ -380,7 +388,7 @@ def unit_create(request, project_id, phase_id):
 
     return render(request, 'unit_create.html', context)
 
-#ユニット編集機能
+# ユニット編集機能
 def unit_edit(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
@@ -401,16 +409,16 @@ def unit_edit(request, project_id, phase_id, unit_id):
 
     return render(request, 'unit_edit.html', context)
 
-#ユニット削除
+# ユニット削除
 def unit_delete(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
     if request.method == 'POST':
         unit.delete()
-        return redirect('unit_list', project_id=project_id , phase_id=phase_id)
+        return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     return redirect('unit_edit', project_id=project_id, phase_id=phase_id, unit_id=unit_id)
 
-#task group
-#タスク詳細表示機能
+# task group
+# タスク詳細表示機能
 def task_detail(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
 
@@ -427,12 +435,12 @@ def task_detail(request, project_id, phase_id, unit_id, task_id):
         'project_id': project_id,
         'phase_id': phase_id,
         'unit_id': unit_id,
-        'task_id':task_id,
+        'task_id': task_id,
     }
 
     return render(request, 'task_detail.html', context)
 
-#タスク削除
+# タスク削除
 def task_delete(request, project_id, phase_id, unit_id, task_id):
     task = get_object_or_404(Task, id=task_id)
     if request.method == 'POST':
@@ -440,7 +448,7 @@ def task_delete(request, project_id, phase_id, unit_id, task_id):
         return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     return redirect('task_detail', project_id=project_id, phase_id=phase_id, unit_id=unit_id, task_id=task_id)
 
-#タスク作成機能
+# タスク作成機能
 def task_create(request, project_id, phase_id, unit_id):
     unit = get_object_or_404(Unit, id=unit_id)
 
@@ -451,39 +459,43 @@ def task_create(request, project_id, phase_id, unit_id):
             task.unit = unit
             task.start_day = date.today()
             task.save()
-            
+
             task_assignment = TaskAssignment.objects.create(
                 task=task,
-                project_member=form.cleaned_data.get('task_member') or request.user
+                project_member=form.cleaned_data.get(
+                    'task_member') or request.user
             )
-            
+
             return redirect('unit_list', project_id=project_id, phase_id=phase_id)
     else:
         form = TaskCreateForm(project_id=project_id)
 
     return render(request, 'task_create.html', {'form': form, 'project_id': project_id, 'phase_id': phase_id, 'unit_id': unit_id})
 
-#タスク編集機能(未完成)
+# タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
 
+# tool group
+@login_required
+def account_setting(request):
+    if request.method == 'POST':
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('account_setting')
+    else:
+        form = UserProfileForm(instance=request.user)
 
-#tool group
-#通知リスト機能(未完成)
+    return render(request, 'account_setting.html', {'form': form})
+
+# 通知リスト機能(未完成)
 def notification_list(request):
     notifications = Notification.objects.filter(user=request.user)
     return render(request, 'notification_list.html', {'notifications': notifications})
 
-#通知詳細表示機能（未完成）
+# 通知詳細表示機能（未完成）
 def notification_detail(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     return render(request, 'notification_detail.html', {'notification': notification})
-
-
-
-
-
-
-
-
-

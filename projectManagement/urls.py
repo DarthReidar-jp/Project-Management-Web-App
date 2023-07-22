@@ -3,6 +3,9 @@ from django.urls import path
 
 urlpatterns = [
 
+
+    path('account_setting/', views.account_setting, name='account_setting'),
+
     #notifications
     path('notifications/', views.notification_list, name='notification_list'),
     path('notifications/<int:notification_id>/', views.notification_detail, name='notification_detail'),

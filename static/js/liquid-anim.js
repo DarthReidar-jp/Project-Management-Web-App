@@ -1,38 +1,45 @@
-//essential variables
-var canvases = document.getElementsByClassName("liquid-canvas")
+// essential variables
+var canvases = document.getElementsByClassName("liquid-canvas");
 
-//parameters
-var level =[],
-    color = "skyblue",
-    amplitude = 15,  // 揺れの振幅
-    frequency = 0.02;  // 揺れの周波数
+// parameters
+var level = [],
+  amplitude = 15,  // amplitude of the swing
+  frequency = [0.02, 0.021, 0.022];  // different frequency for each wave
 
-//function to start or restart the animation
-function init(){
-  levels = []; // reset levels array
-  for(let canvas of canvases) {
-      canvas.state = {
-        c: 0,
-        amplitude: Math.random() * 30,  // 揺れの振幅（ランダムに設定）
-        frequency: 0.01 + Math.random() * 0.04  // 揺れの周波数（ランダムに設定）
-      };
+// function to start or restart the animation
+function init() {
+  levels = [];  // reset levels array
+  for (let canvas of canvases) {
+    // add phaseShifts property to state object
+    canvas.state = {
+      c: 0,
+      color: canvas.dataset.color,
+      amplitude: amplitude,  // amplitude of the swing (fixed)
+      frequency: frequency,  // frequency of the swing (modified)
+      phaseShifts: [],  // array to hold random phase shifts for this canvas
+    };
 
-    levels.push(parseInt(canvas.dataset.progress)); // 進捗状況に応じてレベルを設定
+    // add three random phase shifts for each canvas
+    for (let i = 0; i < 3; i++) {
+      canvas.state.phaseShifts.push(Math.random() * 2 * Math.PI);
+    }
+
+    levels.push(parseInt(canvas.dataset.progress));  // set levels based on progress
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight;
     let ctx = canvas.getContext("2d");
-    window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height, levels[Array.from(canvases).indexOf(canvas)], canvas.state)); // Added canvas.state here
+    window.requestAnimationFrame(() => draw(ctx, canvas.width, canvas.height, levels[Array.from(canvases).indexOf(canvas)], canvas.state));  // added canvas.state here
   }
 }
 
-//function that draws into the canvas in a loop
-function draw(ctx, w, h, level, state) {  // level parameter added to draw function
+// function that draws into the canvas in a loop
+function draw(ctx, w, h, level, state) {  // added level parameter to draw function
   ctx.clearRect(0, 0, w, h);
 
   // draw the liquid only when level is greater than 0
   if (level > 0) {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
+    ctx.fillStyle = state.color;
+    ctx.strokeStyle = state.color;
 
     // draw the liquid
     if (level === 100) {
@@ -43,37 +50,36 @@ function draw(ctx, w, h, level, state) {  // level parameter added to draw funct
       ctx.lineTo(w, h);
       ctx.lineTo(0, h);
       ctx.lineTo(0, h - (h - 100) * level / 100 - 50);
-      var temp = state.amplitude * Math.sin(state.c * state.frequency);
+
+      // modify bezierCurveTo method to sum three sine waves with phase shifts and different frequency
+      var temp = 0;
+      for (let i = 0; i < 3; i++) {
+        temp += state.amplitude * Math.sin(state.c * state.frequency[i] + state.phaseShifts[i]);
+      }
+
       ctx.bezierCurveTo((w / 3), h - (h - 100) * level / 100 - 50 - temp,
         (2 * w / 3), h - (h - 100) * level / 100 - 50 + temp,
         w, h - (h - 100) * level / 100 - 50);
       ctx.fill();
     }
   }
+
   update(state);
-  window.requestAnimationFrame(() => draw(ctx, w, h, level, state));  // Add state here
+  window.requestAnimationFrame(() => draw(ctx, w, h, level, state));  // added state here
 }
 
-  
-
-//function that updates variables
+// function that updates variables
 function update(state) {
-    state.c++;
-    if (100 * Math.PI <= state.c)
-      state.c = 0;
-    // Smoothly update the amplitude
-    state.amplitude += (Math.random() - 0.5) * 2;
-    // Ensure amplitude stays within a reasonable range
-    state.amplitude = Math.min(30, Math.max(state.amplitude, 0));
-  }
+  state.c++;
+}
 
-//update canvas size when resizing the window
-window.addEventListener('resize', function() {
-  for(let canvas of canvases) {
+// update canvas size when resizing the window
+window.addEventListener('resize', function () {
+  for (let canvas of canvases) {
     window.cancelAnimationFrame(canvas.aniId);
   }
-  init();  // レベルの更新のためにinit関数を再呼び出し
+  init();  // re-call init function to update levels
 });
 
-//start animation
+// start animation
 init();

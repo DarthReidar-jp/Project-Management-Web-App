@@ -1,0 +1,63 @@
+{% extends 'unit_base.html' %}
+{% block title %}{{ phase.phase_name }}{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/projectManagement/unit/unit_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-xl my-5 unit-list">
+  <div class="unit-title">
+    <h2>Units</h2>
+  </div>
+  <div class="unit-tile card my-3 p-3">
+    <a href="{% url 'unit_create' project_id=project.id phase_id=phase.id %}"
+      class="btn btn-primary add-unit-button">Add New Unit</a>
+  </div>
+  {% for unit in phase.units.all %}
+  <div class="unit-tile card my-3 p-3">
+    <div class="d-flex justify-content-start">
+      <h3 class="unit-name">{{ unit.unit_name }}</h3>
+      <a href="{% url 'unit_edit' project_id=project.id phase_id=phase.id unit_id=unit.id %}"
+        class="btn btn-secondary edit-unit-button">Edit Unit</a>
+    </div>
+
+    <div class="task-list my-2">
+      <div
+        class="task-card card my-1 p-2 {% if user_task.task.is_completed_task %}completed-task{% else %}uncompleted-task{% endif %}">
+        <a href="{% url 'task_create' project_id=project.id phase_id=phase.id unit_id=unit.id %}"
+          class="btn btn-info add-task-button">Add New Task</a>
+      </div>
+      {% for task in unit.tasks.all %}
+      {% for user_task in user_tasks %}
+      {% if user_task.task.id == task.id %}
+      <div
+        class="task-card card my-1 p-2 {% if user_task.task.is_completed_task %}completed-task{% else %}uncompleted-task{% endif %}">
+        <a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{task.task_name }}</a>
+        <p>Deadline: {{ task.dead_line }}</p>
+        <p>Assigned to:
+          {% for email in task.get_assignee_emails %}
+          {{ email }}
+          {% endfor %}
+        </p>
+        {% if user_task.is_assigned %}
+        <form method="post"
+          action="{% url 'task_toggle' project_id=project.id phase_id=phase.id unit_id=user_task.task.unit.id task_id=user_task.task.id %}">
+          {% csrf_token %}
+          <button type="submit" name="check-task"
+            class="btn {% if user_task.is_completed %}btn-success{% else %}btn-danger{% endif %}">
+            {% if user_task.is_completed %}Completed{% else %}Complete{% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+</div>
+{% endblock %}

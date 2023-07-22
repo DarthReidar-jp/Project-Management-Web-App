@@ -2,18 +2,22 @@ from django import forms
 from django.forms import formset_factory
 from django.core.exceptions import ValidationError
 from .models import Project, ProjectMember, Phase, Unit, Task, TaskAssignment
+from accounts.models import User
+from colorfield.fields import ColorField
+from colorfield.widgets import ColorWidget
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'country', 'profile_image']
+
 
 class ProjectCreateForm(forms.ModelForm):
-    KIND_CHOICES = [
-        ('Web', 'Web'),
-        ('Software', 'Software'),
-        ('Hardware', 'Hardware'),
-    ]
     project_name = forms.CharField(label='Project Name', required=True)
     project_description = forms.CharField(label='Project Description', widget=forms.Textarea, required=False)
     project_kind = forms.ChoiceField(
         label='Kind of Project',
-        choices=KIND_CHOICES,
+        choices=Project.PROJECT_KIND,
         initial=2,
         required=True,
         widget=forms.Select(attrs={'id': 'one',}))
@@ -28,7 +32,7 @@ class ProjectCreateForm(forms.ModelForm):
 
     class Meta:
         model = Project
-        fields = ['project_name', 'project_description', 'project_kind', 'start_day', 'dead_line',]
+        fields = ['project_name', 'project_description', 'project_kind', 'start_day', 'dead_line']
 
     def clean_project_deadline(self):
         dead_line = self.cleaned_data.get('dead_line')

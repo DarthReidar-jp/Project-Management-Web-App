@@ -1,0 +1,110 @@
+{% extends 'phase_base.html' %}
+{% block title %}{{ project.project_name }} - Project Details{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/projectManagement/phase/phase_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5">
+  <div class="main p-5">
+    
+  {% if phases %}
+  <div class="current-phase">
+    <h2>working phase</h2>
+    {% for phase in current_phases %}
+    <div class="phase-tile card mb-5 px-4 py-3 ">
+      <a href="{% url 'unit_list' project.id phase.id %}">
+        <div class="d-flex mb-2">
+          <h3 class="phase-name">{{ phase.phase_name }}</h3>
+          {% if is_manager %}
+          <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}"
+          class="btn btn-outline-secondary edit-btn"><i class="fa-regular fa-pen-to-square"></i></a>
+          {% endif %}
+        </div>
+
+        <div class="phase-info-list">
+          <div class="phase-info-card card">
+            <a href="{% url 'unit_list' project.id phase.id %}">
+              <div class="phase-info card-body">
+                <p>Planned Start Date: {{ phase.start_day|date:"Y/m/d" }}</p>
+                <p>Deadline: {{ phase.dead_line|date:"Y/m/d" }}</p>
+                <p>Responsible: {{ phase.responsible }}</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="unit-list align-items-end">
+            {% for unit_info in unit_data %}
+            <div class="card unit-card text-center  ms-1">
+              <div class="unit-info">
+                <h5>{{ unit_info.unit.unit_name }}</h5>
+              </div>
+              <canvas id="canvas{{ forloop.counter }}" class="liquid-canvas" data-progress="{{ unit_info.progress }}" data-color="{{ project.project_color }}"></canvas>
+            </div>
+            {% endfor %}
+          </div>
+          
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+
+
+
+    <div class="phase-timeline">
+      <h2>Time line</h2>
+      {% if is_manager %}
+      <div class="create-phase-tile card  text-center">
+        <a href="{% url 'phase_create' project.id %}">
+          <div class="card-body">
+            <h4> Create New Phase</h4>
+            <i class="fas fa-plus-circle create-icon"></i>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+      {% for phase in phases %}
+      <div class="phase-tile card mb-5 p-3">
+        <a href="{% url 'unit_list' project.id phase.id %}">
+            <div class="d-flex mb-2">
+              <h3 class="phase-name">{{ phase.phase_name }}</h3>
+              {% if is_manager %}
+              <a href="{% url 'phase_edit' project_id=project.id phase_id=phase.id %}"
+              class="btn btn-outline-secondary edit-btn"><i class="fa-regular fa-pen-to-square"></i></a>
+              {% endif %}
+            </div>
+            <a href="{% url 'unit_list' project.id phase.id %}">
+              <div class="card-body phase-info">
+                <p>Planned Start Date: {{ phase.start_day|date:"Y/m/d" }}</p>
+                <p>Deadline: {{ phase.dead_line|date:"Y/m/d" }}</p>
+                <p>Responsible: {{ phase.responsible }}</p>
+              </div>
+            </a>
+      </div>
+      {% endfor %}
+    </div>
+    
+    {% else %}
+
+    <p>No phases available.</p>
+    {% if is_manager %}
+      <div class="create-phase-tile card  text-center">
+        <a href="{% url 'phase_create' project.id %}">
+          <div class="card-body">
+            <h4> Create New Phase</h4>
+            <i class="fas fa-plus-circle create-icon"></i>
+          </div>
+        </a>
+      </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% load static %}
+<script src="{% static 'js/liquid-anim.js' %}"></script>
+{% endblock %}

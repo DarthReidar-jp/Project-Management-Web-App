@@ -1,0 +1,46 @@
+{% extends 'phase_base.html' %}
+{% block title %}edit project{% endblock %}
+{% block styles %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/projectManagement/project/project_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="project-edit">
+  <h2>edit project</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-update">更新する</button>
+    <button type="button" class="btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+      このプロジェクトを削除する
+    </button>
+  </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">フェーズ削除</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        本当にこのフェーズを削除しますか？
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <form method="POST" action="{% url 'project_delete' project_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">削除する</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
