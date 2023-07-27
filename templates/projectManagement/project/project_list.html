@@ -9,7 +9,7 @@
 <!-- Project list container -->
 <div class="container-lg my-5 project-list">
   <!-- Project creation tile -->
-  <div class="project-tile create-project-tile">
+  <div class="project-tile create-project-tile mt-5">
     <a href="{% url 'project_create' %}">
       <div class="create-project-info">
         <h3>Create New Project</h3>
@@ -45,7 +45,7 @@
         </table>
         <!-- Project deadline -->
         <div class="project-deadline">
-          <p class="text-white bg-primary text-center fw-bold">{{ project.project.dead_line|date:"Y/m/d" }}</p>
+          <p class="text-white bg-primary text-center fw-bold" >{{ project.project.dead_line|date:"Y/m/d" }}</p>
         </div>
         <!-- Project progress -->
         <div class="project-progress mt-5">

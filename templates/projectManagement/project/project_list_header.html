@@ -31,13 +31,13 @@
                     <!-- Join project button -->
                     <button type="button" class="join-project-button btn btn-outline-secondary btn-lg mx-3"><i class="fa-solid fa-arrows-down-to-people"></i></button> <!-- プロジェクトに参加するアイコンのボタン -->
                     <!-- Email button -->
-                    <a href="#" class="btn btn-outline-secondary btn-lg mx-3">
+                    <a href="{% url 'notification_list' %}" class="btn btn-outline-secondary btn-lg mx-3">
                         <i class="fa-regular fa-envelope"></i> <!-- メールアイコン -->
                     </a>
                     <!-- User account dropdown -->
                     <div class="nav-item dropdown">
                         <!-- Dropdown toggle button -->
-                        <a class="btn" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="btn " href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- User profile picture -->
                             <img class="profile-image-icon-lg" src="{{ request.user.profile_image.url }}" alt="{{ request.user.username }}'s profile picture">
                         </a>
@@ -46,8 +46,6 @@
                             <!-- Account settings link -->
                             <li><a class="dropdown-item" href="{% url 'account_setting' %}">accounts setting</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <!-- Display user email -->
-                            <li><a class="dropdown-item" href="#">{{ request.user.email }} </a></li>
                             <!-- Logout link -->
                             <li><a class="dropdown-item" href="/accounts/logout/">Log out</a></li>
                         </ul>

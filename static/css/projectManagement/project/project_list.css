@@ -69,7 +69,7 @@ body:not(.focus-within) .input-group .form-control {
 
 /*project list content*/
 .project-list {
-  max-width: 70rem;
+  max-width: 65rem;
   padding: 20px;
 }
 
@@ -92,7 +92,7 @@ body:not(.focus-within) .input-group .form-control {
 }
 
 .card-title {
-  font-size: 1.3rem;
+  font-size: 1rem;
   margin: 0.5rem;
 }
 

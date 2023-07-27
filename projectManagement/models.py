@@ -34,21 +34,21 @@ class Project(models.Model):
     ]
 
     KIND_TO_COLOR = {
-        'Web': '#0000FF',  # ブルー
-        'Software': '#008000',  # グリーン
-        'Mobile App': '#FFA500',  # オレンジ
-        'Data Science': '#800080',  # パープル
-        'Game Development': '#FF0000',  # レッド
-        'Blockchain': '#FFFF00',  # イエロー
-        'IoT': '#ADD8E6',  # ライトブルー
-        'AR/VR': '#FFC0CB',  # ピンク
-        'E-commerce': '#FFD700',  # ゴールド
-        'Healthcare': '#90EE90',  # ライトグリーン
-        'Education': '#008080',  # ティール
-        'Fashion': '#FF007F',  # ローズ
-        'Food and Beverage': '#FFF700',  # レモンイエロー
-        'Music': '#FF00FF',  # マゼンタ
-        'Art and Design': '#00FFFF'  # シアン
+        'Web': '#6699CC',  # ブルー
+        'Software': '#66CC99',  # グリーン
+        'Mobile App': '#FFCC99',  # オレンジ
+        'Data Science': '#CC99CC',  # パープル
+        'Game Development': '#CC6666',  # レッド
+        'Blockchain': '#FFFF99',  # イエロー
+        'IoT': '#99CCCC',  # ライトブルー
+        'AR/VR': '#FFCCCC',  # ピンク
+        'E-commerce': '#FFCC66',  # ゴールド
+        'Healthcare': '#99CC99',  # ライトグリーン
+        'Education': '#66CCCC',  # ティール
+        'Fashion': '#CC6699',  # ローズ
+        'Food and Beverage': '#FFFF66',  # レモンイエロー
+        'Music': '#FF66FF',  # マゼンタ
+        'Art and Design': '#66FFFF'  # シアン
     }
 
     project_name = models.CharField(max_length=255)
@@ -242,7 +242,8 @@ class Task(models.Model):
     def get_assignee_emails(self):
         return [assignment.project_member.user.email for assignment in self.assignments.all()]
 
-
+    def get_assignee_profile_images(self):
+        return [assignment.project_member.user.profile_image.url for assignment in self.assignments.all()]
 
 
 class TaskAssignment(models.Model):

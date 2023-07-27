@@ -19,7 +19,7 @@
     <div class="d-flex justify-content-start">
       <h3 class="unit-name">{{ unit.unit_name }}</h3>
       <a href="{% url 'unit_edit' project_id=project.id phase_id=phase.id unit_id=unit.id %}"
-        class="btn btn-secondary edit-unit-button">Edit Unit</a>
+        class="btn btn-secondary edit-unit-button"><i class="fa-regular fa-pen-to-square"></i></a>
     </div>
 
     <div class="task-list my-2">
@@ -36,8 +36,8 @@
         <a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{task.task_name }}</a>
         <p>Deadline: {{ task.dead_line }}</p>
         <p>Assigned to:
-          {% for email in task.get_assignee_emails %}
-          {{ email }}
+          {% for profile_image in task.get_assignee_profile_images %}
+          <img class="member-image-icon" src="{{ profile_image }}" alt="Profile Image">
           {% endfor %}
         </p>
         {% if user_task.is_assigned %}
