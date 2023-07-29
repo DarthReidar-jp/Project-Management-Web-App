@@ -178,7 +178,7 @@ body:not(.focus-within) .input-group .form-control {
 
 /*クリエイトタイル*/
 .create-project-tile {
-  width: calc(33% - 20px);
+  width: calc(30% - 30px);
   height: 250px;
   display: inline-block;
   vertical-align: top;

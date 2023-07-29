@@ -1,6 +1,7 @@
 import json
 import string
 import random
+import openai
 from datetime import date, datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -476,6 +477,16 @@ def task_create(request, project_id, phase_id, unit_id):
 # タスク編集機能(未完成)
 def task_edit(request):
     return render(request, 'task_edit.html')
+
+
+
+#タスクの自動作成機能
+def task_auto_create(request):
+    return render(request, 'task_auto_create.html')
+
+#タスクの自動作成承認機能
+def approval_task_auto_create(request):
+    return render(request, 'approval_task_auto_create.html')
 
 # tool group
 @login_required

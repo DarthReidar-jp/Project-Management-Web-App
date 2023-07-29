@@ -46,5 +46,8 @@ urlpatterns = [
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/edit/', views.task_edit, name='task_edit'),
     path('<int:project_id>/phases/<int:phase_id>/units/<int:unit_id>/tasks/<int:task_id>/task_toggle/', views.task_toggle, name='task_toggle'),
 
+    #AI
+    path('autotaskview', views.task_auto_create, name='task_auto_create'),
+    path('autotaskviewss', views.approval_task_auto_create, name='approval_task_auto_create'),
 
 ]
