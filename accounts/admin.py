@@ -9,13 +9,13 @@ class UserAdmin(BaseUserAdmin):
         "first_name",
         "last_name",
         "country",
-        "active",
+        "is_active",
         "staff",
         "admin",
     )
     list_filter = (
         "admin",
-        "active",
+        "is_active",
         "country",
     )
     ordering = ("email",)

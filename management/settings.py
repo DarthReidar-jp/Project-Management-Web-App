@@ -59,6 +59,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates' ,'projectManagement','project'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement','phase'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement','unit'),
+            os.path.join(BASE_DIR, 'templates' ,'projectManagement','task'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement','function'),
             os.path.join(BASE_DIR, 'templates' ,'projectManagement','app_base'),
         ],

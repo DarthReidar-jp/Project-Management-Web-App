@@ -50,6 +50,7 @@ function draw(ctx, w, h, level, state) {  // added level parameter to draw funct
       ctx.lineTo(w, h);
       ctx.lineTo(0, h);
       ctx.lineTo(0, h - (h - 100) * level / 100 - 50);
+      
 
       // modify bezierCurveTo method to sum three sine waves with phase shifts and different frequency
       var temp = 0;

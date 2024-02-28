@@ -84,7 +84,7 @@ class Blob {
     this._color = value;
   }
   get color() {
-    return this._color || '#ff0000';
+    return this._color || '#008CAF';
   }
   
   set canvas(value) {
@@ -215,6 +215,9 @@ class Point {
 }
 
 blob = new Blob;
+blob.radius = 900; 
+
+ // この行を追加します。
 
 init = function() {
   canvas = document.createElement('canvas');
@@ -223,8 +226,10 @@ init = function() {
   document.body.appendChild(canvas);
 
   let resize = function() {
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    
   }
   window.addEventListener('resize', resize);
   resize();

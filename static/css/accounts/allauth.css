@@ -1,7 +1,11 @@
 body {
     background-color: rgb(247, 252, 255);
+    overflow: auto;
 }
 
+canvas { 
+    position: absolute; 
+    z-index: -2; }
 
 .button.secondaryAction {
     display: block;
@@ -48,7 +52,3 @@ body {
     margin-top: 10px;
 }
 
-canvas { 
-    position: fixed; 
-    touch-action: none;
-    z-index: -2; }

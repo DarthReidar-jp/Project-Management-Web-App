@@ -8,3 +8,4 @@ RUN pip install django-bootstrap4
 RUN pip install crispy-bootstrap4
 RUN pip install Pillow
 RUN pip install django-colorfield
+RUN pip install openai

@@ -73,7 +73,7 @@ class User(AbstractBaseUser):
         blank=True)
 
 
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) 
     admin = models.BooleanField(default=False) 
 
@@ -100,5 +100,5 @@ class User(AbstractBaseUser):
         return self.admin
 
     @property
-    def is_active(self):
-        return self.active
+    def is_user_active(self):
+        return self.is_active

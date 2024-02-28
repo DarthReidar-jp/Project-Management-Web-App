@@ -1,0 +1,19 @@
+{% extends 'app_base.html' %}
+{% block title %}自動作成タスク承認{% endblock %}
+{% block styles %}
+{% load static %}
+
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>タスク作成提案</h1>
+    <!-- 提案タスクカード -->
+    {% for task in proposed_tasks %}
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{ task }}</h5>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
