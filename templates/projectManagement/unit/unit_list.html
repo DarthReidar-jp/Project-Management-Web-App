@@ -36,9 +36,7 @@
         <a href="{% url 'task_detail' project_id=project.id phase_id=phase.id unit_id=unit.id task_id=task.id %}">{{task.task_name }}</a>
         <p>Deadline: {{ task.dead_line }}</p>
         <p>Assigned to:
-          {% for profile_image in task.get_assignee_profile_images %}
-          <img class="member-image-icon" src="{{ profile_image }}" alt="Profile Image">
-          {% endfor %}
+          <img class="member-image-icon" src="/media/profile_images/darthreider.png" alt="Profile Image">
         </p>
         {% if user_task.is_assigned %}
         <form method="post"
